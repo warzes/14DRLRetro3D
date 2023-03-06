@@ -141,11 +141,17 @@ inline bool getTextureFormatType(render::TexelsFormat inFormat, GLenum textureTy
 	}
 	else if( inFormat == render::TexelsFormat::RG_U8 )
 	{
+#if defined(_WIN32)
 		format = GL_RG;
 		internalFormat = GL_RG8;
 		oglType = GL_UNSIGNED_BYTE;
 		const GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_GREEN };
 		glTexParameteriv(textureType, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask); // TODO: могут быть проблемы с браузерами, тогда только грузить stb с указанием нужного формата
+#endif // _WIN32
+#if defined(__EMSCRIPTEN__)
+		Fatal("TexelsFormat::RG_U8 not support in web platform");
+		return false;
+#endif
 	}
 	else if( inFormat == render::TexelsFormat::RGB_U8 )
 	{
@@ -230,7 +236,6 @@ bool render::IsReadyUniform(const Uniform& uniform)
 ShaderProgram render::CreateShaderProgram(const std::string& vertexShaderMemory, const std::string& fragmentShaderMemory)
 {
 	ShaderProgram resource;
-
 	const GLuint glShaderVertex = createShader(GL_VERTEX_SHADER, vertexShaderMemory);
 	const GLuint glShaderFragment = createShader(GL_FRAGMENT_SHADER, fragmentShaderMemory);
 
@@ -375,9 +380,6 @@ Texture2D render::CreateTexture2D(const char* fileName, const Texture2DInfo& tex
 		stbi_image_free((void*)pixelData);
 		return {};
 	}
-
-	const size_t imageDataSize = (size_t)width * height * nrChannels;
-
 	Texture2DCreateInfo createInfo;
 	{
 		if( nrChannels == STBI_grey ) createInfo.format = TexelsFormat::R_U8;
@@ -425,7 +427,12 @@ Texture2D render::CreateTexture2D(const Texture2DCreateInfo& createInfo, const T
 	GLenum format = GL_RGB;
 	GLint internalFormat = GL_RGB;
 	GLenum oglType = GL_UNSIGNED_BYTE;
-	getTextureFormatType(createInfo.format, GL_TEXTURE_2D, format, internalFormat, oglType);
+	if( !getTextureFormatType(createInfo.format, GL_TEXTURE_2D, format, internalFormat, oglType) )
+	{
+		glDeleteTextures(1, &texture.id);
+		glBindTexture(GL_TEXTURE_2D, CurrentTexture2D[0]);
+		return {};
+	}		
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, (GLsizei)texture.width, (GLsizei)texture.height, 0, format, oglType, createInfo.pixelData);
 

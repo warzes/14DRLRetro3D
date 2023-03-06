@@ -14,7 +14,21 @@
 #include <vector>
 #include <unordered_map>
 
+#if defined(_WIN32)
 #include <glad/gl.h>
+#endif // _WIN32
+
+#if defined(__ANDROID__)
+#endif // __ANDROID__
+
+#if defined(__linux__)
+#endif // __linux__
+
+#if defined(__EMSCRIPTEN__)
+#	include <emscripten.h>
+#define GL_GLEXT_PROTOTYPES
+#define EGL_EGLEXT_PROTOTYPES
+#endif // __EMSCRIPTEN__
 
 #include <glfw.h>
 
