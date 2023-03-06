@@ -1,0 +1,1 @@
+emrun ../bin/index.html

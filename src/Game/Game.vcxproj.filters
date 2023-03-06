@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\3rdparty\glad\gl.c">
+      <Filter>3rdparty\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\glfwImpl.c">
+      <Filter>3rdparty\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\stb.cpp">
+      <Filter>3rdparty\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{af714386-95c7-4581-bd0e-c3bab679fc37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glad">
+      <UniqueIdentifier>{72f53a05-39ce-4e00-900a-d73835737211}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glfw">
+      <UniqueIdentifier>{c6eaa005-de73-4a7f-8165-99bb0d42167b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\stb">
+      <UniqueIdentifier>{d990563e-b559-4dc5-84c5-4604ae33a622}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\3rdparty\glad\gl.h">
+      <Filter>3rdparty\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\glfw.h">
+      <Filter>3rdparty\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\stb_image.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\stb_truetype.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+</Project>
