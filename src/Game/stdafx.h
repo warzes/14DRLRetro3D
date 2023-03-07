@@ -63,3 +63,5 @@ Left handed
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif
+
+#include "TempFunc.h"

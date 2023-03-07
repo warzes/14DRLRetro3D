@@ -18,6 +18,9 @@
     <ClCompile Include="..\3rdparty\polypartition\polypartition.cpp">
       <Filter>3rdparty\polypartition</Filter>
     </ClCompile>
+    <ClCompile Include="Sector.cpp">
+      <Filter>GameRender</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -37,6 +40,9 @@
     </Filter>
     <Filter Include="3rdparty\polypartition">
       <UniqueIdentifier>{01489970-7457-4820-8074-ddfb7636a533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameRender">
+      <UniqueIdentifier>{bd9e4ba1-a825-4748-956c-a2d616cd0899}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +64,12 @@
     <ClInclude Include="WorldRender.h" />
     <ClInclude Include="..\3rdparty\polypartition\polypartition.h">
       <Filter>3rdparty\polypartition</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>GameRender</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFunc.h">
+      <Filter>GameRender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

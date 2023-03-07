@@ -170,7 +170,11 @@ int main()
 		vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(testVertex), vert);
 		ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
 		vao = render::CreateVertexArray(&vb, &ib, shader);
-		texture = render::CreateTexture2D("../data/textures/1mx1m.png");
+
+
+		render::Texture2DInfo texInfo;
+		texInfo.mipmap = false;
+		texture = render::CreateTexture2D("../data/textures/tile.png", texInfo);
 
 		cam.position = { 0.0f, 0.0f, 0.0f };
 		cam.viewPoint = { 0.0f, 0.0f, 1.0f };
