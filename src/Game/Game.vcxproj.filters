@@ -15,6 +15,9 @@
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="WorldRender.cpp" />
+    <ClCompile Include="..\3rdparty\polypartition\polypartition.cpp">
+      <Filter>3rdparty\polypartition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -31,6 +34,9 @@
     </Filter>
     <Filter Include="emscripten">
       <UniqueIdentifier>{678a85fa-6b82-4b61-a213-ee0a4cdd38cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\polypartition">
+      <UniqueIdentifier>{01489970-7457-4820-8074-ddfb7636a533}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +56,9 @@
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="WorldRender.h" />
+    <ClInclude Include="..\3rdparty\polypartition\polypartition.h">
+      <Filter>3rdparty\polypartition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\emscripten\build.bat">

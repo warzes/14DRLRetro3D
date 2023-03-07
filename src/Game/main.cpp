@@ -178,6 +178,8 @@ int main()
 
 		CreateWorldRender();
 
+		glEnable(GL_DEPTH_TEST);
+
 #if defined(__EMSCRIPTEN__)
 		emscripten_set_main_loop(mainLoop, 0, true);
 #else

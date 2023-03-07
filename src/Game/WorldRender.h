@@ -25,6 +25,13 @@ struct Sector
 	std::vector<Wall> numWalls;
 	float CeilingHeight;
 	float FloorHeight;
+
+	// AABB
+	// TODO: присвоить бесконечность
+	glm::vec2 min;
+	glm::vec2 max;
+	
+	glm::vec2 GetSize() const { return max - min; }
 };
 
 void CreateWorldRender();

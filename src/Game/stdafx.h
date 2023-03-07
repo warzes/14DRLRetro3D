@@ -58,6 +58,8 @@ Left handed
 
 #include <stb_image.h>
 
+#include <polypartition/polypartition.h>
+
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif
