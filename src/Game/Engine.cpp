@@ -16,6 +16,9 @@ unsigned CurrentVBO = 0;
 unsigned CurrentIBO = 0;
 unsigned CurrentVAO = 0;
 unsigned CurrentTexture2D[MaxBindingTextures] = { 0 };
+GLFWwindow* Window = nullptr;
+int WindowWidth = 0;
+int WindowHeight = 0;
 //-----------------------------------------------------------------------------
 //=============================================================================
 // Logging
@@ -678,5 +681,115 @@ void render::Draw(const VertexArray& vao, PrimitiveDraw primitive)
 	{
 		glDrawArrays(translateToGL(primitive), 0, (GLsizei)vao.vbo->count);
 	}
+}
+//-----------------------------------------------------------------------------
+//=============================================================================
+// App System
+//=============================================================================
+//-----------------------------------------------------------------------------
+void errorCallback(int error, const char* description) noexcept
+{
+	Fatal("GLFW Error (" + std::to_string(error) + "): " + std::string(description));
+}
+//-----------------------------------------------------------------------------
+void windowSizeCallback(GLFWwindow* /*window*/, int width, int height) noexcept
+{
+	WindowWidth = width;
+	WindowHeight = height;
+}
+//-----------------------------------------------------------------------------
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+{
+	if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+//-----------------------------------------------------------------------------
+bool app::Create(const CreateInfo& info)
+{
+	LogCreate("../log.txt");
+
+	glfwSetErrorCallback(errorCallback);
+
+	if( !glfwInit() )
+	{
+		LogError("GLFW: Failed to initialize GLFW");
+		return false;
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
+#if defined(_DEBUG)
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#else
+	glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_TRUE);
+#endif
+	glfwWindowHint(GLFW_RESIZABLE, info.window.resizable ? GL_TRUE : GL_FALSE);
+	Window = glfwCreateWindow(info.window.width, info.window.height, info.window.title, nullptr, nullptr);
+	if( !Window )
+	{
+		LogError("GLFW: Failed to initialize Window");
+		return false;
+	}
+
+	glfwSetWindowSizeCallback(Window, windowSizeCallback);
+	glfwSetKeyCallback(Window, keyCallback);
+
+	glfwMakeContextCurrent(Window);
+
+#if defined(_WIN32)
+	if( !gladLoadGL(glfwGetProcAddress) )
+	{
+		LogError("GLAD: Cannot load OpenGL extensions");
+		return false;
+	}
+#endif
+
+	glfwSwapInterval(info.window.vsync ? 1 : 0);
+
+	glfwGetFramebufferSize(Window, &WindowWidth, &WindowHeight);
+
+	return true;
+}
+//-----------------------------------------------------------------------------
+void app::Destroy()
+{
+	glfwDestroyWindow(Window);
+	glfwTerminate();
+	LogDestroy();
+}
+//-----------------------------------------------------------------------------
+void app::BeginFrame()
+{
+	glViewport(0, 0, WindowWidth, WindowHeight);
+	glClearColor(0.2f, 0.4f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+//-----------------------------------------------------------------------------
+void app::EndFrame()
+{
+	glfwSwapBuffers(Window);
+	glfwPollEvents();
+}
+//-----------------------------------------------------------------------------
+bool app::IsClose()
+{
+	return IsExitRequested || glfwWindowShouldClose(Window) == GLFW_TRUE;
+}
+//-----------------------------------------------------------------------------
+void app::Exit()
+{
+	IsExitRequested = true;
+}
+//-----------------------------------------------------------------------------
+int app::GetWindowWidth()
+{
+	return WindowWidth;
+}
+//-----------------------------------------------------------------------------
+int app::GetWindowHeight()
+{
+	return WindowHeight;
 }
 //-----------------------------------------------------------------------------

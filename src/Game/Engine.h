@@ -190,3 +190,33 @@ using render::VertexBuffer;
 using render::IndexBuffer;
 using render::VertexArray;
 using render::Texture2D;
+
+//=============================================================================
+// App System
+//=============================================================================
+namespace app
+{
+	struct CreateInfo
+	{
+		struct
+		{
+			int width = 1024;
+			int height = 768;
+			const char* title = "game";
+			bool resizable = true;
+			bool vsync = true;
+		} window;
+	};
+
+	bool Create(const CreateInfo& info);
+	void Destroy();
+
+	void BeginFrame();
+	void EndFrame();
+	bool IsClose();
+
+	void Exit();
+
+	int GetWindowWidth();
+	int GetWindowHeight();
+}

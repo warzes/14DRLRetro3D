@@ -2,30 +2,18 @@
 #include "Engine.h"
 #include "GameApp.h"
 
-https://www.youtube.com/watch?v=fSjc8vLMg8c
-
-сектор
-<portal ? > -где переход в другой сектор
-
-https ://github.com/victorfisac/Physac
-
-https://shrines.rpgclassics.com/fds/deepdungeon/info.shtml
-
-https://www.youtube.com/@LeoOno/videos
-
-https://www.youtube.com/channel/UCjdHbo8_vh3rxQ-875XGkvw/community?lb=UgkxAhhnkGgELDWMs41ygSHgOm2tWV5nTrty
-
-
-void errorCallback(int error, const char* description) noexcept
-{
-	Fatal("Error (" + std::to_string(error) + "): " + std::string(description));
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
-{
-	if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
+//https://www.youtube.com/watch?v=fSjc8vLMg8c
+//
+//сектор
+//<portal ? > -где переход в другой сектор
+//
+//https ://github.com/victorfisac/Physac
+//
+//https://shrines.rpgclassics.com/fds/deepdungeon/info.shtml
+//
+//https://www.youtube.com/@LeoOno/videos
+//
+//https://www.youtube.com/channel/UCjdHbo8_vh3rxQ-875XGkvw/community?lb=UgkxAhhnkGgELDWMs41ygSHgOm2tWV5nTrty
 
 #if defined(_WIN32)
 constexpr const char* vertexShaderText = R"(
@@ -123,7 +111,7 @@ int indexs[] =
 	2, 3, 0
 };
 
-GLFWwindow* window;
+
 ShaderProgram shader;
 Uniform uniform;
 VertexBuffer vb;
@@ -133,79 +121,46 @@ Texture2D texture;
 
 void mainLoop() 
 { 
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	const float aspectRatio = (float)width / (float)height;
-
+	const float aspectRatio = (float)app::GetWindowWidth() / (float)app::GetWindowHeight();
 	glm::mat4 mat = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
 
-	glViewport(0, 0, width, height);
-	glClearColor(0.2f, 0.4f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	app::BeginFrame();
 
 	render::Bind(shader);
 	render::SetUniform(uniform, mat);
 	render::Bind(texture);
 	render::Draw(vao);
 
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+	app::EndFrame();
 }
 
 int main()
 {
-	LogCreate("../log.txt");
-
-	LogPrint("Hello");
-
-	glfwSetErrorCallback(errorCallback);
-
-	if( !glfwInit() )
-		return -1;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	if( !window )
+	if( app::Create({}) )
 	{
-		glfwTerminate();
-		return -1;
-	}
+		shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
+		uniform = render::GetUniform(shader, "projectionMatrix");
+		vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(testVertex), vert);
+		ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
+		vao = render::CreateVertexArray(&vb, &ib, shader);
+		texture = render::CreateTexture2D("../data/textures/1mx1m.png");
 
-	glfwSetKeyCallback(window, keyCallback);
 
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
-
-#if defined(_WIN32)
-	gladLoadGL(glfwGetProcAddress);
+#if defined(__EMSCRIPTEN__)
+		emscripten_set_main_loop(mainLoop, 0, true);
+#else
+		while( !app::IsClose() )
+		{
+			mainLoop();
+		}
 #endif
 
-	shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
-	uniform = render::GetUniform(shader,"projectionMatrix");
-	vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(testVertex), vert);
-	ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
-	vao = render::CreateVertexArray(&vb, &ib, shader);
-	texture = render::CreateTexture2D("../data/textures/1mx1m.png");
+		render::DestroyResource(shader);
+		render::DestroyResource(vb);
+		render::DestroyResource(ib);
+		render::DestroyResource(vao);
+		render::DestroyResource(texture);
 
-
-#if defined(_WIN32)
-	while( !glfwWindowShouldClose(window) )
-	{
-		mainLoop();
 	}
-#elif defined(__EMSCRIPTEN__)
-	emscripten_set_main_loop(mainLoop, 0, true);
-#endif
-
-	render::DestroyResource(shader);
-	render::DestroyResource(vb);
-	render::DestroyResource(ib);
-	render::DestroyResource(vao);
-	render::DestroyResource(texture);
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-
-	LogDestroy();
+	app::Destroy();
 }
