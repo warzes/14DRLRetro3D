@@ -169,14 +169,6 @@ namespace render
 	std::vector<ShaderAttribInfo> GetAttribInfo(const ShaderProgram& resource);
 	Uniform GetUniform(const ShaderProgram& program, const char* uniformName);
 
-	void ResetState(ResourceType type);
-	void ResetState(ResourceType type, unsigned slot);
-	void Bind(const ShaderProgram& resource);
-	void Bind(const VertexBuffer& resource);
-	void Bind(const IndexBuffer& resource);
-	void Bind(const VertexAttribute& Attribute);
-	void Bind(const Texture2D& resource, unsigned slot = 0);
-
 	void SetUniform(const Uniform& uniform, int value);
 	void SetUniform(const Uniform& uniform, float value);
 	void SetUniform(const Uniform& uniform, const glm::vec2& value);
@@ -184,6 +176,17 @@ namespace render
 	void SetUniform(const Uniform& uniform, const glm::vec4& value);
 	void SetUniform(const Uniform& uniform, const glm::mat3& value);
 	void SetUniform(const Uniform& uniform, const glm::mat4& value);
+
+	void UpdateVertexBuffer(VertexBuffer& vbo, unsigned offset, unsigned vertexCount, unsigned vertexSize, const void* data);
+	void UpdateIndexBuffer(IndexBuffer& ibo, unsigned offset, unsigned indexCount, unsigned indexSize, const void* data);
+
+	void ResetState(ResourceType type);
+	void ResetState(ResourceType type, unsigned slot);
+	void Bind(const ShaderProgram& resource);
+	void Bind(const VertexBuffer& resource);
+	void Bind(const IndexBuffer& resource);
+	void Bind(const VertexAttribute& Attribute);
+	void Bind(const Texture2D& resource, unsigned slot = 0);
 
 	void Draw(const VertexArray& vao, PrimitiveDraw primitive = PrimitiveDraw::Triangles);
 

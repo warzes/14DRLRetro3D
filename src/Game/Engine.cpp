@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Engine.h"
 //-----------------------------------------------------------------------------
-#define GL_CLAMP 0x2900
-//-----------------------------------------------------------------------------
 //=============================================================================
 // Global Vars
 //=============================================================================
@@ -563,6 +561,85 @@ Uniform render::GetUniform(const ShaderProgram& program, const char* uniformName
 	return uniform;
 }
 //-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, int value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniform1i(uniform.location, value);
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, float value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniform1f(uniform.location, value);
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, const glm::vec2& value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniform2fv(uniform.location, 1, glm::value_ptr(value));
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, const glm::vec3& value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniform3fv(uniform.location, 1, glm::value_ptr(value));
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, const glm::vec4& value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniform4fv(uniform.location, 1, glm::value_ptr(value));
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, const glm::mat3& value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniformMatrix3fv(uniform.location, 1, GL_FALSE, glm::value_ptr(value));
+}
+//-----------------------------------------------------------------------------
+void render::SetUniform(const Uniform& uniform, const glm::mat4& value)
+{
+	assert(IsReadyUniform(uniform));
+	glUniformMatrix4fv(uniform.location, 1, GL_FALSE, glm::value_ptr(value));
+}
+//-----------------------------------------------------------------------------
+void render::UpdateVertexBuffer(VertexBuffer& vbo, unsigned offset, unsigned vertexCount, unsigned vertexSize, const void* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
+
+	if( vbo.count != vertexCount || vbo.size != vertexSize || vbo.usage != ResourceUsage::Dynamic )
+	{
+		glBufferData(GL_ARRAY_BUFFER, vertexCount * vertexSize, data, translateToGL(ResourceUsage::Dynamic));
+		vbo.usage = ResourceUsage::Dynamic;
+	}
+	else
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, offset, vertexCount * vertexSize, data);
+	}
+	vbo.count = vertexCount;
+	vbo.size = vertexSize;
+
+	glBindBuffer(GL_ARRAY_BUFFER, CurrentVBO); // restore current vb
+}
+//-----------------------------------------------------------------------------
+void render::UpdateIndexBuffer(IndexBuffer& ibo, unsigned offset, unsigned indexCount, unsigned indexSize, const void* data)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.id);
+	if( ibo.count != indexCount || ibo.size != indexSize || ibo.usage != ResourceUsage::Dynamic )
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * indexSize, data, translateToGL(ResourceUsage::Dynamic));
+		ibo.usage = ResourceUsage::Dynamic;
+	}
+	else
+	{
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, indexCount * indexSize, data);
+	}
+	ibo.count = indexCount;
+	ibo.size = indexSize;
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CurrentIBO); // restore current ib
+}
+//-----------------------------------------------------------------------------
 void render::ResetState(ResourceType type)
 {
 	if( type == ResourceType::ShaderProgram )
@@ -646,48 +723,6 @@ void render::Bind(const Texture2D& resource, unsigned slot)
 	CurrentTexture2D[slot] = resource.id;
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, resource.id);
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, int value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniform1i(uniform.location, value);
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, float value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniform1f(uniform.location, value);
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, const glm::vec2& value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniform2fv(uniform.location, 1, glm::value_ptr(value));
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, const glm::vec3& value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniform3fv(uniform.location, 1, glm::value_ptr(value));
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, const glm::vec4& value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniform4fv(uniform.location, 1, glm::value_ptr(value));
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, const glm::mat3& value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniformMatrix3fv(uniform.location, 1, GL_FALSE, glm::value_ptr(value));
-}
-//-----------------------------------------------------------------------------
-void render::SetUniform(const Uniform& uniform, const glm::mat4& value)
-{
-	assert(IsReadyUniform(uniform));
-	glUniformMatrix4fv(uniform.location, 1, GL_FALSE, glm::value_ptr(value));
 }
 //-----------------------------------------------------------------------------
 void render::Draw(const VertexArray& vao, PrimitiveDraw primitive)

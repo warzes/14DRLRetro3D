@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Engine.h"
 #include "GameApp.h"
+#include "WorldRender.h"
 
 //https://www.youtube.com/watch?v=fSjc8vLMg8c
 //
@@ -126,7 +127,7 @@ scene::Camera cam;
 
 void mainLoop() 
 { 
-	float mouseSensitivity = 4.0f * app::GetDeltaTime();
+	float mouseSensitivity = 10.0f * app::GetDeltaTime();
 	float moveSpeed = 10.0f * app::GetDeltaTime();
 
 	if( app::IsKeyDown(app::KEY_ESCAPE) ) app::Exit();
@@ -152,6 +153,8 @@ void mainLoop()
 	render::Bind(texture);
 	render::Draw(vao);
 
+	DrawWorldRender();
+
 	app::EndFrame();
 }
 
@@ -160,7 +163,6 @@ int main()
 	if( app::Create({}) )
 	{
 		app::SetMouseLock(true);
-
 
 		shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
 		uniformProj = render::GetUniform(shader, "projectionMatrix");
@@ -174,8 +176,7 @@ int main()
 		cam.viewPoint = { 0.0f, 0.0f, 1.0f };
 		cam.upVector = { 0.0f, 1.0f, 0.0f };
 
-
-
+		CreateWorldRender();
 
 #if defined(__EMSCRIPTEN__)
 		emscripten_set_main_loop(mainLoop, 0, true);
