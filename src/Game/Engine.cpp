@@ -44,6 +44,7 @@ struct
 } Mouse;
 double LastFrameTime = 0.0;
 double TimeDelta = 0.0;
+uint32_t CurrentFrame = 0;
 //-----------------------------------------------------------------------------
 //=============================================================================
 // Logging
@@ -349,6 +350,9 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 //-----------------------------------------------------------------------------
 VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const ShaderProgram& shaders)
 {
+	assert(IsValid(shaders));
+	if (!IsValid(shaders)) return {};
+
 	auto attribInfo = GetAttribInfo(shaders);
 	if( attribInfo.empty() ) return {};
 
@@ -934,6 +938,8 @@ void app::Destroy()
 //-----------------------------------------------------------------------------
 void app::BeginFrame()
 {
+	CurrentFrame = (CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
 	const auto currentTime = glfwGetTime();
 	TimeDelta = currentTime - LastFrameTime;
 	LastFrameTime = currentTime;
@@ -983,6 +989,11 @@ int app::GetWindowHeight()
 float app::GetDeltaTime()
 {
 	return (float)TimeDelta;
+}
+//-----------------------------------------------------------------------------
+uint32_t app::GetCurrentFrameId()
+{
+	return CurrentFrame;
 }
 //-----------------------------------------------------------------------------
 bool app::IsKeyPressed(int key)

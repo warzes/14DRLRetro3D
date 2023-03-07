@@ -16,7 +16,7 @@ struct Wall
 {
 	glm::vec2 p1;
 	glm::vec2 p2;
-	int portal;
+	unsigned portal;
 	int textureId;
 };
 
@@ -46,11 +46,13 @@ struct Sector
 	VertexArray ceillingVao;
 
 	TPPLPolyList trianglesList;
+
+	uint32_t frameId = 999999;
 };
 
 void CompleteSector(Sector& sector); // нужно вызывать после внесения данных. В будущем подумать как лучше
 void DestroySector(Sector& sector);
 void UpdateSector(Sector& sector);
-void DrawSector(Sector& sector);
+void DrawSectors(unsigned currentId, std::vector<Sector>& sectors);
 
 bool IsInside(const Sector& sector, const glm::vec3& pos);

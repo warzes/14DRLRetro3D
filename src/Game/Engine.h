@@ -8,6 +8,7 @@ constexpr auto MAX_KEYBOARD_KEYS = 512;
 constexpr auto MAX_KEY_PRESSED_QUEUE = 16;
 constexpr auto MAX_CHAR_PRESSED_QUEUE = 16;
 constexpr auto MAX_MOUSE_BUTTONS = 8;
+constexpr auto MAX_FRAMES_IN_FLIGHT = 100;
 
 //=============================================================================
 // Core
@@ -367,6 +368,7 @@ namespace app
 	int GetWindowHeight();
 
 	float GetDeltaTime();
+	uint32_t GetCurrentFrameId();
 
 	bool IsKeyPressed(int key);
 	bool IsKeyDown(int key);
