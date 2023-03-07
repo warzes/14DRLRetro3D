@@ -15,7 +15,7 @@
 #include <unordered_map>
 
 #if defined(_WIN32)
-#include <glad/gl.h>
+#	include <glad/gl.h>
 #endif // _WIN32
 
 #if defined(__ANDROID__)
@@ -25,9 +25,11 @@
 #endif // __linux__
 
 #if defined(__EMSCRIPTEN__)
-#	include <emscripten.h>
-#define GL_GLEXT_PROTOTYPES
-#define EGL_EGLEXT_PROTOTYPES
+#	define GLFW_INCLUDE_ES3
+//#	define GL_GLEXT_PROTOTYPES
+//#	define EGL_EGLEXT_PROTOTYPES
+#	include <emscripten/emscripten.h>
+#	include <emscripten/html5.h>
 #endif // __EMSCRIPTEN__
 
 #include <glfw.h>

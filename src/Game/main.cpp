@@ -24,13 +24,14 @@ layout(location = 1) in vec3 vertexColor;
 layout(location = 2) in vec2 vertexTexCoord;
 
 uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 out vec3 fragmentColor;
 out vec2 TexCoord;
 
 void main()
 {
-	gl_Position   = projectionMatrix * vec4(vertexPosition, 1.0);
+	gl_Position   = projectionMatrix * viewMatrix * vec4(vertexPosition, 1.0);
 	fragmentColor = vertexColor;
 	TexCoord      = vertexTexCoord;
 }
@@ -43,13 +44,14 @@ layout(location = 1) in vec3 vertexColor;
 layout(location = 2) in vec2 vertexTexCoord;
 
 uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 out vec3 fragmentColor;
 out vec2 TexCoord;
 
 void main()
 {
-	gl_Position   = projectionMatrix * vec4(vertexPosition, 1.0);
+	gl_Position   = projectionMatrix * viewMatrix * vec4(vertexPosition, 1.0);
 	fragmentColor = vertexColor;
 	TexCoord      = vertexTexCoord;
 }
@@ -113,21 +115,40 @@ int indexs[] =
 
 
 ShaderProgram shader;
-Uniform uniform;
+Uniform uniformProj;
+Uniform uniformView;
 VertexBuffer vb;
 IndexBuffer ib;
 VertexArray vao;
 Texture2D texture;
+scene::Camera cam;
+
 
 void mainLoop() 
 { 
+	float mouseSensitivity = 4.0f * app::GetDeltaTime();
+	float moveSpeed = 10.0f * app::GetDeltaTime();
+
+	if( app::IsKeyDown(app::KEY_ESCAPE) ) app::Exit();
+
+	if( app::IsKeyDown(app::KEY_W) ) scene::CameraMoveBy(cam, moveSpeed);
+	if( app::IsKeyDown(app::KEY_S) ) scene::CameraMoveBy(cam, -moveSpeed);
+	if( app::IsKeyDown(app::KEY_A) ) scene::CameraStrafeBy(cam, moveSpeed);
+	if( app::IsKeyDown(app::KEY_D) ) scene::CameraStrafeBy(cam, -moveSpeed);
+
+	glm::vec2 delta = app::GetMouseDelta();
+	if (delta.x != 0.0f ) scene::CameraRotateLeftRight(cam, delta.x * mouseSensitivity);
+	if( delta.y != 0.0f ) scene::CameraRotateUpDown(cam, -delta.y * mouseSensitivity);
+
 	const float aspectRatio = (float)app::GetWindowWidth() / (float)app::GetWindowHeight();
 	glm::mat4 mat = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
 
 	app::BeginFrame();
 
 	render::Bind(shader);
-	render::SetUniform(uniform, mat);
+	render::SetUniform(uniformProj, mat);
+	render::SetUniform(uniformView, scene::GetCameraViewMatrix(cam));
+
 	render::Bind(texture);
 	render::Draw(vao);
 
@@ -138,12 +159,22 @@ int main()
 {
 	if( app::Create({}) )
 	{
+		app::SetMouseLock(true);
+
+
 		shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
-		uniform = render::GetUniform(shader, "projectionMatrix");
+		uniformProj = render::GetUniform(shader, "projectionMatrix");
+		uniformView = render::GetUniform(shader, "viewMatrix");
 		vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(testVertex), vert);
 		ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
 		vao = render::CreateVertexArray(&vb, &ib, shader);
 		texture = render::CreateTexture2D("../data/textures/1mx1m.png");
+
+		cam.position = { 0.0f, 0.0f, 0.0f };
+		cam.viewPoint = { 0.0f, 0.0f, 1.0f };
+		cam.upVector = { 0.0f, 1.0f, 0.0f };
+
+
 
 
 #if defined(__EMSCRIPTEN__)

@@ -19,6 +19,33 @@ unsigned CurrentTexture2D[MaxBindingTextures] = { 0 };
 GLFWwindow* Window = nullptr;
 int WindowWidth = 0;
 int WindowHeight = 0;
+struct
+{
+	char currentKeyState[MAX_KEYBOARD_KEYS] = { 0 };
+	char previousKeyState[MAX_KEYBOARD_KEYS] = { 0 };
+
+	int keyPressedQueue[MAX_KEY_PRESSED_QUEUE] = { 0 };
+	int keyPressedQueueCount = 0; 
+
+	int charPressedQueue[MAX_CHAR_PRESSED_QUEUE] = { 0 };
+	int charPressedQueueCount = 0;
+} Keyboard;
+//-------------------------------------------------------------------------
+struct
+{
+	glm::vec2 currentPosition = glm::vec2(0.0f);
+	glm::vec2 previousPosition = glm::vec2(0.0f);
+
+	bool cursorHidden = false;
+	bool cursorOnScreen = false;
+
+	char currentButtonState[MAX_MOUSE_BUTTONS] = { 0 };
+	char previousButtonState[MAX_MOUSE_BUTTONS] = { 0 };
+	glm::vec2 currentWheelMove = glm::vec2(0.0f);
+	glm::vec2 previousWheelMove = glm::vec2(0.0f);
+} Mouse;
+double LastFrameTime = 0.0;
+double TimeDelta = 0.0;
 //-----------------------------------------------------------------------------
 //=============================================================================
 // Logging
@@ -103,9 +130,10 @@ inline GLint translateToGL(render::TextureWrapping wrap)
 	{
 	case render::TextureWrapping::Repeat:         return GL_REPEAT;
 	case render::TextureWrapping::MirroredRepeat: return GL_MIRRORED_REPEAT;
-	case render::TextureWrapping::Clamp:          return GL_CLAMP;
 	case render::TextureWrapping::ClampToEdge:    return GL_CLAMP_TO_EDGE;
+#if !defined(__EMSCRIPTEN__)
 	case render::TextureWrapping::ClampToBorder:  return GL_CLAMP_TO_BORDER;
+#endif
 	}
 	return 0;
 }
@@ -684,6 +712,62 @@ void render::Draw(const VertexArray& vao, PrimitiveDraw primitive)
 }
 //-----------------------------------------------------------------------------
 //=============================================================================
+// Scene System
+//=============================================================================
+//-----------------------------------------------------------------------------
+glm::vec3 getNormalizedViewVector(const scene::Camera& camera)
+{
+	return glm::normalize(camera.viewPoint - camera.position);
+}
+//-----------------------------------------------------------------------------
+glm::mat4 scene::GetCameraViewMatrix(const Camera& camera)
+{
+	return glm::lookAt(camera.position, camera.viewPoint, camera.upVector);
+}
+//-----------------------------------------------------------------------------
+void scene::CameraMoveBy(Camera& camera, float distance)
+{
+	const glm::vec3 vOffset = getNormalizedViewVector(camera) * distance;
+	camera.position += vOffset;
+	camera.viewPoint += vOffset;
+}
+//-----------------------------------------------------------------------------
+void scene::CameraStrafeBy(Camera& camera, float distance)
+{
+	const glm::vec3 strafeVector = glm::normalize(glm::cross(getNormalizedViewVector(camera), camera.upVector)) * distance;
+	camera.position += strafeVector;
+	camera.viewPoint += strafeVector;
+}
+//-----------------------------------------------------------------------------
+void scene::CameraRotateLeftRight(Camera& camera, float angleInDegrees)
+{
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleInDegrees), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec4 rotatedViewVector = rotationMatrix * glm::vec4(getNormalizedViewVector(camera), 0.0f);
+	camera.viewPoint = camera.position + glm::vec3(rotatedViewVector);
+}
+//-----------------------------------------------------------------------------
+void scene::CameraRotateUpDown(Camera& camera, float angleInDegrees)
+{
+	const glm::vec3 viewVector = getNormalizedViewVector(camera);
+	const glm::vec3 viewVectorNoY = glm::normalize(glm::vec3(viewVector.x, 0.0f, viewVector.z));
+
+	float currentAngleDegrees = glm::degrees(acos(glm::dot(viewVectorNoY, viewVector)));
+	if( viewVector.y < 0.0f ) currentAngleDegrees = -currentAngleDegrees;
+
+	float newAngleDegrees = currentAngleDegrees + angleInDegrees;
+	if( newAngleDegrees > -85.0f && newAngleDegrees < 85.0f )
+	{
+		glm::vec3 rotationAxis = glm::cross(getNormalizedViewVector(camera), camera.upVector);
+		rotationAxis = glm::normalize(rotationAxis);
+
+		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleInDegrees), rotationAxis);
+		glm::vec4 rotatedViewVector = rotationMatrix * glm::vec4(getNormalizedViewVector(camera), 0.0f);
+
+		camera.viewPoint = camera.position + glm::vec3(rotatedViewVector);
+	}
+}
+//-----------------------------------------------------------------------------
+//=============================================================================
 // App System
 //=============================================================================
 //-----------------------------------------------------------------------------
@@ -698,10 +782,48 @@ void windowSizeCallback(GLFWwindow* /*window*/, int width, int height) noexcept
 	WindowHeight = height;
 }
 //-----------------------------------------------------------------------------
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+void keyCallback(GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/) noexcept
 {
-	if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	if( key < 0 ) return;
+
+	if( action == GLFW_RELEASE ) Keyboard.currentKeyState[key] = 0;
+	else Keyboard.currentKeyState[key] = 1;
+
+	if( (Keyboard.keyPressedQueueCount < MAX_KEY_PRESSED_QUEUE) && (action == GLFW_PRESS) )
+	{
+		Keyboard.keyPressedQueue[Keyboard.keyPressedQueueCount] = key;
+		Keyboard.keyPressedQueueCount++;
+	}
+}
+//-----------------------------------------------------------------------------
+void charCallback(GLFWwindow* /*window*/, unsigned int key) noexcept
+{
+	if( Keyboard.charPressedQueueCount < MAX_KEY_PRESSED_QUEUE )
+	{
+		Keyboard.charPressedQueue[Keyboard.charPressedQueueCount] = key;
+		Keyboard.charPressedQueueCount++;
+	}
+}
+//-----------------------------------------------------------------------------
+void mouseButtonCallback(GLFWwindow* /*window*/, int button, int action, int /*mods*/) noexcept
+{
+	Mouse.currentButtonState[button] = action;
+}
+//-----------------------------------------------------------------------------
+void mouseCursorPosCallback(GLFWwindow* /*window*/, double x, double y) noexcept
+{
+	Mouse.currentPosition.x = (float)x;
+	Mouse.currentPosition.y = (float)y;
+}
+//-----------------------------------------------------------------------------
+void mouseScrollCallback(GLFWwindow* /*window*/, double xoffset, double yoffset) noexcept
+{
+	Mouse.currentWheelMove = { (float)xoffset, (float)yoffset };
+}
+//-----------------------------------------------------------------------------
+void cursorEnterCallback(GLFWwindow* /*window*/, int enter) noexcept
+{
+	Mouse.cursorOnScreen = (enter == GLFW_TRUE);
 }
 //-----------------------------------------------------------------------------
 bool app::Create(const CreateInfo& info)
@@ -734,7 +856,13 @@ bool app::Create(const CreateInfo& info)
 	}
 
 	glfwSetWindowSizeCallback(Window, windowSizeCallback);
+
 	glfwSetKeyCallback(Window, keyCallback);
+	glfwSetCharCallback(Window, charCallback);
+	glfwSetMouseButtonCallback(Window, mouseButtonCallback);
+	glfwSetCursorPosCallback(Window, mouseCursorPosCallback);
+	glfwSetScrollCallback(Window, mouseScrollCallback);
+	glfwSetCursorEnterCallback(Window, cursorEnterCallback);
 
 	glfwMakeContextCurrent(Window);
 
@@ -744,11 +872,20 @@ bool app::Create(const CreateInfo& info)
 		LogError("GLAD: Cannot load OpenGL extensions");
 		return false;
 	}
-#endif
+#endif // _WIN32
 
 	glfwSwapInterval(info.window.vsync ? 1 : 0);
 
 	glfwGetFramebufferSize(Window, &WindowWidth, &WindowHeight);
+
+	Mouse.currentPosition.x = (float)WindowWidth / 2.0f;
+	Mouse.currentPosition.y = (float)WindowHeight / 2.0f;
+
+	LogPrint("OpenGL: OpenGL device information:");
+	LogPrint("    > Vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
+	LogPrint("    > Renderer: " + std::string((const char*)glGetString(GL_RENDERER)));
+	LogPrint("    > Version:  " + std::string((const char*)glGetString(GL_VERSION)));
+	LogPrint("    > GLSL:     " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
 	return true;
 }
@@ -762,6 +899,10 @@ void app::Destroy()
 //-----------------------------------------------------------------------------
 void app::BeginFrame()
 {
+	const auto currentTime = glfwGetTime();
+	TimeDelta = currentTime - LastFrameTime;
+	LastFrameTime = currentTime;
+
 	glViewport(0, 0, WindowWidth, WindowHeight);
 	glClearColor(0.2f, 0.4f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -770,6 +911,17 @@ void app::BeginFrame()
 void app::EndFrame()
 {
 	glfwSwapBuffers(Window);
+
+	Keyboard.keyPressedQueueCount = 0;
+	Keyboard.charPressedQueueCount = 0;
+
+	for( int i = 0; i < MAX_KEYBOARD_KEYS; i++ ) Keyboard.previousKeyState[i] = Keyboard.currentKeyState[i];
+	for( int i = 0; i < MAX_MOUSE_BUTTONS; i++ ) Mouse.previousButtonState[i] = Mouse.currentButtonState[i];
+
+	Mouse.previousWheelMove = Mouse.currentWheelMove;
+	Mouse.currentWheelMove = { 0.0f, 0.0f };
+	Mouse.previousPosition = Mouse.currentPosition;
+
 	glfwPollEvents();
 }
 //-----------------------------------------------------------------------------
@@ -791,5 +943,149 @@ int app::GetWindowWidth()
 int app::GetWindowHeight()
 {
 	return WindowHeight;
+}
+//-----------------------------------------------------------------------------
+float app::GetDeltaTime()
+{
+	return (float)TimeDelta;
+}
+//-----------------------------------------------------------------------------
+bool app::IsKeyPressed(int key)
+{
+	if( (Keyboard.previousKeyState[key] == 0) && (Keyboard.currentKeyState[key] == 1) ) return true;
+	return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsKeyDown(int key)
+{
+	if( Keyboard.currentKeyState[key] == 1 ) return true;
+	else return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsKeyReleased(int key)
+{
+	if( (Keyboard.previousKeyState[key] == 1) && (Keyboard.currentKeyState[key] == 0) ) return true;
+	return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsKeyUp(int key)
+{
+	if( Keyboard.currentKeyState[key] == 0 ) return true;
+	else return false;
+}
+//-----------------------------------------------------------------------------
+int app::GetKeyPressed()
+{
+	int value = 0;
+
+	if( Keyboard.keyPressedQueueCount > 0 )
+	{
+		value = Keyboard.keyPressedQueue[0];
+
+		for( int i = 0; i < (Keyboard.keyPressedQueueCount - 1); i++ )
+			Keyboard.keyPressedQueue[i] = Keyboard.keyPressedQueue[i + 1];
+
+		Keyboard.keyPressedQueue[Keyboard.keyPressedQueueCount] = 0;
+		Keyboard.keyPressedQueueCount--;
+	}
+
+	return value;
+}
+//-----------------------------------------------------------------------------
+int app::GetCharPressed()
+{
+	int value = 0;
+
+	if( Keyboard.charPressedQueueCount > 0 )
+	{
+		value = Keyboard.charPressedQueue[0];
+
+		for( int i = 0; i < (Keyboard.charPressedQueueCount - 1); i++ )
+			Keyboard.charPressedQueue[i] = Keyboard.charPressedQueue[i + 1];
+
+		Keyboard.charPressedQueue[Keyboard.charPressedQueueCount] = 0;
+		Keyboard.charPressedQueueCount--;
+	}
+
+	return value;
+}
+//-----------------------------------------------------------------------------
+bool app::IsMouseButtonPressed(int button)
+{
+	if( (Mouse.currentButtonState[button] == 1) && (Mouse.previousButtonState[button] == 0) ) return true;
+	return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsMouseButtonDown(int button)
+{
+	if( Mouse.currentButtonState[button] == 1 ) return true;
+	return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsMouseButtonReleased(int button)
+{
+	if( (Mouse.currentButtonState[button] == 0) && (Mouse.previousButtonState[button] == 1) ) return true;
+	return false;
+}
+//-----------------------------------------------------------------------------
+bool app::IsMouseButtonUp(int button)
+{
+	return !IsMouseButtonDown(button);
+}
+//-----------------------------------------------------------------------------
+glm::vec2 app::GetMousePosition()
+{
+	return
+	{
+		Mouse.currentPosition.x,
+		Mouse.currentPosition.y
+	};
+}
+//-----------------------------------------------------------------------------
+glm::vec2 app::GetMouseDelta()
+{
+	return
+	{
+		Mouse.currentPosition.x - Mouse.previousPosition.x,
+		Mouse.currentPosition.y - Mouse.previousPosition.y
+	};
+}
+//-----------------------------------------------------------------------------
+void app::SetMousePosition(int x, int y)
+{
+	Mouse.currentPosition = { (float)x, (float)y };
+	Mouse.previousPosition = Mouse.currentPosition;
+	glfwSetCursorPos(Window, Mouse.currentPosition.x, Mouse.currentPosition.y);
+}
+//-----------------------------------------------------------------------------
+float app::GetMouseWheelMove()
+{
+	float result = 0.0f;
+	if( fabsf(Mouse.currentWheelMove.x) > fabsf(Mouse.currentWheelMove.y) ) result = (float)Mouse.currentWheelMove.x;
+	else result = (float)Mouse.currentWheelMove.y;
+	return result;
+}
+//-----------------------------------------------------------------------------
+glm::vec2 app::GetMouseWheelMoveV()
+{
+	return Mouse.currentWheelMove;
+}
+//-----------------------------------------------------------------------------
+void app::SetMouseLock(bool lock)
+{
+#if defined(__EMSCRIPTEN__)
+	if( lock ) emscripten_request_pointerlock("#canvas", 1);
+	else emscripten_exit_pointerlock();
+#else
+	glfwSetInputMode(Window, GLFW_CURSOR, lock ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+#endif
+	SetMousePosition(WindowWidth / 2, WindowHeight / 2);
+
+	Mouse.cursorHidden = lock;
+}
+//-----------------------------------------------------------------------------
+bool app::IsCursorOnScreen()
+{
+	return Mouse.cursorOnScreen;
 }
 //-----------------------------------------------------------------------------
