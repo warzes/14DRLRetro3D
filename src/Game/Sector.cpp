@@ -9,7 +9,7 @@ struct WorldVertex
 	glm::vec2 texCoord;
 };
 //-----------------------------------------------------------------------------
-void CompleteSector(Sector& sector)
+void CompleteSector(OldSector& sector)
 {
 	extern ShaderProgram SectorShader;
 
@@ -66,7 +66,7 @@ void CompleteSector(Sector& sector)
 	}
 }
 //-----------------------------------------------------------------------------
-void DestroySector(Sector& sector)
+void DestroySector(OldSector& sector)
 {
 	render::DestroyResource(sector.wallVao);
 	render::DestroyResource(sector.wallVB);
@@ -78,12 +78,12 @@ void DestroySector(Sector& sector)
 	sector.walls.clear();
 }
 //-----------------------------------------------------------------------------
-void UpdateSector(Sector& sector)
+void UpdateSector(OldSector& sector)
 {
 	// TODO:
 }
 //-----------------------------------------------------------------------------
-void DrawSectors(unsigned currentId, std::vector<Sector>& sectors)
+void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
 {
 	if (currentId >= sectors.size()) return;
 	auto& sector = sectors[currentId];
@@ -179,7 +179,7 @@ void DrawSectors(unsigned currentId, std::vector<Sector>& sectors)
 	}
 }
 //-----------------------------------------------------------------------------
-bool IsInside(const Sector& sector, const glm::vec3& pos)
+bool IsInside(const OldSector& sector, const glm::vec3& pos)
 {
 	// высота точки выше/ниже сектора
 	if (pos.y < sector.FloorHeight) return false;

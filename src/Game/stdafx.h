@@ -1,5 +1,7 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS // TODO: delete
+
 #if defined(_MSC_VER)
 #	pragma warning(push, 0)
 //#	pragma warning(disable : 5262)

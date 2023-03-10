@@ -66,7 +66,7 @@ Uniform SectorUniformLightAmbient;
 Uniform SectorUniformLightDiffuse;
 Uniform SectorUniformLightDirection;
 
-std::vector<Sector> Sectors(3);
+std::vector<OldSector> Sectors(3);
 
 void CreateWorldRender()
 {

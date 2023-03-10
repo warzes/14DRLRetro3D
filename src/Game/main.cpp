@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "GameApp.h"
 #include "WorldRender.h"
+#include "SectorRenderMgr.h"
 
 //https://www.youtube.com/watch?v=fSjc8vLMg8c
 //
@@ -125,6 +126,8 @@ Texture2D texture;
 scene::Camera cam;
 
 
+SectorRenderMgr sectorRenderMgr;
+
 void mainLoop() 
 { 
 	float mouseSensitivity = 10.0f * app::GetDeltaTime();
@@ -155,6 +158,8 @@ void mainLoop()
 
 	DrawWorldRender();
 
+	sectorRenderMgr.Draw();
+
 	app::EndFrame();
 }
 
@@ -182,6 +187,8 @@ int main()
 
 		CreateWorldRender();
 
+		sectorRenderMgr.Create();
+
 		glEnable(GL_DEPTH_TEST);
 
 #if defined(__EMSCRIPTEN__)
@@ -192,6 +199,8 @@ int main()
 			mainLoop();
 		}
 #endif
+
+		sectorRenderMgr.Destroy();
 
 		render::DestroyResource(shader);
 		render::DestroyResource(vb);

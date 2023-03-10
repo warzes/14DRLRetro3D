@@ -12,7 +12,7 @@
 // portal - если ноль, то стена, иначе это портал, число - это ид сектора
 // textureId - ид текстуры
 // TODO: на самом деле стенам не нужна p1, так как у каждой последующей стены p1 равно p2 от предыдущей стены. ћожно оптимизировать если будет нужно
-struct Wall
+struct OldWall
 {
 	glm::vec2 p1;
 	glm::vec2 p2;
@@ -20,9 +20,9 @@ struct Wall
 	int textureId;
 };
 
-struct Sector
+struct OldSector
 {
-	std::vector<Wall> walls;
+	std::vector<OldWall> walls;
 	float CeilingHeight;
 	float FloorHeight;
 	int CeilingTextureId;
@@ -50,9 +50,9 @@ struct Sector
 	uint32_t frameId = 999999;
 };
 
-void CompleteSector(Sector& sector); // нужно вызывать после внесени€ данных. ¬ будущем подумать как лучше
-void DestroySector(Sector& sector);
-void UpdateSector(Sector& sector);
-void DrawSectors(unsigned currentId, std::vector<Sector>& sectors);
+void CompleteSector(OldSector& sector); // нужно вызывать после внесени€ данных. ¬ будущем подумать как лучше
+void DestroySector(OldSector& sector);
+void UpdateSector(OldSector& sector);
+void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors);
 
-bool IsInside(const Sector& sector, const glm::vec3& pos);
+bool IsInside(const OldSector& sector, const glm::vec3& pos);

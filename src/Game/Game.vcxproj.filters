@@ -14,12 +14,32 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="WorldRender.cpp" />
     <ClCompile Include="..\3rdparty\polypartition\polypartition.cpp">
       <Filter>3rdparty\polypartition</Filter>
     </ClCompile>
     <ClCompile Include="Sector.cpp">
-      <Filter>GameRender</Filter>
+      <Filter>SectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldRender.cpp">
+      <Filter>SectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorRenderMgr.cpp">
+      <Filter>NewSectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorRenderType.cpp">
+      <Filter>NewSectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadMap.cpp">
+      <Filter>NewSectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="kplib.cpp">
+      <Filter>NewSectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="MapFunc.cpp">
+      <Filter>NewSectorRender</Filter>
+    </ClCompile>
+    <ClCompile Include="crc32.cpp">
+      <Filter>NewSectorRender</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -41,8 +61,11 @@
     <Filter Include="3rdparty\polypartition">
       <UniqueIdentifier>{01489970-7457-4820-8074-ddfb7636a533}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameRender">
+    <Filter Include="SectorRender">
       <UniqueIdentifier>{bd9e4ba1-a825-4748-956c-a2d616cd0899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewSectorRender">
+      <UniqueIdentifier>{a7812f63-e62a-4419-8a33-f9e577abb7f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,15 +84,29 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="WorldRender.h" />
     <ClInclude Include="..\3rdparty\polypartition\polypartition.h">
       <Filter>3rdparty\polypartition</Filter>
     </ClInclude>
     <ClInclude Include="Sector.h">
-      <Filter>GameRender</Filter>
+      <Filter>SectorRender</Filter>
     </ClInclude>
     <ClInclude Include="TempFunc.h">
-      <Filter>GameRender</Filter>
+      <Filter>SectorRender</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldRender.h">
+      <Filter>SectorRender</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorRenderType.h">
+      <Filter>NewSectorRender</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorRenderMgr.h">
+      <Filter>NewSectorRender</Filter>
+    </ClInclude>
+    <ClInclude Include="kplib.h">
+      <Filter>NewSectorRender</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>NewSectorRender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
