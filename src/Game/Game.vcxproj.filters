@@ -23,23 +23,50 @@
     <ClCompile Include="WorldRender.cpp">
       <Filter>SectorRender</Filter>
     </ClCompile>
-    <ClCompile Include="SectorRenderMgr.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="dirty.c">
+      <Filter>_PolySoup</Filter>
     </ClCompile>
-    <ClCompile Include="SectorRenderType.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="hash.c">
+      <Filter>_PolySoup</Filter>
     </ClCompile>
-    <ClCompile Include="LoadMap.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="mymath.c">
+      <Filter>_PolySoup</Filter>
     </ClCompile>
-    <ClCompile Include="kplib.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="strn.c">
+      <Filter>_PolySoup</Filter>
     </ClCompile>
-    <ClCompile Include="MapFunc.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="trace.c">
+      <Filter>_PolySoup</Filter>
     </ClCompile>
-    <ClCompile Include="crc32.cpp">
-      <Filter>NewSectorRender</Filter>
+    <ClCompile Include="utils.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="array.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="arraytypes.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="bound.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="bpcd.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="collision.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="compare.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="defs.c">
+      <Filter>_PolySoup</Filter>
+    </ClCompile>
+    <ClCompile Include="temp.cpp">
+      <Filter>_tempCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="bsp.cpp">
+      <Filter>_HUMTemp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,8 +91,14 @@
     <Filter Include="SectorRender">
       <UniqueIdentifier>{bd9e4ba1-a825-4748-956c-a2d616cd0899}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NewSectorRender">
-      <UniqueIdentifier>{a7812f63-e62a-4419-8a33-f9e577abb7f5}</UniqueIdentifier>
+    <Filter Include="_PolySoup">
+      <UniqueIdentifier>{a921cb92-ce07-4c3b-9dc0-9f0d23681920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_tempCollision">
+      <UniqueIdentifier>{fa913bfb-2f0d-497f-9e3f-4b07e3478dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_HUMTemp">
+      <UniqueIdentifier>{9f7eee51-d438-4ebe-b391-37cde24c309a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,22 +129,76 @@
     <ClInclude Include="WorldRender.h">
       <Filter>SectorRender</Filter>
     </ClInclude>
-    <ClInclude Include="SectorRenderType.h">
-      <Filter>NewSectorRender</Filter>
+    <ClInclude Include="defs.h">
+      <Filter>_PolySoup</Filter>
     </ClInclude>
-    <ClInclude Include="SectorRenderMgr.h">
-      <Filter>NewSectorRender</Filter>
+    <ClInclude Include="dirty.h">
+      <Filter>_PolySoup</Filter>
     </ClInclude>
-    <ClInclude Include="kplib.h">
-      <Filter>NewSectorRender</Filter>
+    <ClInclude Include="floatn.h">
+      <Filter>_PolySoup</Filter>
     </ClInclude>
-    <ClInclude Include="crc32.h">
-      <Filter>NewSectorRender</Filter>
+    <ClInclude Include="hash.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="libs.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="mymath.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="strn.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="array.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="arraytypes.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="bound.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="bpcd.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="compare.h">
+      <Filter>_PolySoup</Filter>
+    </ClInclude>
+    <ClInclude Include="mat.h">
+      <Filter>_tempCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="vec.h">
+      <Filter>_tempCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>_tempCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="quat.h">
+      <Filter>_tempCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="swizzle.h">
+      <Filter>_tempCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="bsp.h">
+      <Filter>_HUMTemp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\emscripten\build.bat">
       <Filter>emscripten</Filter>
+    </None>
+    <None Include="README.md">
+      <Filter>_PolySoup</Filter>
     </None>
   </ItemGroup>
 </Project>
