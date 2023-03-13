@@ -12,6 +12,7 @@
 #include <cstdlib>
 
 #include <algorithm>
+#include <iterator>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -51,7 +52,7 @@ Left handed
 #include <glm/glm.hpp>
 //#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-//#include <glm/gtx/hash.hpp>
+#include <glm/gtx/hash.hpp>
 //#include <glm/gtx/quaternion.hpp>
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/matrix_decompose.hpp>
@@ -61,6 +62,8 @@ Left handed
 #include <stb_image.h>
 
 #include <polypartition/polypartition.h>
+
+#include <tiny_obj_loader.h>
 
 #if defined(_MSC_VER)
 #	pragma warning(pop)

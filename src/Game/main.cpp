@@ -5,12 +5,48 @@
 
 #include "trace.h"
 
-https://www.youtube.com/watch?v=MDusDn8oTSE
-https://www.youtube.com/watch?v=v1riwEd0BDA
-https://github.com/SirJonthe/retro3d
-хумус энджин
-либу коллизий (на основе моего матана) в отдельном репо
+constexpr const char* vertexShaderModelText = R"(
+#version 330 core
 
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 vertexNormal;
+layout(location = 2) in vec3 vertexColor;
+layout(location = 3) in vec2 vertexTexCoord;
+
+uniform mat4 uWorld;
+uniform mat4 uView;
+uniform mat4 uProjection;
+
+out vec3 fragmentColor;
+out vec2 TexCoord;
+
+void main()
+{
+	gl_Position   = uProjection * uView * uWorld * vec4(vertexPosition, 1.0);
+	fragmentColor = vertexColor;
+	TexCoord      = vertexTexCoord;
+}
+)";
+constexpr const char* fragmentShaderModelText = R"(
+#version 330 core
+
+in vec3 fragmentColor;
+in vec2 TexCoord;
+
+uniform sampler2D Texture;
+
+out vec4 outColor;
+
+void main()
+{
+	outColor = texture(Texture, TexCoord) * vec4(fragmentColor, 1.0);
+}
+)";
+
+//https://www.youtube.com/watch?v=MDusDn8oTSE
+//https://www.youtube.com/watch?v=v1riwEd0BDA
+//https://github.com/SirJonthe/retro3d
+//либу коллизий (на основе моего матана) в отдельном репо
 
 //идеи
 //графику для шутера взять отсюда - https://tommulgrew.itch.io/trial-of-the-sorcerer
@@ -139,6 +175,12 @@ VertexArray vao;
 Texture2D texture;
 scene::Camera cam;
 
+ShaderProgram shaderModel;
+Uniform uniformModelWorldMatrix;
+Uniform uniformModelViewMatrix;
+Uniform uniformModelProjectionMatrix;
+Model model;
+
 void mainLoop() 
 { 
 	float mouseSensitivity = 10.0f * app::GetDeltaTime();
@@ -156,18 +198,25 @@ void mainLoop()
 	if( delta.y != 0.0f ) scene::CameraRotateUpDown(cam, -delta.y * mouseSensitivity);
 
 	const float aspectRatio = (float)app::GetWindowWidth() / (float)app::GetWindowHeight();
-	glm::mat4 mat = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
+	glm::mat4 view = scene::GetCameraViewMatrix(cam);
 
 	app::BeginFrame();
 
 	render::Bind(shader);
-	render::SetUniform(uniformProj, mat);
-	render::SetUniform(uniformView, scene::GetCameraViewMatrix(cam));
+	render::SetUniform(uniformProj, proj);
+	render::SetUniform(uniformView, view);
 
 	render::Bind(texture);
 	render::Draw(vao);
 
-	DrawWorldRender();
+	//DrawWorldRender();
+
+	render::Bind(shaderModel);
+	render::SetUniform(uniformModelViewMatrix, view);
+	render::SetUniform(uniformModelProjectionMatrix, proj);
+	render::SetUniform(uniformModelWorldMatrix, glm::mat4(1.0f));
+	scene::Draw(model);
 
 	app::EndFrame();
 }
@@ -228,11 +277,18 @@ int main()
 
 		render::Texture2DInfo texInfo;
 		texInfo.mipmap = false;
-		texture = render::CreateTexture2D("../data/textures/tile.png", texInfo);
+		texture = render::CreateTexture2D("../data/textures/tile.png", true, texInfo);
 
 		cam.position = { 0.0f, 0.0f, 0.0f };
 		cam.viewPoint = { 0.0f, 0.0f, 1.0f };
 		cam.upVector = { 0.0f, 1.0f, 0.0f };
+
+
+		model = scene::CreateModel("../rock.obj", "../");
+		shaderModel = render::CreateShaderProgram(vertexShaderModelText, fragmentShaderModelText);
+		uniformModelWorldMatrix = render::GetUniform(shaderModel, "uWorld");
+		uniformModelViewMatrix = render::GetUniform(shaderModel, "uView");
+		uniformModelProjectionMatrix = render::GetUniform(shaderModel, "uProjection");
 
 		CreateWorldRender();
 
@@ -247,6 +303,8 @@ int main()
 		}
 #endif
 
+		render::DestroyResource(shaderModel);
+		scene::Destroy(model);
 		render::DestroyResource(shader);
 		render::DestroyResource(vb);
 		render::DestroyResource(ib);

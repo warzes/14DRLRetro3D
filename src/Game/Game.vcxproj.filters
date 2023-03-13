@@ -24,49 +24,52 @@
       <Filter>SectorRender</Filter>
     </ClCompile>
     <ClCompile Include="dirty.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="hash.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="mymath.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="strn.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="trace.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="utils.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="array.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="arraytypes.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="bound.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="bpcd.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="collision.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="compare.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="defs.c">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClCompile>
     <ClCompile Include="temp.cpp">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClCompile>
     <ClCompile Include="bsp.cpp">
-      <Filter>_HUMTemp</Filter>
+      <Filter>other\_HUMTemp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiny_obj_loader.cpp">
+      <Filter>3rdparty\tiny_obj_loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,14 +94,20 @@
     <Filter Include="SectorRender">
       <UniqueIdentifier>{bd9e4ba1-a825-4748-956c-a2d616cd0899}</UniqueIdentifier>
     </Filter>
-    <Filter Include="_PolySoup">
-      <UniqueIdentifier>{a921cb92-ce07-4c3b-9dc0-9f0d23681920}</UniqueIdentifier>
+    <Filter Include="other">
+      <UniqueIdentifier>{03302dcf-bcc5-4003-8734-cc709665b060}</UniqueIdentifier>
     </Filter>
-    <Filter Include="_tempCollision">
+    <Filter Include="other\_HUMTemp">
+      <UniqueIdentifier>{9f7eee51-d438-4ebe-b391-37cde24c309a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="other\_tempCollision">
       <UniqueIdentifier>{fa913bfb-2f0d-497f-9e3f-4b07e3478dc1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="_HUMTemp">
-      <UniqueIdentifier>{9f7eee51-d438-4ebe-b391-37cde24c309a}</UniqueIdentifier>
+    <Filter Include="other\_PolySoup">
+      <UniqueIdentifier>{a921cb92-ce07-4c3b-9dc0-9f0d23681920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\tiny_obj_loader">
+      <UniqueIdentifier>{55eec8ff-972f-4853-bb82-0d63b6faefd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -130,67 +139,73 @@
       <Filter>SectorRender</Filter>
     </ClInclude>
     <ClInclude Include="defs.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="dirty.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="floatn.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="hash.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="libs.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="mymath.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="strn.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="trace.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="array.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="arraytypes.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="bound.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="bpcd.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="collision.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="compare.h">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </ClInclude>
     <ClInclude Include="mat.h">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClInclude>
     <ClInclude Include="vec.h">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClInclude>
     <ClInclude Include="util.h">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClInclude>
     <ClInclude Include="quat.h">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClInclude>
     <ClInclude Include="swizzle.h">
-      <Filter>_tempCollision</Filter>
+      <Filter>other\_tempCollision</Filter>
     </ClInclude>
     <ClInclude Include="bsp.h">
-      <Filter>_HUMTemp</Filter>
+      <Filter>other\_HUMTemp</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayH.h">
+      <Filter>other\_HUMTemp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiny_obj_loader.h">
+      <Filter>3rdparty\tiny_obj_loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +213,7 @@
       <Filter>emscripten</Filter>
     </None>
     <None Include="README.md">
-      <Filter>_PolySoup</Filter>
+      <Filter>other\_PolySoup</Filter>
     </None>
   </ItemGroup>
 </Project>

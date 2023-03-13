@@ -1,6 +1,18 @@
 ﻿#include "stdafx.h"
 #include "Engine.h"
 //-----------------------------------------------------------------------------
+namespace std
+{
+	template <>
+	struct hash<scene::VertexMesh>
+	{
+		size_t operator()(const scene::VertexMesh& vertex) const
+		{
+			return ((hash<glm::vec3>()(vertex.position) ^ (hash<glm::vec2>()(vertex.texCoord) << 1)) >> 1);
+		}
+	};
+} // namespace std
+//-----------------------------------------------------------------------------
 //=============================================================================
 // Global Vars
 //=============================================================================
@@ -14,6 +26,10 @@ unsigned CurrentVBO = 0;
 unsigned CurrentIBO = 0;
 unsigned CurrentVAO = 0;
 unsigned CurrentTexture2D[MaxBindingTextures] = { 0 };
+
+// Cache
+std::unordered_map<std::string, Texture2D> CacheTextures2D;
+
 GLFWwindow* Window = nullptr;
 int WindowWidth = 0;
 int WindowHeight = 0;
@@ -339,7 +355,9 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 
 	Bind(*resource.vbo);
 	for( size_t i = 0; i < attribs.size(); i++ )
+	{
 		Bind(attribs[i]);
+	}
 
 	if( resource.ibo ) Bind(*resource.ibo);
 
@@ -399,8 +417,17 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 	return CreateVertexArray(vbo, ibo, attribs);
 }
 //-----------------------------------------------------------------------------
-Texture2D render::CreateTexture2D(const char* fileName, const Texture2DInfo& textureInfo)
+Texture2D render::CreateTexture2D(const char* fileName, bool useCache, const Texture2DInfo& textureInfo)
 {
+	if( useCache )
+	{
+		auto it = CacheTextures2D.find(fileName);
+		if( it != CacheTextures2D.end() )
+			return it->second;
+	}
+
+	LogPrint("Load texture: " + std::string(fileName));
+
 	//stbi_set_flip_vertically_on_load(verticallyFlip ? 1 : 0);
 	const int desiredСhannels = STBI_default;
 	int width = 0;
@@ -424,10 +451,11 @@ Texture2D render::CreateTexture2D(const char* fileName, const Texture2DInfo& tex
 		createInfo.height = static_cast<uint16_t>(height);
 		createInfo.pixelData = pixelData;
 	}
+	Texture2D texture = CreateTexture2D(createInfo, textureInfo);
 
-	Texture2D ret = CreateTexture2D(createInfo, textureInfo);
 	stbi_image_free((void*)pixelData);
-	return ret;
+	CacheTextures2D[fileName] = texture;
+	return texture;
 }
 //-----------------------------------------------------------------------------
 Texture2D render::CreateTexture2D(const Texture2DCreateInfo& createInfo, const Texture2DInfo& textureInfo)
@@ -806,6 +834,222 @@ void scene::CameraRotateUpDown(Camera& camera, float angleInDegrees)
 	}
 }
 //-----------------------------------------------------------------------------
+Model createMeshBuffer(std::vector<Mesh>&& meshes)
+{
+	const std::vector<render::VertexAttribute> formatVertex =
+	{
+		{.location = 0, .size = 3, .normalized = false, .stride = sizeof(VertexMesh), .offset = (void*)offsetof(VertexMesh, position)},
+		{.location = 1, .size = 3, .normalized = false, .stride = sizeof(VertexMesh), .offset = (void*)offsetof(VertexMesh, normal)},
+		{.location = 2, .size = 3, .normalized = false, .stride = sizeof(VertexMesh), .offset = (void*)offsetof(VertexMesh, color)},
+		{.location = 3, .size = 2, .normalized = false, .stride = sizeof(VertexMesh), .offset = (void*)offsetof(VertexMesh, texCoord)}
+	};
+
+	Model model;
+	model.subMeshes = std::move(meshes);
+
+	for( int i = 0; i < model.subMeshes.size(); i++ )
+	{
+		model.subMeshes[i].vertexBuffer = render::CreateVertexBuffer(render::ResourceUsage::Static, model.subMeshes[i].vertices.size(), sizeof(model.subMeshes[i].vertices[0]), model.subMeshes[i].vertices.data());
+		if( !render::IsValid(model.subMeshes[i].vertexBuffer) )
+		{
+			LogError("VertexBuffer create failed!");
+			Destroy(model);
+			return {};
+		}
+
+		model.subMeshes[i].indexBuffer = render::CreateIndexBuffer(render::ResourceUsage::Static, model.subMeshes[i].indices.size(), sizeof(uint32_t), model.subMeshes[i].indices.data());
+		if( !render::IsValid(model.subMeshes[i].indexBuffer) )
+		{
+			LogError("IndexBuffer create failed!");
+			Destroy(model);
+			return {};
+		}
+
+		model.subMeshes[i].vao = render::CreateVertexArray(&model.subMeshes[i].vertexBuffer, &model.subMeshes[i].indexBuffer, formatVertex);
+		if( !render::IsValid(model.subMeshes[i].vao) )
+		{
+			LogError("VAO create failed!");
+			Destroy(model);
+			return {};
+		}
+	}
+	return model;
+}
+//-----------------------------------------------------------------------------
+Model loadObjFile(const char* fileName, const char* pathMaterialFiles = "./")
+{
+	tinyobj::ObjReaderConfig readerConfig;
+	readerConfig.mtl_search_path = pathMaterialFiles; // Path to material files
+
+	tinyobj::ObjReader reader;
+	if( !reader.ParseFromFile(fileName, readerConfig) )
+	{
+		if( !reader.Error().empty() )
+			LogError("TinyObjReader: " + reader.Error());
+		return {};
+	}
+	if( !reader.Warning().empty() )
+		LogWarning("TinyObjReader: " + reader.Warning());
+
+	auto& attributes = reader.GetAttrib();
+	auto& shapes = reader.GetShapes();
+	auto& materials = reader.GetMaterials();
+	const bool isFindMaterials = !materials.empty();
+
+	std::vector<Mesh> tempMesh(materials.size());
+	std::vector<std::unordered_map<VertexMesh, uint32_t>> uniqueVertices(materials.size());
+	if( tempMesh.empty() )
+	{
+		tempMesh.resize(1);
+		uniqueVertices.resize(1);
+	}
+
+	// Loop over shapes
+	for( size_t shapeId = 0; shapeId < shapes.size(); shapeId++ )
+	{
+		// Loop over faces(polygon)
+		size_t index_offset = 0;
+		for( size_t faceId = 0; faceId < shapes[shapeId].mesh.num_face_vertices.size(); faceId++ )
+		{
+			const size_t fv = static_cast<size_t>(shapes[shapeId].mesh.num_face_vertices[faceId]);
+
+			// per-face material
+			int materialId = shapes[shapeId].mesh.material_ids[faceId];
+			if( materialId < 0 ) materialId = 0;
+
+			// Loop over vertices in the face.
+			for( size_t v = 0; v < fv; v++ )
+			{
+				// access to vertex
+				const tinyobj::index_t idx = shapes[shapeId].mesh.indices[index_offset + v];
+
+				// vertex position
+				const tinyobj::real_t vx = attributes.vertices[3 * size_t(idx.vertex_index) + 0];
+				const tinyobj::real_t vy = attributes.vertices[3 * size_t(idx.vertex_index) + 1];
+				const tinyobj::real_t vz = attributes.vertices[3 * size_t(idx.vertex_index) + 2];
+
+				// Check if `normal_index` is zero or positive. negative = no normal data
+				tinyobj::real_t nx = 0.0f;
+				tinyobj::real_t ny = 0.0f;
+				tinyobj::real_t nz = 0.0f;
+				if( idx.normal_index >= 0 )
+				{
+					nx = attributes.normals[3 * size_t(idx.normal_index) + 0];
+					ny = attributes.normals[3 * size_t(idx.normal_index) + 1];
+					nz = attributes.normals[3 * size_t(idx.normal_index) + 2];
+				}
+
+				// Check if `texcoord_index` is zero or positive. negative = no texcoord data
+				tinyobj::real_t tx = 0;
+				tinyobj::real_t ty = 0;
+				if( idx.texcoord_index >= 0 )
+				{
+					tx = attributes.texcoords[2 * size_t(idx.texcoord_index) + 0];
+					ty = attributes.texcoords[2 * size_t(idx.texcoord_index) + 1];
+				}
+
+				// vertex colors
+				const tinyobj::real_t r = attributes.colors[3 * size_t(idx.vertex_index) + 0];
+				const tinyobj::real_t g = attributes.colors[3 * size_t(idx.vertex_index) + 1];
+				const tinyobj::real_t b = attributes.colors[3 * size_t(idx.vertex_index) + 2];
+
+				VertexMesh vertex = { 
+					.position = { vx, vy, vz },
+					.normal = { nx, ny, nz },
+					.color = { r, g, b },
+					.texCoord = { tx,ty }
+				};
+
+				if( uniqueVertices[materialId].count(vertex) == 0 )
+				{
+					uniqueVertices[materialId][vertex] = static_cast<uint32_t>(tempMesh[materialId].vertices.size());
+					tempMesh[materialId].vertices.emplace_back(vertex);
+				}
+
+				tempMesh[materialId].indices.emplace_back(uniqueVertices[materialId][vertex]);
+			}
+			index_offset += fv;
+		}
+	}
+
+	// load materials
+	if( isFindMaterials )
+	{
+		for( int i = 0; i < materials.size(); i++ )
+		{
+			if( materials[i].diffuse_texname.empty() ) continue;
+
+			std::string diffuseMap = pathMaterialFiles + materials[i].diffuse_texname;
+			tempMesh[i].material.diffuseTexture = render::CreateTexture2D(diffuseMap.c_str(), true);
+		}
+	}
+
+	return createMeshBuffer(std::move(tempMesh));
+}
+//-----------------------------------------------------------------------------
+Model scene::CreateModel(const char* fileName, const char* pathMaterialFiles)
+{
+	if( std::string(fileName).find(".obj") != std::string::npos )
+		return loadObjFile(fileName, pathMaterialFiles);
+
+	return {};
+}
+//-----------------------------------------------------------------------------
+Model scene::CreateModel(std::vector<Mesh>&& meshes)
+{
+	return createMeshBuffer(std::move(meshes));
+}
+//-----------------------------------------------------------------------------
+void scene::Destroy(Model& model)
+{
+	for( int i = 0; i < model.subMeshes.size(); i++ )
+	{
+		model.subMeshes[i].vertices.clear();
+		model.subMeshes[i].indices.clear();
+
+		render::DestroyResource(model.subMeshes[i].vertexBuffer);
+		render::DestroyResource(model.subMeshes[i].indexBuffer);
+		render::DestroyResource(model.subMeshes[i].vao);
+	}
+	model.subMeshes.clear();
+}
+//-----------------------------------------------------------------------------
+void scene::Draw(const Model& model)
+{
+	for( int i = 0; i < model.subMeshes.size(); i++ )
+	{
+		if( render::IsValid(model.subMeshes[i].vao) )
+		{
+			const Texture2D& diffuseTexture = model.subMeshes[i].material.diffuseTexture;
+			if( render::IsValid(diffuseTexture) )
+				render::Bind(diffuseTexture, 0);
+			render::Draw(model.subMeshes[i].vao, render::PrimitiveDraw::Triangles);
+		}
+	}
+}
+//-----------------------------------------------------------------------------
+std::vector<glm::vec3> scene::GetTrianglesInMesh(const Mesh& mesh)
+{
+	std::vector<glm::vec3> v;
+	v.reserve(mesh.indices.size());
+	// востановление треугольников по индексному буферу
+	for( size_t i = 0; i < mesh.indices.size(); i++ )
+		v.push_back(mesh.vertices[mesh.indices[i]].position);
+	return v;
+}
+//-----------------------------------------------------------------------------
+std::vector<glm::vec3> scene::GetTrianglesInModel(const Model& model)
+{
+	std::vector<glm::vec3> v;
+	for( size_t i = 0; i < model.subMeshes.size(); i++ )
+	{
+		auto subV = GetTrianglesInMesh(model.subMeshes[i]);
+		// https://www.techiedelight.com/ru/concatenate-two-vectors-cpp/
+		std::move(subV.begin(), subV.end(), std::back_inserter(v));
+	}
+	return v;
+}
+//-----------------------------------------------------------------------------
 //=============================================================================
 // App System
 //=============================================================================
@@ -931,6 +1175,10 @@ bool app::Create(const CreateInfo& info)
 //-----------------------------------------------------------------------------
 void app::Destroy()
 {
+	for( auto& it : CacheTextures2D )
+		render::DestroyResource(it.second);
+	CacheTextures2D.clear();
+
 	glfwDestroyWindow(Window);
 	glfwTerminate();
 	LogDestroy();

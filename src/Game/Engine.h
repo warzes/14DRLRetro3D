@@ -102,7 +102,7 @@ namespace render
 
 	struct VertexAttribute
 	{
-		int location = -1;  // если -1, то берется индекс массива атрибутов
+		unsigned location/* = -1*/;  // если -1, то берется индекс массива атрибутов
 		int size;
 		//unsigned type;
 		bool normalized;
@@ -158,7 +158,7 @@ namespace render
 	IndexBuffer CreateIndexBuffer(ResourceUsage usage, unsigned indexCount, unsigned indexSize, const void* data);
 	VertexArray CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const std::vector<VertexAttribute>& attribs);
 	VertexArray CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const ShaderProgram& shaders);
-	Texture2D CreateTexture2D(const char* fileName, const Texture2DInfo& textureInfo = {});
+	Texture2D CreateTexture2D(const char* fileName, bool useCache = true, const Texture2DInfo& textureInfo = {});
 	Texture2D CreateTexture2D(const Texture2DCreateInfo& createInfo, const Texture2DInfo& textureInfo = {});
 
 	void DestroyResource(ShaderProgram& resource);
@@ -215,9 +215,68 @@ namespace scene
 	glm::mat4 GetCameraViewMatrix(const Camera& camera);
 	void CameraMoveBy(Camera& camera, float distance); // перемещение вперед/назад
 	void CameraStrafeBy(Camera& camera, float distance); // перемещение влево/вправо
-	void CameraRotateLeftRight(Camera& camera, float angleInDegrees);
-	void CameraRotateUpDown(Camera& camera, float angleInDegrees);
+	void CameraRotateLeftRight(Camera& camera, float angleInDegrees); // поворот влево/вправо
+	void CameraRotateUpDown(Camera& camera, float angleInDegrees); // поворот вверх/вниз
+
+	class Material
+	{
+	public:
+		Texture2D diffuseTexture;
+
+		glm::vec3 ambientColor = glm::vec3{ 1.0f };
+		glm::vec3 diffuseColor = glm::vec3{ 1.0f };
+		glm::vec3 specularColor = glm::vec3{ 1.0f };
+		float shininess = 1.0f;
+	};
+
+	struct VertexMesh
+	{
+		bool operator==(const VertexMesh& v) const { return position == v.position && normal == v.normal && color == v.color && texCoord == v.texCoord; }
+
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec3 color;
+		glm::vec2 texCoord;
+	};
+
+	struct Mesh
+	{
+		std::vector<VertexMesh> vertices;
+		std::vector<uint32_t> indices;
+		Material material;
+
+		VertexBuffer vertexBuffer;
+		IndexBuffer indexBuffer;
+		VertexArray vao;
+
+		// bouncing box
+		glm::vec3 min;
+		glm::vec3 max;
+	};
+
+	struct Model
+	{
+		std::vector<Mesh> subMeshes;
+		// bouncing box
+		glm::vec3 min;
+		glm::vec3 max;
+	};
+
+	Model CreateModel(const char* fileName, const char* pathMaterialFiles = "./");
+	Model CreateModel(std::vector<Mesh>&& meshes);
+	void Destroy(Model& model);
+	void Draw(const Model& model);
+	std::vector<glm::vec3> GetTrianglesInMesh(const Mesh& mesh);
+	std::vector<glm::vec3> GetTrianglesInModel(const Model& model);
 }
+
+using scene::Camera;
+using scene::Material;
+using scene::VertexMesh;
+using scene::Mesh;
+using scene::Model;
+
+
 
 //=============================================================================
 // App System

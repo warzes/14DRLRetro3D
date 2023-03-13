@@ -13,9 +13,9 @@ float planeDistance(const glm::vec4& plane, const glm::vec3& point)
 
 no_alias glm::vec3 planeHit(const glm::vec3& v0, const glm::vec3& v1, const glm::vec4& plane)
 {
-	glm::vec3 dir = v1 - v0;
-	float d = planeDistance(plane, v0);
-	glm::vec3 pos = v0 - (d / glm::dot((glm::vec3&)plane, dir)) * dir; // TODO: проверить (glm::vec3&)plane
+	const glm::vec3 dir = v1 - v0;
+	const float d = planeDistance(plane, v0);
+	const glm::vec3 pos = v0 - (d / glm::dot({ plane.x, plane.y, plane.z }, dir)) * dir; // TODO: проверить (glm::vec3&)plane
 	return pos;
 }
 
@@ -177,26 +177,6 @@ no_alias float BTri::GetDistance(const glm::vec3& pos) const
 
 	return fabsf(planeDistance(plane, pos));
 }
-
-
-#ifdef USE_SIMD
-bool BTri::IsAbove3DNow(v2sf v0XY, v2sf v0Z1) const {
-	for (int i = 0; i < 3; i++) {
-		v2sf planeXY = ((v2sf*)&edgePlanes[i])[0];
-		v2sf planeZD = ((v2sf*)&edgePlanes[i])[1];
-
-		v2sf dotXY = pfmul(planeXY, v0XY);
-		v2sf dotZD = pfmul(planeZD, v0Z1);
-		v2sf dot = pfacc(dotXY, dotZD);
-		dot = pfacc(dot, dot);
-
-		int d = _m_to_int(dot);
-		if (d < 0) return false;
-	}
-
-	return true;
-}
-#endif
 
 BNode::~BNode() 
 {
@@ -370,91 +350,6 @@ no_alias BTri* BNode::IntersectsCached(const glm::vec3& v0, const glm::vec3& v1,
 	return NULL;
 }
 
-#ifdef USE_SIMD
-bool BNode::Intersects3DNow(const vec4& v0, const vec4& v1, const vec4& dir) const {
-	v2sf planeXY = ((v2sf*)&tri.plane)[0];
-	v2sf planeZD = ((v2sf*)&tri.plane)[1];
-
-	v2sf v0XY = ((v2sf*)&v0)[0];
-	v2sf v0Z1 = ((v2sf*)&v0)[1];
-
-	v2sf dotXY = pfmul(planeXY, v0XY);
-	v2sf dotZD = pfmul(planeZD, v0Z1);
-	v2sf dotD = pfacc(dotXY, dotZD);
-	dotD = pfacc(dotD, dotD);
-
-	int d = _m_to_int(dotD);
-
-	if (d > 0) {
-		if (front != NULL && front->intersects3DNow(v0, v1, dir)) return true;
-
-		v2sf dotXY = pfmul(planeXY, ((v2sf*)&v1)[0]);
-		v2sf dotZD = pfmul(planeZD, ((v2sf*)&v1)[1]);
-		v2sf dot = pfacc(dotXY, dotZD);
-		dot = pfacc(dot, dot);
-
-		int d = _m_to_int(dot);
-		if (d < 0) {
-			v2sf dirXY = ((v2sf*)&dir)[0];
-			v2sf dirZ0 = ((v2sf*)&dir)[1];
-
-			v2sf dotXY = pfmul(planeXY, dirXY);
-			v2sf dotZ0 = pfmul(planeZD, dirZ0);
-			v2sf dot = pfacc(dotXY, dotZ0);
-			dot = pfacc(dot, dot);
-			dot = pfrcp(dot);
-			dot = pfmul(dot, dotD);
-
-			dirXY = pfmul(dirXY, dot);
-			dirZ0 = pfmul(dirZ0, dot);
-
-			v0XY = pfsub(v0XY, dirXY);
-			v0Z1 = pfsub(v0Z1, dirZ0);
-
-			if (tri.isAbove3DNow(v0XY, v0Z1)) {
-				return true;
-			}
-
-			if (back != NULL && back->intersects3DNow(v0, v1, dir)) return true;
-		}
-
-	}
-	else {
-		if (back != NULL && back->intersects3DNow(v0, v1, dir)) return true;
-
-		v2sf dotXY = pfmul(planeXY, ((v2sf*)&v1)[0]);
-		v2sf dotZD = pfmul(planeZD, ((v2sf*)&v1)[1]);
-		v2sf dot = pfacc(dotXY, dotZD);
-		dot = pfacc(dot, dot);
-
-		int d = _m_to_int(dot);
-		if (d > 0) {
-			v2sf dirXY = ((v2sf*)&dir)[0];
-			v2sf dirZ0 = ((v2sf*)&dir)[1];
-
-			v2sf dotXY = pfmul(planeXY, dirXY);
-			v2sf dotZ0 = pfmul(planeZD, dirZ0);
-			v2sf dot = pfacc(dotXY, dotZ0);
-			dot = pfacc(dot, dot);
-			dot = pfrcp(dot);
-			dot = pfmul(dot, dotD);
-
-			dirXY = pfmul(dirXY, dot);
-			dirZ0 = pfmul(dirZ0, dot);
-
-			v0XY = pfsub(v0XY, dirXY);
-			v0Z1 = pfsub(v0Z1, dirZ0);
-
-			if (tri.isAbove3DNow(v0XY, v0Z1)) {
-				return true;
-			}
-			if (front != NULL && front->intersects3DNow(v0, v1, dir)) return true;
-		}
-	}
-	return false;
-}
-#endif
-
 no_alias bool BNode::PushSphere(glm::vec3& pos, const float radius) const 
 {
 	float d = planeDistance(tri.plane, pos);
@@ -574,7 +469,7 @@ void BNode::build(Array <BTri> &tris){
 }
 */
 
-void BNode::Build(std::vector<BTri>& tris, const int splitCost, const int balCost, const float epsilon)
+void BNode::Build(Array<BTri>& tris, const int splitCost, const int balCost, const float epsilon)
 {
 	uint32_t index = 0;
 	int minScore = 0x7FFFFFFF;
@@ -613,24 +508,29 @@ void BNode::Build(std::vector<BTri>& tris, const int splitCost, const int balCos
 
 	Array <BTri> backTris;
 	Array <BTri> frontTris;
-	for (uint i = 0; i < tris.getCount(); i++) {
-
-		uint neg = 0, pos = 0;
-		for (uint j = 0; j < 3; j++) {
+	for (uint32_t i = 0; i < tris.getCount(); i++) 
+	{
+		uint32_t neg = 0, pos = 0;
+		for ( uint32_t j = 0; j < 3; j++) 
+		{
 			float dist = planeDistance(tri.plane, tris[i].v[j]);
 			if (dist < -epsilon) neg++; else
 				if (dist > epsilon) pos++;
 		}
 
-		if (neg) {
-			if (pos) {
+		if (neg) 
+		{
+			if (pos) 
+			{
 				BTri newTris[3];
 				int nPos, nNeg;
-				tris[i].split(newTris, nPos, nNeg, tri.plane, epsilon);
-				for (int i = 0; i < nPos; i++) {
+				tris[i].Split(newTris, nPos, nNeg, tri.plane, epsilon);
+				for (int i = 0; i < nPos; i++) 
+				{
 					frontTris.add(newTris[i]);
 				}
-				for (int i = 0; i < nNeg; i++) {
+				for (int i = 0; i < nNeg; i++) 
+				{
 					backTris.add(newTris[nPos + i]);
 				}
 			}
@@ -646,37 +546,19 @@ void BNode::Build(std::vector<BTri>& tris, const int splitCost, const int balCos
 
 	if (backTris.getCount() > 0) {
 		back = new BNode;
-		back->build(backTris, splitCost, balCost, epsilon);
+		back->Build(backTris, splitCost, balCost, epsilon);
 	}
 	else back = NULL;
 
 	if (frontTris.getCount() > 0) {
 		front = new BNode;
-		front->build(frontTris, splitCost, balCost, epsilon);
+		front->Build(frontTris, splitCost, balCost, epsilon);
 	}
 	else front = NULL;
 }
 
-#ifdef USE_SIMD
-void SSENode::build(const BNode* node, SSENode*& sseDest) {
-	tri.plane = loadups((const float*)&node->tri.plane);
-	for (int i = 0; i < 3; i++) {
-		tri.edgePlanes[i] = loadups((const float*)&node->tri.edgePlanes[i]);
-	}
-	if (node->front) {
-		front = sseDest++;
-		front->build(node->front, sseDest);
-	}
-	else front = NULL;
-	if (node->back) {
-		back = sseDest++;
-		back->build(node->back, sseDest);
-	}
-	else back = NULL;
-}
-#endif
-
-void BSP::AddTriangle(const vec3& v0, const vec3& v1, const vec3& v2, void* data) {
+void BSP::AddTriangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, void* data) 
+{
 	BTri tri;
 
 	tri.v[0] = v0;
@@ -684,94 +566,74 @@ void BSP::AddTriangle(const vec3& v0, const vec3& v1, const vec3& v2, void* data
 	tri.v[2] = v2;
 	tri.data = data;
 
-	tri.finalize();
+	tri.Finalize();
 
-	tris.add(tri);
+	m_tris.add(tri);
 }
 
-void BSP::Build(const int splitCost, const int balCost, const float epsilon) {
+void BSP::Build(const int splitCost, const int balCost, const float epsilon) 
+{
 	//	int nTris = tris.getCount();
-
-	top = new BNode;
-	//	top->build(tris);
-	top->build(tris, splitCost, balCost, epsilon);
-	/*
-		SSENode *mem = new SSENode[nTris * 4];
-
-		sseTop = (SSENode *) ((intptr(mem) + 15) & ~intptr(0xF));
-		sseDest = sseTop + 1;
-		sseTop->build(top, sseDest);
-
-		sseDest = mem;
-	*/
+	m_top = new BNode;
+	m_top->Build(m_tris, splitCost, balCost, epsilon);
 }
 
-no_alias bool BSP::Intersects(const vec3& v0, const vec3& v1, vec3* point, const BTri** triangle) const {
-	if (top != NULL) return top->intersects(v0, v1, v1 - v0, point, triangle);
-
+no_alias bool BSP::Intersects(const glm::vec3& v0, const glm::vec3& v1, glm::vec3* point, const BTri** triangle) const
+{
+	if (m_top != NULL) return m_top->Intersects(v0, v1, v1 - v0, point, triangle);
 	return false;
 }
 
-bool BSP::IntersectsCached(const vec3& v0, const vec3& v1) {
-	if (top != NULL) {
-		if (cache) {
-			if (cache->intersects(v0, v1)) return true;
+bool BSP::IntersectsCached(const glm::vec3& v0, const glm::vec3& v1) 
+{
+	if (m_top != NULL) {
+		if (m_cache) {
+			if ( m_cache->Intersects(v0, v1)) return true;
 		}
-		cache = top->intersectsCached(v0, v1, v1 - v0);
-		return (cache != NULL);
+		m_cache = m_top->IntersectsCached(v0, v1, v1 - v0);
+		return (m_cache != NULL);
 	}
 
 	return false;
 }
 
-#ifdef USE_SIMD
-bool BSP::intersects3DNow(const vec3& v0, const vec3& v1) const {
-	if (top != NULL) {
-		femms();
-
-		vec4 v04 = vec4(v0, 1);
-		vec4 v14 = vec4(v1, 1);
-
-		bool result = top->intersects3DNow(v04, v14, v14 - v04);
-
-		femms();
-		return result;
-	}
-
-	return false;
-}
-#endif
-
-bool BSP::PushSphere(vec3& pos, const float radius) const {
-	if (top != NULL) return top->pushSphere(pos, radius);
+bool BSP::PushSphere(glm::vec3& pos, const float radius) const
+{
+	if (m_top != NULL) return m_top->PushSphere(pos, radius);
 
 	return false;
 }
 
-no_alias float BSP::getDistance(const vec3& pos) const {
+no_alias float BSP::GetDistance(const glm::vec3& pos) const 
+{
 	float dist = FLT_MAX;
 
-	if (top != NULL) top->getDistance(pos, dist);
+	if ( m_top != NULL) m_top->GetDistance(pos, dist);
 
 	return dist;
 }
 
 
-no_alias bool BSP::isInOpenSpace(const vec3& pos) const {
-	if (top != NULL) {
-
-		BNode* node = top;
-		while (true) {
+no_alias bool BSP::IsInOpenSpace(const glm::vec3& pos) const
+{
+	if ( m_top != NULL) 
+	{
+		BNode* node = m_top;
+		while (true) 
+		{
 			float d = planeDistance(node->tri.plane, pos);
 
-			if (d > 0) {
-				if (node->front) {
+			if (d > 0) 
+			{
+				if (node->front)
+				{
 					node = node->front;
 				}
 				else return true;
 			}
 			else {
-				if (node->back) {
+				if (node->back) 
+				{
 					node = node->back;
 				}
 				else return false;
@@ -782,100 +644,28 @@ no_alias bool BSP::isInOpenSpace(const vec3& pos) const {
 	return false;
 }
 
-#ifdef USE_SIMD
-bool BSP::isInOpenSpace3DNow(const vec3& pos) const {
-	if (top != NULL) {
-		SSENode* node = sseTop;
-		femms();
-
-		v2sf posXY, posZ1;
-		posXY = *(v2sf*)&pos.x;
-		posZ1.m64_f32[0] = pos.z;
-		posZ1.m64_f32[1] = 1.0f;
-
-		while (true) {
-			v2sf planeXY = ((v2sf*)&node->tri.plane)[0];
-			v2sf planeZD = ((v2sf*)&node->tri.plane)[1];
-
-			v2sf dotXY = pfmul(planeXY, posXY);
-			v2sf dotZD = pfmul(planeZD, posZ1);
-			v2sf dot = pfacc(dotXY, dotZD);
-			dot = pfacc(dot, dot);
-
-			int d = _m_to_int(dot);
-
-			if (d > 0) {
-				if (node->front) {
-					node = node->front;
-				}
-				else {
-					femms();
-					return true;
-				}
-			}
-			else {
-				if (node->back) {
-					node = node->back;
-				}
-				else {
-					femms();
-					return false;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-bool BSP::isInOpenSpaceSSE(const vec3& pos) const {
-	if (top != NULL) {
-		v4sf zero = setzerops();
-		v4sf pos4 = loadups((const float*)&vec4(pos, 1));
-
-		SSENode* node = sseTop;
-		while (true) {
-			v4sf d = dot4(node->tri.plane, pos4);
-
-			if (comigt(d, zero)) {
-				if (node->front) {
-					node = node->front;
-				}
-				else return true;
-			}
-			else {
-				if (node->back) {
-					node = node->back;
-				}
-				else return false;
-			}
-		}
-	}
-
-	return false;
-}
-#endif
-
-bool BSP::loadFile(const char* fileName) {
+bool BSP::LoadFile(const char* fileName) 
+{
 	FILE* file = fopen(fileName, "rb");
 	if (file == NULL) return false;
 
-	delete top;
+	delete m_top;
 
-	top = new BNode;
-	top->read(file);
+	m_top = new BNode;
+	m_top->Read(file);
 	fclose(file);
 
 	return true;
 }
 
-bool BSP::saveFile(const char* fileName) const {
-	if (top == NULL) return false;
+bool BSP::SaveFile(const char* fileName) const 
+{
+	if ( m_top == NULL) return false;
 
 	FILE* file = fopen(fileName, "wb");
 	if (file == NULL) return false;
 
-	top->write(file);
+	m_top->Write(file);
 	fclose(file);
 
 	return true;
