@@ -68,6 +68,18 @@
     <ClCompile Include="..\3rdparty\tiny_obj_loader.cpp">
       <Filter>3rdparty\tiny_obj_loader</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderCode.cpp">
+      <Filter>GameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="IGameState.cpp">
+      <Filter>GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateManager.cpp">
+      <Filter>GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateTest.cpp">
+      <Filter>GameState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -102,6 +114,12 @@
     </Filter>
     <Filter Include="3rdparty\tiny_obj_loader">
       <UniqueIdentifier>{55eec8ff-972f-4853-bb82-0d63b6faefd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameState">
+      <UniqueIdentifier>{313d3c3a-fbd0-4b25-b4ab-f792f516e4f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameResources">
+      <UniqueIdentifier>{f7f4a354-ae9d-4a9e-9206-e678b85da181}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +212,18 @@
     </ClInclude>
     <ClInclude Include="..\3rdparty\tiny_obj_loader.h">
       <Filter>3rdparty\tiny_obj_loader</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameState.h">
+      <Filter>GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCode.h">
+      <Filter>GameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateManager.h">
+      <Filter>GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateTest.h">
+      <Filter>GameState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

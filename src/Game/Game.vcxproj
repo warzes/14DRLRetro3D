@@ -299,6 +299,8 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameStateManager.cpp" />
+    <ClCompile Include="GameStateTest.cpp" />
     <ClCompile Include="hash.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -309,6 +311,7 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</SDLCheck>
     </ClCompile>
+    <ClCompile Include="IGameState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mymath.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -321,6 +324,7 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</SDLCheck>
     </ClCompile>
     <ClCompile Include="Sector.cpp" />
+    <ClCompile Include="ShaderCode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -383,12 +387,16 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="floatn.h" />
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="GameStateTest.h" />
     <ClInclude Include="hash.h" />
+    <ClInclude Include="IGameState.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="mymath.h" />
     <ClInclude Include="quat.h" />
     <ClInclude Include="Sector.h" />
+    <ClInclude Include="ShaderCode.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="strn.h" />
     <ClInclude Include="swizzle.h" />

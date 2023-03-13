@@ -54,7 +54,10 @@ void main()
 {
 	outColor = texture(Texture, TexCoord) * vec4(FragmentColor, 1.0);
 	float NdotLD = max(dot(Light.Direction, normalize(Normal)), 0.0); // ламберт
-	outColor.rgb *= Light.Ambient + Light.Diffuse * NdotLD;
+	float NdotLD2 = max(dot(Light.Direction, normalize(-Normal)), 0.0); // ламберт
+
+	
+	outColor.rgb *= Light.Ambient + Light.Diffuse * max(NdotLD, NdotLD2);
 	//float attenuation = saturate(1.0 - DistanceToLight / LightRadius);
 	//frag_Color.rgb *= Light.Ambient + Light.Diffuse * NdotLD * attenuation;
 }
@@ -125,10 +128,8 @@ void CreateWorldRender()
 
 float t = 0.0f;
 
-void DrawWorldRender()
+void DrawWorldRender(const scene::Camera& cam)
 {
-	extern scene::Camera cam;
-
 	Sectors[0].FloorHeight = t;
 
 	if (app::IsKeyPressed(app::KEY_Q))
@@ -158,7 +159,4 @@ void DrawWorldRender()
 
 	DrawSectors(0, Sectors, textures);
 	DrawSectors(1, Sectors, textures);
-
-	extern scene::Camera cam;
-
 }
