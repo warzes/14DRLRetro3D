@@ -1,9 +1,11 @@
 ﻿#include "stdafx.h"
 #include "Engine.h"
 #include "GameApp.h"
+#include "ShaderCode.h"
 #include "GameStateManager.h"
 #include "GameStateTest.h"
-#include "ShaderCode.h"
+#include "GameStateEditor.h"
+
 
 #include "trace.h"
 
@@ -81,7 +83,8 @@ int main()
 		CreateDefaultShader();
 
 		gGameStateManager.AddState(&gGameStateTest);
-		gGameStateManager.SetActiveState(&gGameStateTest);
+		gGameStateManager.AddState(&gGameStateEditor);
+		gGameStateManager.SetActiveState(&gGameStateEditor);
 		
 #if defined(__EMSCRIPTEN__)
 		emscripten_set_main_loop(mainLoop, 0, true);

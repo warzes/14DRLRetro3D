@@ -1389,6 +1389,8 @@ glm::vec2 app::GetMouseWheelMoveV()
 //-----------------------------------------------------------------------------
 void app::SetMouseLock(bool lock)
 {
+	if (Mouse.cursorHidden == lock) return;
+
 #if defined(__EMSCRIPTEN__)
 	if( lock ) emscripten_request_pointerlock("#canvas", 1);
 	else emscripten_exit_pointerlock();

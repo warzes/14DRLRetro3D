@@ -297,8 +297,11 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</SDLCheck>
     </ClCompile>
+    <ClCompile Include="EditorLeftPanel.cpp" />
+    <ClCompile Include="EditorRightPanel.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameStateEditor.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="GameStateTest.cpp" />
     <ClCompile Include="hash.c">
@@ -384,9 +387,13 @@
     <ClInclude Include="compare.h" />
     <ClInclude Include="defs.h" />
     <ClInclude Include="dirty.h" />
+    <ClInclude Include="EditorConstant.h" />
+    <ClInclude Include="EditorLeftPanel.h" />
+    <ClInclude Include="EditorRightPanel.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="floatn.h" />
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameStateEditor.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="GameStateTest.h" />
     <ClInclude Include="hash.h" />

@@ -80,6 +80,15 @@
     <ClCompile Include="GameStateTest.cpp">
       <Filter>GameState</Filter>
     </ClCompile>
+    <ClCompile Include="GameStateEditor.cpp">
+      <Filter>GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftPanel.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorRightPanel.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -120,6 +129,9 @@
     </Filter>
     <Filter Include="GameResources">
       <UniqueIdentifier>{f7f4a354-ae9d-4a9e-9206-e678b85da181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor">
+      <UniqueIdentifier>{28332ca1-842a-4524-9e90-094a36ed7e97}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +236,18 @@
     </ClInclude>
     <ClInclude Include="GameStateTest.h">
       <Filter>GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateEditor.h">
+      <Filter>GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorConstant.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftPanel.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorRightPanel.h">
+      <Filter>Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
