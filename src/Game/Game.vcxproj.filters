@@ -65,9 +65,6 @@
     <ClCompile Include="temp.cpp">
       <Filter>other\_tempCollision</Filter>
     </ClCompile>
-    <ClCompile Include="bsp.cpp">
-      <Filter>other\_HUMTemp</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdparty\tiny_obj_loader.cpp">
       <Filter>3rdparty\tiny_obj_loader</Filter>
     </ClCompile>
@@ -96,9 +93,6 @@
     </Filter>
     <Filter Include="other">
       <UniqueIdentifier>{03302dcf-bcc5-4003-8734-cc709665b060}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="other\_HUMTemp">
-      <UniqueIdentifier>{9f7eee51-d438-4ebe-b391-37cde24c309a}</UniqueIdentifier>
     </Filter>
     <Filter Include="other\_tempCollision">
       <UniqueIdentifier>{fa913bfb-2f0d-497f-9e3f-4b07e3478dc1}</UniqueIdentifier>
@@ -197,12 +191,6 @@
     </ClInclude>
     <ClInclude Include="swizzle.h">
       <Filter>other\_tempCollision</Filter>
-    </ClInclude>
-    <ClInclude Include="bsp.h">
-      <Filter>other\_HUMTemp</Filter>
-    </ClInclude>
-    <ClInclude Include="ArrayH.h">
-      <Filter>other\_HUMTemp</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\tiny_obj_loader.h">
       <Filter>3rdparty\tiny_obj_loader</Filter>

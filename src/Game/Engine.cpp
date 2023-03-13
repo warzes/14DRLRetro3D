@@ -846,6 +846,8 @@ Model createMeshBuffer(std::vector<Mesh>&& meshes)
 
 	Model model;
 	model.subMeshes = std::move(meshes);
+	model.min = model.subMeshes[0].min;
+	model.max = model.subMeshes[0].max;
 
 	for( int i = 0; i < model.subMeshes.size(); i++ )
 	{
@@ -871,6 +873,12 @@ Model createMeshBuffer(std::vector<Mesh>&& meshes)
 			LogError("VAO create failed!");
 			Destroy(model);
 			return {};
+		}
+
+		// compute AABB
+		{
+			model.min = glm::min(model.min, model.subMeshes[i].min);
+			model.max = glm::min(model.max, model.subMeshes[i].max);
 		}
 	}
 	return model;
@@ -984,6 +992,20 @@ Model loadObjFile(const char* fileName, const char* pathMaterialFiles = "./")
 		}
 	}
 
+	// compute AABB
+	{
+		for( int i = 0; i < tempMesh.size(); i++ )
+		{
+			tempMesh[0].min = tempMesh[i].vertices[0].position;
+			tempMesh[0].max = tempMesh[i].vertices[0].position;
+			for( size_t j = 0; j < tempMesh[i].vertices.size(); j++ )
+			{
+				tempMesh[i].min = glm::min(tempMesh[0].min, tempMesh[i].vertices[j].position);
+				tempMesh[i].max = glm::max(tempMesh[0].max, tempMesh[i].vertices[j].position);
+			}
+		}
+	}
+
 	return createMeshBuffer(std::move(tempMesh));
 }
 //-----------------------------------------------------------------------------
@@ -1028,7 +1050,7 @@ void scene::Draw(const Model& model)
 	}
 }
 //-----------------------------------------------------------------------------
-std::vector<glm::vec3> scene::GetTrianglesInMesh(const Mesh& mesh)
+std::vector<glm::vec3> scene::GetVertexInMesh(const Mesh& mesh)
 {
 	std::vector<glm::vec3> v;
 	v.reserve(mesh.indices.size());
@@ -1038,12 +1060,12 @@ std::vector<glm::vec3> scene::GetTrianglesInMesh(const Mesh& mesh)
 	return v;
 }
 //-----------------------------------------------------------------------------
-std::vector<glm::vec3> scene::GetTrianglesInModel(const Model& model)
+std::vector<glm::vec3> scene::GetVertexInModel(const Model& model)
 {
 	std::vector<glm::vec3> v;
 	for( size_t i = 0; i < model.subMeshes.size(); i++ )
 	{
-		auto subV = GetTrianglesInMesh(model.subMeshes[i]);
+		auto subV = GetVertexInMesh(model.subMeshes[i]);
 		// https://www.techiedelight.com/ru/concatenate-two-vectors-cpp/
 		std::move(subV.begin(), subV.end(), std::back_inserter(v));
 	}

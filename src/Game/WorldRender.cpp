@@ -66,7 +66,9 @@ Uniform SectorUniformLightAmbient;
 Uniform SectorUniformLightDiffuse;
 Uniform SectorUniformLightDirection;
 
-std::vector<OldSector> Sectors(3);
+std::vector<Sector> Sectors(3);
+
+std::vector<Texture2D> textures(6);
 
 void CreateWorldRender()
 {
@@ -77,41 +79,48 @@ void CreateWorldRender()
 	SectorUniformLightDiffuse = render::GetUniform(SectorShader, "Light.Diffuse");
 	SectorUniformLightDirection = render::GetUniform(SectorShader, "Light.Direction");
 
+	textures[0] = render::CreateTexture2D("../data/textures/t00.png");
+	textures[1] = render::CreateTexture2D("../data/textures/t01.png");
+	textures[2] = render::CreateTexture2D("../data/textures/t02.png");
+	textures[3] = render::CreateTexture2D("../data/textures/t03.png");
+	textures[4] = render::CreateTexture2D("../data/textures/t04.png");
+	textures[5] = render::CreateTexture2D("../data/textures/t05.png");
 
-	// Sector 1
-	{
-		Sectors[0].FloorHeight = 0.0f;
-		Sectors[0].CeilingHeight = 3.0f;
+	Sectors = LoadSectorFromFile("../map.map", 0.5f);
+	//// Sector 1
+	//{
+	//	Sectors[0].FloorHeight = 0.0f;
+	//	Sectors[0].CeilingHeight = 3.0f;
 
-		Sectors[0].walls.push_back({ .p1 = {0.0f, 0.0f}, .p2 = {4.0f, 4.0f}, .portal = 0, .textureId = 1 });
-		Sectors[0].walls.push_back({ .p1 = {4.0f, 4.0f}, .p2 = {8.0f, 4.0f}, .portal = 0, .textureId = 2 });
-		Sectors[0].walls.push_back({ .p1 = {8.0f, 4.0f}, .p2 = {12.0f, 0.0f}, .portal = 0, .textureId = 3 });
-		Sectors[0].walls.push_back({ .p1 = {12.0f, 0.0f}, .p2 = {8.0f, -4.0f}, .portal = 0, .textureId = 3 });
-		Sectors[0].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {4.0f, -4.0f}, .portal = 2, .textureId = 3 });
-		Sectors[0].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {0.0f, 0.0f}, .portal = 0, .textureId = 3 });
+	//	Sectors[0].walls.push_back({ .p1 = {0.0f, 0.0f}, .p2 = {4.0f, 4.0f}, .portal = 0, .textureId = 1 });
+	//	Sectors[0].walls.push_back({ .p1 = {4.0f, 4.0f}, .p2 = {8.0f, 4.0f}, .portal = 0, .textureId = 2 });
+	//	Sectors[0].walls.push_back({ .p1 = {8.0f, 4.0f}, .p2 = {12.0f, 0.0f}, .portal = 0, .textureId = 3 });
+	//	Sectors[0].walls.push_back({ .p1 = {12.0f, 0.0f}, .p2 = {8.0f, -4.0f}, .portal = 0, .textureId = 3 });
+	//	Sectors[0].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {4.0f, -4.0f}, .portal = 2, .textureId = 3 });
+	//	Sectors[0].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {0.0f, 0.0f}, .portal = 0, .textureId = 3 });
 
-		CompleteSector(Sectors[0]);
-	}
+	//	CompleteSector(Sectors[0]);
+	//}
 
-	// Sector 2
-	{
-		Sectors[1].FloorHeight = 0.0f;
-		Sectors[1].CeilingHeight = 3.0f;
+	//// Sector 2
+	//{
+	//	Sectors[1].FloorHeight = 0.0f;
+	//	Sectors[1].CeilingHeight = 3.0f;
 
-		Sectors[1].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {8.0f, -10.0f}, .portal = 0, .textureId = 1 });
-		Sectors[1].walls.push_back({ .p1 = {8.0f, -10.0f}, .p2 = {4.0f, -10.0f}, .portal = 0, .textureId = 1 });
-		Sectors[1].walls.push_back({ .p1 = {4.0f, -10.0f}, .p2 = {4.0f, -4.0f}, .portal = 0, .textureId = 1 });
-		Sectors[1].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {8.0f, -4.0f}, .portal = 1, .textureId = 1 });
+	//	Sectors[1].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {8.0f, -10.0f}, .portal = 0, .textureId = 1 });
+	//	Sectors[1].walls.push_back({ .p1 = {8.0f, -10.0f}, .p2 = {4.0f, -10.0f}, .portal = 0, .textureId = 1 });
+	//	Sectors[1].walls.push_back({ .p1 = {4.0f, -10.0f}, .p2 = {4.0f, -4.0f}, .portal = 0, .textureId = 1 });
+	//	Sectors[1].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {8.0f, -4.0f}, .portal = 1, .textureId = 1 });
 
 
 
-		//Sectors[1].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {5.0f, -4.0f}, .portal = 0, .textureId = 1 });
-		//Sectors[1].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {4.0f, -10.0f}, .portal = 0, .textureId = 1 });
-		//Sectors[1].walls.push_back({ .p1 = {4.0f, -10.0f}, .p2 = {8.0f, -12.0f}, .portal = 0, .textureId = 1 });
-		//Sectors[1].walls.push_back({ .p1 = {8.0f, -12.0f}, .p2 = {8.0f, -4.0f}, .portal = 0, .textureId = 1 });
+	//	//Sectors[1].walls.push_back({ .p1 = {8.0f, -4.0f}, .p2 = {5.0f, -4.0f}, .portal = 0, .textureId = 1 });
+	//	//Sectors[1].walls.push_back({ .p1 = {4.0f, -4.0f}, .p2 = {4.0f, -10.0f}, .portal = 0, .textureId = 1 });
+	//	//Sectors[1].walls.push_back({ .p1 = {4.0f, -10.0f}, .p2 = {8.0f, -12.0f}, .portal = 0, .textureId = 1 });
+	//	//Sectors[1].walls.push_back({ .p1 = {8.0f, -12.0f}, .p2 = {8.0f, -4.0f}, .portal = 0, .textureId = 1 });
 
-		CompleteSector(Sectors[1]);
-	}
+	//	CompleteSector(Sectors[1]);
+	//}
 }
 
 float t = 0.0f;
@@ -147,7 +156,8 @@ void DrawWorldRender()
 	render::SetUniform(SectorUniformLightDiffuse, 0.666666f);
 	render::SetUniform(SectorUniformLightDirection, LightDirection);
 
-	DrawSectors(0, Sectors);
+	DrawSectors(0, Sectors, textures);
+	DrawSectors(1, Sectors, textures);
 
 	extern scene::Camera cam;
 

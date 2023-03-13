@@ -266,8 +266,8 @@ namespace scene
 	Model CreateModel(std::vector<Mesh>&& meshes);
 	void Destroy(Model& model);
 	void Draw(const Model& model);
-	std::vector<glm::vec3> GetTrianglesInMesh(const Mesh& mesh);
-	std::vector<glm::vec3> GetTrianglesInModel(const Model& model);
+	std::vector<glm::vec3> GetVertexInMesh(const Mesh& mesh);
+	std::vector<glm::vec3> GetVertexInModel(const Model& model);
 }
 
 using scene::Camera;

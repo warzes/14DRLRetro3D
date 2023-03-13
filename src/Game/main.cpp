@@ -183,10 +183,11 @@ Model model;
 
 void mainLoop() 
 { 
-	float mouseSensitivity = 10.0f * app::GetDeltaTime();
-	float moveSpeed = 10.0f * app::GetDeltaTime();
-
 	if( app::IsKeyDown(app::KEY_ESCAPE) ) app::Exit();
+
+	const float mouseSensitivity = 10.0f * app::GetDeltaTime();
+	const float moveSpeed = 10.0f * app::GetDeltaTime();
+	const glm::vec3 oldCameraPos = cam.position;
 
 	if( app::IsKeyDown(app::KEY_W) ) scene::CameraMoveBy(cam, moveSpeed);
 	if( app::IsKeyDown(app::KEY_S) ) scene::CameraMoveBy(cam, -moveSpeed);
@@ -210,7 +211,7 @@ void mainLoop()
 	render::Bind(texture);
 	render::Draw(vao);
 
-	//DrawWorldRender();
+	DrawWorldRender();
 
 	render::Bind(shaderModel);
 	render::SetUniform(uniformModelViewMatrix, view);
@@ -263,7 +264,7 @@ int main()
 
 
 
-	if( app::Create({}) )
+	if( app::Create({ .window = {.width = 1600, .height = 900} }) )
 	{
 		app::SetMouseLock(true);
 
@@ -277,9 +278,11 @@ int main()
 
 		render::Texture2DInfo texInfo;
 		texInfo.mipmap = false;
+		texInfo.minFilter = render::TextureMinFilter::NearestMipmapNearest;
+		texInfo.magFilter = render::TextureMagFilter::Nearest;
 		texture = render::CreateTexture2D("../data/textures/tile.png", true, texInfo);
 
-		cam.position = { 0.0f, 0.0f, 0.0f };
+		cam.position = { 0.0f, 0.0f, -10.0f };
 		cam.viewPoint = { 0.0f, 0.0f, 1.0f };
 		cam.upVector = { 0.0f, 1.0f, 0.0f };
 
@@ -289,7 +292,7 @@ int main()
 		uniformModelWorldMatrix = render::GetUniform(shaderModel, "uWorld");
 		uniformModelViewMatrix = render::GetUniform(shaderModel, "uView");
 		uniformModelProjectionMatrix = render::GetUniform(shaderModel, "uProjection");
-
+		
 		CreateWorldRender();
 
 		glEnable(GL_DEPTH_TEST);

@@ -9,7 +9,7 @@ struct WorldVertex
 	glm::vec2 texCoord;
 };
 //-----------------------------------------------------------------------------
-void CompleteSector(OldSector& sector)
+void CompleteSector(Sector& sector)
 {
 	extern ShaderProgram SectorShader;
 
@@ -66,7 +66,109 @@ void CompleteSector(OldSector& sector)
 	}
 }
 //-----------------------------------------------------------------------------
-void DestroySector(OldSector& sector)
+std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
+{
+	FILE *fp = fopen(fileName, "r");
+	if( !fp ) 
+	{ 
+		LogError("Error opening level.h");
+		return {};
+	}
+
+	int numText = 19; //number of textures
+	int numSect = 0; //number of sectors
+	int numWall = 0; //number of walls
+
+	std::vector<Sector> sectors;
+
+	// number of sectors
+	fscanf(fp, "%i", &numSect);
+	sectors.resize(numSect);
+
+	struct numWallHelper // TODO: временный класс для соотношения стен и секторов
+	{ 
+		int ws, we; //wall number start and end
+	};
+	std::vector<numWallHelper> wallHelper(numSect);
+
+	// load all sectors
+	for( int s = 0; s < numSect; s++ )
+	{		
+		fscanf(fp, "%i", &wallHelper[s].ws);
+		fscanf(fp, "%i", &wallHelper[s].we);
+		// TODO: здесь переделать. в оригинале у каждого сектора свой набор стен, мне это не нужно в файле карты
+		//sectors[s].walls.resize(wallHelper[s].we - wallHelper[s].ws);
+
+		int z1, z2; //height of bottom and top
+		fscanf(fp, "%i", &z1);
+		fscanf(fp, "%i", &z2);
+		// TODO: тут высота в целых, а мне нужно в флоатах
+		sectors[s].FloorHeight = z1 * scale;
+		sectors[s].CeilingHeight = z2 * scale;
+
+		int st, ss;             //surface texture, surface scale 
+		fscanf(fp, "%i", &st);
+		fscanf(fp, "%i", &ss);
+		
+		sectors[s].CeilingTextureId = st;
+		sectors[s].FloorTextureId = st;
+	}
+
+	fscanf(fp, "%i", &numWall);   //number of walls
+	// TODO: мне это не нужно
+
+	// load all walls
+	for( int w = 0; w < numWall; w++ )
+	{
+		Wall wall;
+
+		int x1, y1;             //bottom line point 1
+		fscanf(fp, "%i", &x1);
+		fscanf(fp, "%i", &y1);
+		wall.p1.x = x1 * scale;
+		wall.p1.y = y1 * scale;
+
+		int x2, y2;             //bottom line point 2
+		fscanf(fp, "%i", &x2);
+		fscanf(fp, "%i", &y2);
+		wall.p2.x = x2 * scale;
+		wall.p2.y = y2 * scale;
+				
+		wall.portal = 0;
+
+		int wt, u, v;            //wall texture and u/v tile
+		fscanf(fp, "%i", &wt);
+		fscanf(fp, "%i", &u);
+		fscanf(fp, "%i", &v);
+		int shade;             //shade of the wall // угол?
+		fscanf(fp, "%i", &shade);
+
+		wall.textureId = wt;
+
+		int numS = 0;
+		// ищем нужный сектор
+		for( int i = 0; i < wallHelper.size(); i++ )
+		{
+			if( w < wallHelper[i].we )
+			{
+				numS = i;
+				break;
+			}
+		}
+
+		auto& sector = sectors[numS];
+		sector.walls.push_back(wall);
+	}
+
+	//fscanf(fp, "%i %i %i %i %i", &P.x, &P.y, &P.z, &P.a, &P.l); //player position, angle, look direction 
+	fclose(fp);
+
+	for( int i = 0; i < sectors.size(); i++)
+		CompleteSector(sectors[i]);
+	return sectors;
+}
+//-----------------------------------------------------------------------------
+void DestroySector(Sector& sector)
 {
 	render::DestroyResource(sector.wallVao);
 	render::DestroyResource(sector.wallVB);
@@ -78,12 +180,12 @@ void DestroySector(OldSector& sector)
 	sector.walls.clear();
 }
 //-----------------------------------------------------------------------------
-void UpdateSector(OldSector& sector)
+void UpdateSector(Sector& sector)
 {
 	// TODO:
 }
 //-----------------------------------------------------------------------------
-void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
+void DrawSectors(unsigned currentId, std::vector<Sector>& sectors, const std::vector<Texture2D>& textures)
 {
 	if (currentId >= sectors.size()) return;
 	auto& sector = sectors[currentId];
@@ -107,7 +209,7 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
 
 				if (idSector < sectors.size() && currentId != idSector)
 				{
-					DrawSectors(idSector, sectors);
+					DrawSectors(idSector, sectors, textures);
 					if (sector.FloorHeight >= sectors[idSector].FloorHeight) continue;
 					else
 					{
@@ -145,6 +247,7 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
 			data.push_back({ v6, normal2, {1.0f, 1.0f, 1.0f}, t4 });
 		}
 		render::UpdateVertexBuffer(sector.wallVB, 0, data.size(), sizeof(WorldVertex), data.data());
+		render::Bind(textures[sector.walls[0].textureId]); // TODO: сделать текстуры разным стенам
 		render::Draw(sector.wallVao);
 	}
 
@@ -165,6 +268,7 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
 
 		// рисуем пол
 		render::UpdateVertexBuffer(sector.floorVB, 0, data.size(), sizeof(WorldVertex), data.data());
+		render::Bind(textures[sector.FloorTextureId]);
 		render::Draw(sector.floorVao);
 
 		// все тоже самое что и у пола, только изменена высота и нормаль
@@ -175,11 +279,12 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors)
 		}
 		// рисуем потолок
 		render::UpdateVertexBuffer(sector.floorVB, 0, data.size(), sizeof(WorldVertex), data.data());
+		render::Bind(textures[sector.CeilingTextureId]);
 		render::Draw(sector.floorVao);
 	}
 }
 //-----------------------------------------------------------------------------
-bool IsInside(const OldSector& sector, const glm::vec3& pos)
+bool IsInside(const Sector& sector, const glm::vec3& pos)
 {
 	// высота точки выше/ниже сектора
 	if (pos.y < sector.FloorHeight) return false;

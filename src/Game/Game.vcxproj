@@ -257,7 +257,6 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</SDLCheck>
     </ClCompile>
-    <ClCompile Include="bsp.cpp" />
     <ClCompile Include="collision.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -374,11 +373,9 @@
     <ClInclude Include="..\3rdparty\stb_truetype.h" />
     <ClInclude Include="..\3rdparty\tiny_obj_loader.h" />
     <ClInclude Include="array.h" />
-    <ClInclude Include="ArrayH.h" />
     <ClInclude Include="arraytypes.h" />
     <ClInclude Include="bound.h" />
     <ClInclude Include="bpcd.h" />
-    <ClInclude Include="bsp.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="compare.h" />
     <ClInclude Include="defs.h" />
