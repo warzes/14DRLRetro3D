@@ -400,6 +400,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="EditorLeftCamera.cpp" />
+    <ClCompile Include="EditorLeftCursor.cpp" />
     <ClCompile Include="EditorLeftGrid.cpp" />
     <ClCompile Include="EditorLeftPanel.cpp" />
     <ClCompile Include="EditorRightPanel.cpp" />
@@ -525,6 +526,7 @@
     <ClInclude Include="dirty.h" />
     <ClInclude Include="EditorConstant.h" />
     <ClInclude Include="EditorLeftCamera.h" />
+    <ClInclude Include="EditorLeftCursor.h" />
     <ClInclude Include="EditorLeftGrid.h" />
     <ClInclude Include="EditorLeftPanel.h" />
     <ClInclude Include="EditorRightPanel.h" />

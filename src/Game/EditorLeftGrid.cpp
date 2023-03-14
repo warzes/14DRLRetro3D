@@ -100,7 +100,7 @@ void EditorLeftGrid::Draw(const glm::vec2& cam)
 	render::Draw(m_geomBuff2.vao, render::PrimitiveDraw::Triangles);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftGrid::GetMouseInfo(const glm::vec2& cam, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell)
+void EditorLeftGrid::GetMouseInfo(const glm::vec2& cam, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell) const
 {
 	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
 	const float sizeScaleX = halfScreenWidth / viewSize;

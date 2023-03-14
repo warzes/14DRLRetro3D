@@ -12,7 +12,7 @@ public:
 	void Update(const glm::vec2& cam);
 	void Draw(const glm::vec2& cam);
 
-	void GetMouseInfo(const glm::vec2& cam, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell);
+	void GetMouseInfo(const glm::vec2& cam, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell) const;
 
 private:
 	GeometryBuffer m_geomBuff2;

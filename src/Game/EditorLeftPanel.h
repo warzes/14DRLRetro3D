@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "EditorLeftGrid.h"
 #include "EditorLeftCamera.h"
+#include "EditorLeftCursor.h"
 
 class EditorLeftPanel
 {
@@ -19,6 +20,7 @@ private:
 
 	EditorLeftGrid m_grid;
 	EditorLeftCamera m_leftCamera;
+	EditorLeftCursor m_cursor;
 
 	VertexBuffer m_vb;
 	IndexBuffer m_ib;

@@ -75,12 +75,15 @@ bool EditorLeftPanel::Create()
 	if( !m_grid.Create() )
 		return false;
 
+	if( !m_cursor.Create() )
+		return false;
 
 	return true;
 }
 
 void EditorLeftPanel::Destroy()
 {
+	m_cursor.Destroy();
 	m_grid.Destroy();
 
 	ImGui_ImplOpenGL3_Shutdown();
@@ -97,7 +100,7 @@ void EditorLeftPanel::Update(float deltaTime)
 	if (!m_isActive) return;
 
 	m_leftCamera.Update(deltaTime);
-
+	m_cursor.Update(m_leftCamera.cam, m_grid);
 	m_grid.Update(m_leftCamera.cam);
 
 	glm::vec2 realMousePos = app::GetMousePosition();
@@ -133,6 +136,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 	glScissor(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
 
 	m_grid.Draw(m_leftCamera.cam);
+	m_cursor.Draw(m_leftCamera.cam);
 	return;
 
 
