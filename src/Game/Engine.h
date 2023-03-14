@@ -218,9 +218,13 @@ namespace scene
 	void CameraRotateLeftRight(Camera& camera, float angleInDegrees); // поворот влево/вправо
 	void CameraRotateUpDown(Camera& camera, float angleInDegrees); // поворот вверх/вниз
 
-
 	struct GeometryBuffer
 	{
+		GeometryBuffer() = default;
+		GeometryBuffer(GeometryBuffer&& ref);
+		GeometryBuffer(const GeometryBuffer& ref);
+		GeometryBuffer& operator=(GeometryBuffer&& ref);
+		GeometryBuffer& operator=(const GeometryBuffer& ref);
 
 		VertexBuffer vb;
 		IndexBuffer ib;

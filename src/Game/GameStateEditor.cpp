@@ -71,7 +71,7 @@ void GameStateEditor::OnFrame(float deltaTime)
 	app::BeginFrame();
 	
 	m_leftPanel.Draw(deltaTime);
-	//m_rightPanel.Draw(deltaTime);
+	m_rightPanel.Draw(deltaTime);
 
 	app::EndFrame();
 }

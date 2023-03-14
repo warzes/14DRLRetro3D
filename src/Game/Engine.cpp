@@ -836,6 +836,48 @@ void scene::CameraRotateUpDown(Camera& camera, float angleInDegrees)
 	}
 }
 //-----------------------------------------------------------------------------
+scene::GeometryBuffer::GeometryBuffer(scene::GeometryBuffer&& ref)
+{
+	vb = ref.vb;
+	ib = ref.ib;
+	vao = ref.vao;
+	// ref будет удален, поэтому надо обновить ссылки
+	if( ref.vao.vbo ) vao.vbo = &vb;
+	if( ref.vao.ibo ) vao.ibo = &ib;
+}
+//-----------------------------------------------------------------------------
+scene::GeometryBuffer::GeometryBuffer(const scene::GeometryBuffer& ref)
+{
+	vb = ref.vb;
+	ib = ref.ib;
+	vao = ref.vao;
+	// ref будет удален, поэтому надо обновить ссылки
+	if( ref.vao.vbo ) vao.vbo = &vb;
+	if( ref.vao.ibo ) vao.ibo = &ib;
+}
+//-----------------------------------------------------------------------------
+scene::GeometryBuffer& scene::GeometryBuffer::operator=(scene::GeometryBuffer&& ref)
+{
+	vb = ref.vb;
+	ib = ref.ib;
+	vao = ref.vao;
+	// ref будет удален, поэтому надо обновить ссылки
+	if( ref.vao.vbo ) vao.vbo = &vb;
+	if( ref.vao.ibo ) vao.ibo = &ib;
+	return *this;
+}
+//-----------------------------------------------------------------------------
+scene::GeometryBuffer& scene::GeometryBuffer::operator=(const scene::GeometryBuffer& ref)
+{
+	vb = ref.vb;
+	ib = ref.ib;
+	vao = ref.vao;
+	// ref будет удален, поэтому надо обновить ссылки
+	if( ref.vao.vbo ) vao.vbo = &vb;
+	if( ref.vao.ibo ) vao.ibo = &ib;
+	return *this;
+}
+//-----------------------------------------------------------------------------
 GeometryBuffer scene::CreateGeometryBuffer(render::ResourceUsage usage, unsigned vertexCount, unsigned vertexSize, const void* vertexData, unsigned indexCount, unsigned indexSize, const void* indexData, const ShaderProgram& shaders)
 {
 	assert(render::IsValid(shaders));
