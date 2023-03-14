@@ -116,6 +116,9 @@
     <ClCompile Include="EditorLeftGrid.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
+    <ClCompile Include="EditorLeftCamera.cpp">
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -311,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="VertexFormat.h">
       <Filter>GameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftCamera.h">
+      <Filter>Editor\impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

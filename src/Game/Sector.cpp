@@ -24,12 +24,12 @@ void CompleteSector(Sector& sector)
 	sector.floorVB = render::CreateVertexBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr);
 	sector.floorVao = render::CreateVertexArray(&sector.floorVB, nullptr, SectorRenderShader);
 
-	sector.min = glm::min(sector.walls[0].p1, sector.walls[0].p2);
-	sector.max = glm::max(sector.walls[0].p1, sector.walls[0].p2);
+	sector.min = glm::min(sector.walls[0].p1.point, sector.walls[0].p2.point);
+	sector.max = glm::max(sector.walls[0].p1.point, sector.walls[0].p2.point);
 	for (size_t i = 1; i < sector.walls.size(); i++)
 	{
-		sector.min = glm::min(sector.min, glm::min(sector.walls[i].p1, sector.walls[i].p2));
-		sector.max = glm::max(sector.max, glm::max(sector.walls[i].p1, sector.walls[i].p2));
+		sector.min = glm::min(sector.min, glm::min(sector.walls[i].p1.point, sector.walls[i].p2.point));
+		sector.max = glm::max(sector.max, glm::max(sector.walls[i].p1.point, sector.walls[i].p2.point));
 	}
 
 	// Triangulate
@@ -37,12 +37,12 @@ void CompleteSector(Sector& sector)
 		// нужно получить список уникальных точек. 
 		std::vector<glm::vec2> uniquePoint;
 		// сначала берем первую точку из начала первой стены
-		uniquePoint.push_back(sector.walls[0].p1);
+		uniquePoint.push_back(sector.walls[0].p1.point);
 		// все начальные точки стен равны концам предыдущих стен, поэтому берем только конечную точку p2
 		for (size_t i = 0; i < sector.walls.size(); i++)
 		{
-			if (sector.walls[i].p2 == uniquePoint[0]) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
-			uniquePoint.push_back(sector.walls[i].p2);
+			if (sector.walls[i].p2.point == uniquePoint[0]) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
+			uniquePoint.push_back(sector.walls[i].p2.point);
 		}
 
 		// триангуляция
@@ -125,14 +125,14 @@ std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
 		int x1, y1;             //bottom line point 1
 		fscanf(fp, "%i", &x1);
 		fscanf(fp, "%i", &y1);
-		wall.p1.x = x1 * scale;
-		wall.p1.y = y1 * scale;
+		wall.p1.point.x = x1 * scale;
+		wall.p1.point.y = y1 * scale;
 
 		int x2, y2;             //bottom line point 2
 		fscanf(fp, "%i", &x2);
 		fscanf(fp, "%i", &y2);
-		wall.p2.x = x2 * scale;
-		wall.p2.y = y2 * scale;
+		wall.p2.point.x = x2 * scale;
+		wall.p2.point.y = y2 * scale;
 				
 		wall.portal = 0;
 
@@ -218,18 +218,18 @@ void DrawSectors(unsigned currentId, std::vector<Sector>& sectors, const std::ve
 				}
 			}
 
-			float sizeWallX = glm::max(w.p1.x, w.p2.x) - glm::min(w.p1.x, w.p2.x);
+			float sizeWallX = glm::max(w.p1.point.x, w.p2.point.x) - glm::min(w.p1.point.x, w.p2.point.x);
 			if (sizeWallX <= 0.0f)
-				sizeWallX = glm::max(w.p1.y, w.p2.y) - glm::min(w.p1.y, w.p2.y);
+				sizeWallX = glm::max(w.p1.point.y, w.p2.point.y) - glm::min(w.p1.point.y, w.p2.point.y);
 
 			const float sizeWallY = CeilingHeight - FloorHeight;
 
-			const glm::vec3 v1 = { w.p1.x, FloorHeight,   w.p1.y };
-			const glm::vec3 v2 = { w.p1.x, CeilingHeight, w.p1.y };
-			const glm::vec3 v3 = { w.p2.x, FloorHeight,   w.p2.y };
-			const glm::vec3 v4 = { w.p1.x, CeilingHeight, w.p1.y };
-			const glm::vec3 v5 = { w.p2.x, CeilingHeight, w.p2.y };
-			const glm::vec3 v6 = { w.p2.x, FloorHeight,   w.p2.y };
+			const glm::vec3 v1 = { w.p1.point.x, FloorHeight,   w.p1.point.y };
+			const glm::vec3 v2 = { w.p1.point.x, CeilingHeight, w.p1.point.y };
+			const glm::vec3 v3 = { w.p2.point.x, FloorHeight,   w.p2.point.y };
+			const glm::vec3 v4 = { w.p1.point.x, CeilingHeight, w.p1.point.y };
+			const glm::vec3 v5 = { w.p2.point.x, CeilingHeight, w.p2.point.y };
+			const glm::vec3 v6 = { w.p2.point.x, FloorHeight,   w.p2.point.y };
 
 			const glm::vec3 normal1 = glm::triangleNormal(v1, v2, v3);
 			const glm::vec3 normal2 = glm::triangleNormal(v4, v5, v6);

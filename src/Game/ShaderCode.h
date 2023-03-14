@@ -236,6 +236,50 @@ extern Uniform UniformLineDrawWorld;
 extern Uniform UniformLineDrawColor;
 
 //=============================================================================
+// Grid Cell shader
+//=============================================================================
+constexpr const char* vertexShaderGridCellText = R"(
+#version 330 core
+
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec2 vertexTexCoord;
+
+uniform mat4 uWorld;
+uniform mat4 uView;
+uniform mat4 uProjection;
+
+out vec2 TexCoord;
+
+void main()
+{
+	gl_Position = uProjection * uView * uWorld * vec4(vertexPosition, 1.0);
+	TexCoord = vertexTexCoord;
+}
+)";
+constexpr const char* fragmentShaderGridCellText = R"(
+#version 330 core
+
+in vec2 TexCoord;
+
+uniform vec3 uColor;
+
+out vec4 outColor;
+
+uniform sampler2D Texture;
+
+void main()
+{
+	outColor = texture(Texture, TexCoord) * vec4(uColor, 1.0);
+}
+)";
+
+extern ShaderProgram GridCellShader;
+extern Uniform UniformGridCellProj;
+extern Uniform UniformGridCellView;
+extern Uniform UniformGridCellWorld;
+extern Uniform UniformGridCellColor;
+
+//=============================================================================
 // Main func
 //=============================================================================
 

@@ -23,6 +23,12 @@ Uniform UniformLineDrawView;
 Uniform UniformLineDrawWorld;
 Uniform UniformLineDrawColor;
 
+ShaderProgram GridCellShader;
+Uniform UniformGridCellProj;
+Uniform UniformGridCellView;
+Uniform UniformGridCellWorld;
+Uniform UniformGridCellColor;
+
 bool CreateDefaultShader()
 {
 	shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
@@ -46,6 +52,12 @@ bool CreateDefaultShader()
 	UniformLineDrawView = render::GetUniform(LineDrawShader, "uView");
 	UniformLineDrawWorld = render::GetUniform(LineDrawShader, "uWorld");
 	UniformLineDrawColor = render::GetUniform(LineDrawShader, "uColor");
+
+	GridCellShader = render::CreateShaderProgram(vertexShaderGridCellText, fragmentShaderGridCellText);
+	UniformGridCellProj = render::GetUniform(GridCellShader, "uProjection");
+	UniformGridCellView = render::GetUniform(GridCellShader, "uView");
+	UniformGridCellWorld = render::GetUniform(GridCellShader, "uWorld");
+	UniformGridCellColor = render::GetUniform(GridCellShader, "uColor");
 
 	return true;
 }

@@ -12,6 +12,7 @@ bool GameStateEditor::OnCreate()
 	if (!m_rightPanel.Create())
 		return false;
 
+	m_leftPanel.SetActive(true);
 
 	return true;
 }

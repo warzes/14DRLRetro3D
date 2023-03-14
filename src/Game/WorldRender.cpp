@@ -70,12 +70,12 @@ void DrawWorldRender(const scene::Camera& cam)
 	if (app::IsKeyPressed(app::KEY_E))
 		t -= 0.5f;
 
-	if (IsInside(Sectors[0], cam.position))
-	{
-		LogPrint("Is inside");
-	}
-	else
-		LogPrint("Is outside");
+	//if (IsInside(Sectors[0], cam.position))
+	//{
+	//	LogPrint("Is inside");
+	//}
+	//else
+	//	LogPrint("Is outside");
 
 	const float aspectRatio = (float)app::GetWindowWidth() / (float)app::GetWindowHeight();
 	glm::mat4 mat = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);

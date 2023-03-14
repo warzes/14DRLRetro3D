@@ -96,15 +96,9 @@ void EditorLeftPanel::Update(float deltaTime)
 {
 	if (!m_isActive) return;
 
-	m_grid.Update();
+	m_leftCamera.Update(deltaTime);
 
-	if (app::IsKeyDown(app::KEY_A)) m_2dCam.x -= CameraSpeedInEditorLeftPanel * deltaTime;
-	if (app::IsKeyDown(app::KEY_D)) m_2dCam.x += CameraSpeedInEditorLeftPanel * deltaTime;
-	if (app::IsKeyDown(app::KEY_W)) m_2dCam.y -= CameraSpeedInEditorLeftPanel * deltaTime;
-	if (app::IsKeyDown(app::KEY_S)) m_2dCam.y += CameraSpeedInEditorLeftPanel * deltaTime;
-	if (m_2dCam.x < 0.0f) m_2dCam.x = 0.0f;
-	if (m_2dCam.y < 0.0f) m_2dCam.y = 0.0f;
-	// TODO: такое же сделать для макс
+	m_grid.Update(m_leftCamera.cam);
 
 	glm::vec2 realMousePos = app::GetMousePosition();
 	glm::ivec2 pos;
@@ -118,14 +112,14 @@ void EditorLeftPanel::Update(float deltaTime)
 	Cursor.pos = glm::vec2(pos.x + offsetTest.x, pos.y + offsetTest.y);
 	Cursor.realPos = glm::vec2(Cursor.pos.x * gridStep, Cursor.pos.y * gridStep);
 
-	if (app::IsMouseButtonPressed(0))
+	/*if (app::IsMouseButtonPressed(0))
 	{
 		std::string text = "Mouse pos=" + std::to_string(pos.x) + ":" + std::to_string(pos.y);
 		text += "- Offset=" + std::to_string(offset.x) + ":" + std::to_string(offset.y);
 		text += "- Real=" + std::to_string(realMousePos.x) + ":" + std::to_string(realMousePos.y);
 		LogPrint(text);
 		testPoints.push_back(Cursor);
-	}
+	}*/
 }
 
 void EditorLeftPanel::Draw(float deltaTime)
@@ -138,7 +132,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 	glViewport(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
 	glScissor(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
 
-	m_grid.Draw(m_2dCam);
+	m_grid.Draw(m_leftCamera.cam);
 	return;
 
 
@@ -155,7 +149,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 
 		glm::mat4 proj = glm::ortho(0.0f, (float)viewSize, (float)viewSize, 0.0f, -1.0f, 1.0f);
 
-		glm::mat4 view = glm::lookAt(glm::vec3(m_2dCam.x, m_2dCam.y, -0.5f), glm::vec3(m_2dCam.x, m_2dCam.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 view = glm::lookAt(glm::vec3(m_leftCamera.cam.x, m_leftCamera.cam.y, -0.5f), glm::vec3(m_leftCamera.cam.x, m_leftCamera.cam.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		
 
@@ -268,8 +262,8 @@ void EditorLeftPanel::getMouseInfo(const glm::vec2& realPos, glm::ivec2& posInMa
 	sizeCell.x = halfScreenWidth / viewSize * gridStep;
 	sizeCell.y = (float)app::GetWindowHeight() / viewSize * gridStep;
 	
-	float posX = realPos.x / sizeCell.x + m_2dCam.x;
-	float posY = realPos.y / sizeCell.y + m_2dCam.y;
+	float posX = realPos.x / sizeCell.x + m_leftCamera.cam.x;
+	float posY = realPos.y / sizeCell.y + m_leftCamera.cam.y;
 
 	posInMap.x = static_cast<int>(posX);
 	posInMap.y = static_cast<int>(posY);
