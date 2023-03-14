@@ -3,8 +3,11 @@
 #define _CRT_SECURE_NO_WARNINGS // TODO: delete
 
 #if defined(_MSC_VER)
+#	pragma warning(disable : 4514)
+#	pragma warning(disable : 4820)
+#	pragma warning(disable : 5045)
 #	pragma warning(push, 0)
-//#	pragma warning(disable : 5262)
+#	pragma warning(disable : 4365)
 #endif
 
 #include <cstdint>
@@ -73,5 +76,3 @@ Left handed
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif
-
-#include "TempFunc.h"

@@ -80,9 +80,6 @@
     <ClCompile Include="GameStateTest.cpp">
       <Filter>GameState</Filter>
     </ClCompile>
-    <ClCompile Include="GameStateEditor.cpp">
-      <Filter>GameState</Filter>
-    </ClCompile>
     <ClCompile Include="EditorLeftPanel.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
@@ -112,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="..\3rdparty\imgui\imgui_impl_opengl3.cpp">
       <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateEditor.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftGrid.cpp">
+      <Filter>Editor\impl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +162,9 @@
     </Filter>
     <Filter Include="3rdparty\imgui">
       <UniqueIdentifier>{59a3638b-ffd0-4232-8420-f3065177524b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\impl">
+      <UniqueIdentifier>{4bab9790-6f01-4adb-a87e-e1cb36a971d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -264,9 +270,6 @@
     <ClInclude Include="GameStateTest.h">
       <Filter>GameState</Filter>
     </ClInclude>
-    <ClInclude Include="GameStateEditor.h">
-      <Filter>GameState</Filter>
-    </ClInclude>
     <ClInclude Include="EditorConstant.h">
       <Filter>Editor</Filter>
     </ClInclude>
@@ -299,6 +302,15 @@
     </ClInclude>
     <ClInclude Include="..\3rdparty\imgui\imgui_impl_opengl3.h">
       <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateEditor.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftGrid.h">
+      <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexFormat.h">
+      <Filter>GameResources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

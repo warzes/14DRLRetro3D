@@ -2,6 +2,8 @@
 #include "EditorLeftPanel.h"
 #include "EditorConstant.h"
 #include "Engine.h"
+#include "ShaderCode.h"
+#include "VertexFormat.h"
 
 struct testPoint
 {
@@ -15,46 +17,7 @@ testPoint Cursor;
 
 bool EditorLeftPanel::Create()
 {
-	constexpr const char* vertexShaderText = R"(
-#version 330 core
-
-layout(location = 0) in vec3 vertexPosition;
-
-uniform mat4 uWorld;
-uniform mat4 uView;
-uniform mat4 uProjection;
-
-void main()
-{
-	gl_Position = uProjection * uView * uWorld * vec4(vertexPosition, 1.0);
-}
-)";
-	constexpr const char* fragmentShaderText = R"(
-#version 330 core
-
-uniform vec3 uColor;
-
-out vec4 outColor;
-
-void main()
-{
-	outColor = vec4(uColor, 1.0);
-}
-)";
-
-
-	m_shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
-	m_uniformProj = render::GetUniform(m_shader, "uProjection");
-	m_uniformView = render::GetUniform(m_shader, "uView");
-	m_uniformWorld = render::GetUniform(m_shader, "uWorld");
-	m_uniformColor = render::GetUniform(m_shader, "uColor");
-
-	struct lineVertex
-	{
-		glm::vec3 pos;
-	};
-
-	constexpr lineVertex vert[] =
+	constexpr VertexPos3 vert[] =
 	{
 		{{-500.0f, -500.0f, 0.0f}},
 		{{-500.0f,  500.0f, 0.0f}},
@@ -68,16 +31,16 @@ void main()
 		2, 3, 0
 	};
 
-	m_vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(lineVertex), vert);
+	m_vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(VertexPos3), vert);
 	m_ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
-	m_vao = render::CreateVertexArray(&m_vb, &m_ib, m_shader);
+	m_vao = render::CreateVertexArray(&m_vb, &m_ib, LineDrawShader);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.IniFilename = nullptr; // не нужно хранить файл настроек
 
 	// Setup Dear ImGui style
@@ -109,6 +72,8 @@ void main()
 	//IM_ASSERT(font != NULL);
 
 
+	if( !m_grid.Create() )
+		return false;
 
 
 	return true;
@@ -116,11 +81,12 @@ void main()
 
 void EditorLeftPanel::Destroy()
 {
+	m_grid.Destroy();
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	render::DestroyResource(m_shader);
 	render::DestroyResource(m_vb);
 	render::DestroyResource(m_ib);
 	render::DestroyResource(m_vao);
@@ -129,6 +95,8 @@ void EditorLeftPanel::Destroy()
 void EditorLeftPanel::Update(float deltaTime)
 {
 	if (!m_isActive) return;
+
+	m_grid.Update();
 
 	if (app::IsKeyDown(app::KEY_A)) m_2dCam.x -= CameraSpeedInEditorLeftPanel * deltaTime;
 	if (app::IsKeyDown(app::KEY_D)) m_2dCam.x += CameraSpeedInEditorLeftPanel * deltaTime;
@@ -162,24 +130,40 @@ void EditorLeftPanel::Update(float deltaTime)
 
 void EditorLeftPanel::Draw(float deltaTime)
 {
+	(void)deltaTime;
+
+	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
+
+	glDisable(GL_DEPTH_TEST);
+	glViewport(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
+	glScissor(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
+
+	m_grid.Draw(m_2dCam);
+	return;
+
+
+
+
+
+
 	//if (m_isActive)
 	{
 		// масштаб экрана равен halfScreenWidth / viewSize, то есть 800 / 100, тогда
 		// 10 в вьюве - это 80 реально
 		// а 80 в реале (например мышь) - это 10 в вьюве
 
-		const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
-		glm::mat4 proj = glm::ortho(0.0f, viewSize, viewSize, 0.0f, -1.0f, 1.0f);
+
+		glm::mat4 proj = glm::ortho(0.0f, (float)viewSize, (float)viewSize, 0.0f, -1.0f, 1.0f);
 
 		glm::mat4 view = glm::lookAt(glm::vec3(m_2dCam.x, m_2dCam.y, -0.5f), glm::vec3(m_2dCam.x, m_2dCam.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glDisable(GL_DEPTH_TEST);
-		glViewport(0.0f, 0.0f, halfScreenWidth, (float)app::GetWindowHeight());
-		glScissor(0.0f, 0.0f, halfScreenWidth, (float)app::GetWindowHeight());
-		render::Bind(m_shader);
-		render::SetUniform(m_uniformProj, proj);
-		render::SetUniform(m_uniformView, view);
-		render::SetUniform(m_uniformColor, glm::vec3(0.1f, 0.2f, 0.3f));
+		
+
+
+		render::Bind(LineDrawShader);
+		render::SetUniform(UniformLineDrawProj, proj);
+		render::SetUniform(UniformLineDrawView, view);
+		render::SetUniform(UniformLineDrawColor, glm::vec3(0.1f, 0.2f, 0.3f));
 
 		for (int x = 0; x <= gridSize; x += gridStep)
 		{
@@ -187,7 +171,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 			{
 				glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, 0.0f));
 				world = glm::scale(world, glm::vec3(gridLineSize, 1.0f, 1.0f));
-				render::SetUniform(m_uniformWorld, world);
+				render::SetUniform(UniformLineDrawWorld, world);
 				render::Draw(m_vao);
 			}
 
@@ -195,13 +179,13 @@ void EditorLeftPanel::Draw(float deltaTime)
 			{
 				glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, x, 0.0f));
 				world = glm::scale(world, glm::vec3(1.0f, gridLineSize, 1.0f));
-				render::SetUniform(m_uniformWorld, world);
+				render::SetUniform(UniformLineDrawWorld, world);
 				render::Draw(m_vao);
 			}
 		}
 
-		render::SetUniform(m_uniformColor, glm::vec3(1.0f, 1.0f, 1.0f));
-		for (int i = 0; i < testPoints.size(); i++)
+		render::SetUniform(UniformLineDrawColor, glm::vec3(1.0f, 1.0f, 1.0f));
+		for (size_t i = 0; i < testPoints.size(); i++)
 		{
 			glm::mat4 world = glm::translate(glm::mat4(1.0f),
 				glm::vec3(
@@ -209,15 +193,15 @@ void EditorLeftPanel::Draw(float deltaTime)
 					testPoints[i].realPos.y,
 					0.0f));
 			world = glm::scale(world, glm::vec3(gridLineSize));
-			render::SetUniform(m_uniformWorld, world);
+			render::SetUniform(UniformLineDrawWorld, world);
 			render::Draw(m_vao);
 		}
 
 		// draw cursor
-		render::SetUniform(m_uniformColor, glm::vec3(1.0f, 1.0f, 0.3f));
+		render::SetUniform(UniformLineDrawColor, glm::vec3(1.0f, 1.0f, 0.3f));
 		glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(Cursor.realPos.x, Cursor.realPos.y, 0.0f));
 		world = glm::scale(world, glm::vec3(gridLineSize*2));
-		render::SetUniform(m_uniformWorld, world);
+		render::SetUniform(UniformLineDrawWorld, world);
 		render::Draw(m_vao);
 
 
@@ -230,8 +214,8 @@ void EditorLeftPanel::Draw(float deltaTime)
 		ImGui::NewFrame();
 
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		if( show_demo_window )
-			ImGui::ShowDemoWindow(&show_demo_window);
+		//if( show_demo_window )
+		//	ImGui::ShowDemoWindow(&show_demo_window);
 
 		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
 		{
@@ -257,7 +241,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 		}
 
 		// 3. Show another simple window.
-		if( show_another_window )
+		//if( show_another_window )
 		{
 			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 			ImGui::Text("Hello from another window!");

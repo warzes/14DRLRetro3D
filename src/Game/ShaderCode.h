@@ -200,6 +200,42 @@ extern Uniform SectorRenderUniformLightDiffuse;
 extern Uniform SectorRenderUniformLightDirection;
 
 //=============================================================================
+// Line Draw shader
+//=============================================================================
+constexpr const char* vertexShaderLineDrawText = R"(
+#version 330 core
+
+layout(location = 0) in vec3 vertexPosition;
+
+uniform mat4 uWorld;
+uniform mat4 uView;
+uniform mat4 uProjection;
+
+void main()
+{
+	gl_Position = uProjection * uView * uWorld * vec4(vertexPosition, 1.0);
+}
+)";
+constexpr const char* fragmentShaderLineDrawText = R"(
+#version 330 core
+
+uniform vec3 uColor;
+
+out vec4 outColor;
+
+void main()
+{
+	outColor = vec4(uColor, 1.0);
+}
+)";
+
+extern ShaderProgram LineDrawShader;
+extern Uniform UniformLineDrawProj;
+extern Uniform UniformLineDrawView;
+extern Uniform UniformLineDrawWorld;
+extern Uniform UniformLineDrawColor;
+
+//=============================================================================
 // Main func
 //=============================================================================
 

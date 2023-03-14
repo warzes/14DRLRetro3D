@@ -378,7 +378,8 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 	std::vector<VertexAttribute> attribs(attribInfo.size());
 	for( size_t i = 0; i < attribInfo.size(); i++ )
 	{
-		attribs[i].location = attribInfo[i].location;
+		assert(attribInfo[i].location>-1);
+		attribs[i].location = (unsigned)attribInfo[i].location; // TODO: attribInfo[i].location может быть -1, тогда как в attribs[i].location unsigned. нужно исправить
 		attribs[i].normalized = false;
 
 		size_t sizeType = 0;
@@ -411,7 +412,7 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 	}
 	for( size_t i = 0; i < attribs.size(); i++ )
 	{
-		attribs[i].stride = (unsigned int)offset;
+		attribs[i].stride = (int)offset;
 	}
 
 	return CreateVertexArray(vbo, ibo, attribs);
@@ -759,6 +760,7 @@ void render::Bind(const Texture2D& resource, unsigned slot)
 //-----------------------------------------------------------------------------
 void render::Draw(const VertexArray& vao, PrimitiveDraw primitive)
 {
+	assert(IsValid(vao));
 	if( CurrentVAO != vao.id )
 	{
 		CurrentVAO = vao.id;
@@ -834,6 +836,55 @@ void scene::CameraRotateUpDown(Camera& camera, float angleInDegrees)
 	}
 }
 //-----------------------------------------------------------------------------
+GeometryBuffer scene::CreateGeometryBuffer(render::ResourceUsage usage, unsigned vertexCount, unsigned vertexSize, const void* vertexData, unsigned indexCount, unsigned indexSize, const void* indexData, const ShaderProgram& shaders)
+{
+	assert(render::IsValid(shaders));
+
+	GeometryBuffer geom;
+
+	geom.vb = render::CreateVertexBuffer(usage, vertexCount, vertexSize, vertexData);
+	if( !render::IsValid(geom.vb) )
+	{
+		LogError("GeometryBuffer::VertexBuffer create failed!!");
+		return {};
+	}
+
+	bool isIndexBuffer = indexCount > 0 && indexSize > 0;
+
+	if( isIndexBuffer )
+	{
+		geom.ib = render::CreateIndexBuffer(usage, indexCount, indexSize, indexData);
+		if( !render::IsValid(geom.ib) )
+		{
+			LogError("GeometryBuffer::IndexBuffer create failed!!");
+			render::DestroyResource(geom.vb);
+			return {};
+		}
+	}
+
+	geom.vao = render::CreateVertexArray(&geom.vb, isIndexBuffer ? &geom.ib : nullptr, shaders);
+	if( !render::IsValid(geom.vao) )
+	{
+		LogError("GeometryBuffer::VertexArray create failed!!");
+		render::DestroyResource(geom.vb);
+		if ( isIndexBuffer) render::DestroyResource(geom.ib);
+		return {};
+	}
+	return geom;
+}
+//-----------------------------------------------------------------------------
+GeometryBuffer scene::CreateGeometryBuffer(render::ResourceUsage usage, unsigned vertexCount, unsigned vertexSize, const void* vertexData, const ShaderProgram& shaders)
+{
+	return CreateGeometryBuffer(usage, vertexCount, vertexSize, vertexData, 0, 0, nullptr, shaders);
+}
+//-----------------------------------------------------------------------------
+void  scene::Destroy(GeometryBuffer& buffer)
+{
+	render::DestroyResource(buffer.vb);
+	render::DestroyResource(buffer.ib);
+	render::DestroyResource(buffer.vao);
+}
+//-----------------------------------------------------------------------------
 Model createMeshBuffer(std::vector<Mesh>&& meshes)
 {
 	const std::vector<render::VertexAttribute> formatVertex =
@@ -849,7 +900,7 @@ Model createMeshBuffer(std::vector<Mesh>&& meshes)
 	model.min = model.subMeshes[0].min;
 	model.max = model.subMeshes[0].max;
 
-	for( int i = 0; i < model.subMeshes.size(); i++ )
+	for( size_t i = 0; i < model.subMeshes.size(); i++ )
 	{
 		model.subMeshes[i].vertexBuffer = render::CreateVertexBuffer(render::ResourceUsage::Static, model.subMeshes[i].vertices.size(), sizeof(model.subMeshes[i].vertices[0]), model.subMeshes[i].vertices.data());
 		if( !render::IsValid(model.subMeshes[i].vertexBuffer) )
@@ -859,7 +910,7 @@ Model createMeshBuffer(std::vector<Mesh>&& meshes)
 			return {};
 		}
 
-		model.subMeshes[i].indexBuffer = render::CreateIndexBuffer(render::ResourceUsage::Static, model.subMeshes[i].indices.size(), sizeof(uint32_t), model.subMeshes[i].indices.data());
+		model.subMeshes[i].indexBuffer = render::CreateIndexBuffer(render::ResourceUsage::Static, model.subMeshes[i].indices.size(), sizeof(model.subMeshes[i].indices[0]), model.subMeshes[i].indices.data());
 		if( !render::IsValid(model.subMeshes[i].indexBuffer) )
 		{
 			LogError("IndexBuffer create failed!");
@@ -983,7 +1034,7 @@ Model loadObjFile(const char* fileName, const char* pathMaterialFiles = "./")
 	// load materials
 	if( isFindMaterials )
 	{
-		for( int i = 0; i < materials.size(); i++ )
+		for( size_t i = 0; i < materials.size(); i++ )
 		{
 			if( materials[i].diffuse_texname.empty() ) continue;
 
@@ -994,7 +1045,7 @@ Model loadObjFile(const char* fileName, const char* pathMaterialFiles = "./")
 
 	// compute AABB
 	{
-		for( int i = 0; i < tempMesh.size(); i++ )
+		for( size_t i = 0; i < tempMesh.size(); i++ )
 		{
 			tempMesh[0].min = tempMesh[i].vertices[0].position;
 			tempMesh[0].max = tempMesh[i].vertices[0].position;
@@ -1024,7 +1075,7 @@ Model scene::CreateModel(std::vector<Mesh>&& meshes)
 //-----------------------------------------------------------------------------
 void scene::Destroy(Model& model)
 {
-	for( int i = 0; i < model.subMeshes.size(); i++ )
+	for( size_t i = 0; i < model.subMeshes.size(); i++ )
 	{
 		model.subMeshes[i].vertices.clear();
 		model.subMeshes[i].indices.clear();
@@ -1038,7 +1089,7 @@ void scene::Destroy(Model& model)
 //-----------------------------------------------------------------------------
 void scene::Draw(const Model& model)
 {
-	for( int i = 0; i < model.subMeshes.size(); i++ )
+	for( size_t i = 0; i < model.subMeshes.size(); i++ )
 	{
 		if( render::IsValid(model.subMeshes[i].vao) )
 		{
@@ -1087,7 +1138,7 @@ void windowSizeCallback(GLFWwindow* /*window*/, int width, int height) noexcept
 	WindowHeight = height;
 }
 //-----------------------------------------------------------------------------
-void keyCallback(GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/) noexcept
+void keyCallback(GLFWwindow* /*window*/, int key, int /*scancode*/, int action, int /*mods*/) noexcept
 {
 	if( key < 0 ) return;
 
@@ -1105,14 +1156,14 @@ void charCallback(GLFWwindow* /*window*/, unsigned int key) noexcept
 {
 	if( Keyboard.charPressedQueueCount < MAX_KEY_PRESSED_QUEUE )
 	{
-		Keyboard.charPressedQueue[Keyboard.charPressedQueueCount] = key;
+		Keyboard.charPressedQueue[Keyboard.charPressedQueueCount] = (int)key;
 		Keyboard.charPressedQueueCount++;
 	}
 }
 //-----------------------------------------------------------------------------
 void mouseButtonCallback(GLFWwindow* /*window*/, int button, int action, int /*mods*/) noexcept
 {
-	Mouse.currentButtonState[button] = action;
+	Mouse.currentButtonState[button] = (char)action;
 }
 //-----------------------------------------------------------------------------
 void mouseCursorPosCallback(GLFWwindow* /*window*/, double x, double y) noexcept

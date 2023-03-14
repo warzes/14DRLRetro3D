@@ -6,7 +6,7 @@
 #include "GameStateManager.h"
 #include "GameStateTest.h"
 #include "GameStateEditor.h"
-#include "trace.h"
+//#include "trace.h"
 
 //https://www.youtube.com/watch?v=MDusDn8oTSE
 //https://www.youtube.com/watch?v=v1riwEd0BDA

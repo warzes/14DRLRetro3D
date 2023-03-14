@@ -17,6 +17,12 @@ Uniform SectorRenderUniformLightAmbient;
 Uniform SectorRenderUniformLightDiffuse;
 Uniform SectorRenderUniformLightDirection;
 
+ShaderProgram LineDrawShader;
+Uniform UniformLineDrawProj;
+Uniform UniformLineDrawView;
+Uniform UniformLineDrawWorld;
+Uniform UniformLineDrawColor;
+
 bool CreateDefaultShader()
 {
 	shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
@@ -35,6 +41,12 @@ bool CreateDefaultShader()
 	SectorRenderUniformLightDiffuse = render::GetUniform(SectorRenderShader, "Light.Diffuse");
 	SectorRenderUniformLightDirection = render::GetUniform(SectorRenderShader, "Light.Direction");
 
+	LineDrawShader = render::CreateShaderProgram(vertexShaderLineDrawText, fragmentShaderLineDrawText);
+	UniformLineDrawProj = render::GetUniform(LineDrawShader, "uProjection");
+	UniformLineDrawView = render::GetUniform(LineDrawShader, "uView");
+	UniformLineDrawWorld = render::GetUniform(LineDrawShader, "uWorld");
+	UniformLineDrawColor = render::GetUniform(LineDrawShader, "uColor");
+
 	return true;
 }
 
@@ -43,4 +55,5 @@ void DestroyDefaultShader()
 	render::DestroyResource(shader);
 	render::DestroyResource(shaderModel);
 	render::DestroyResource(SectorRenderShader);
+	render::DestroyResource(LineDrawShader);
 }

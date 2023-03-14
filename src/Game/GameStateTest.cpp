@@ -68,6 +68,7 @@ void GameStateTest::OnActive()
 
 void GameStateTest::OnUpdate(float deltaTime)
 {
+	(void)deltaTime;
 	if( app::IsKeyDown(app::KEY_ESCAPE) ) app::Exit();
 
 	const float mouseSensitivity = 10.0f * app::GetDeltaTime();
@@ -86,6 +87,7 @@ void GameStateTest::OnUpdate(float deltaTime)
 
 void GameStateTest::OnFrame(float deltaTime)
 {
+	(void)deltaTime;
 	const float aspectRatio = (float)app::GetWindowWidth() / (float)app::GetWindowHeight();
 	glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
 	glm::mat4 view = scene::GetCameraViewMatrix(m_cam);

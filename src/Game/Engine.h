@@ -16,9 +16,9 @@ constexpr auto MAX_FRAMES_IN_FLIGHT = 100;
 
 // Implementation from "08/02/2015 Better array 'countof' implementation with C++ 11 (updated)" - https://www.g-truc.net/post-0708.html
 template<typename T, size_t N>
-[[nodiscard]] constexpr size_t Countof(T const (&)[N])
+[[nodiscard]] constexpr unsigned int Countof(T const (&)[N])
 {
-	return N;
+	return static_cast<unsigned int>(N);
 }
 
 //=============================================================================
@@ -218,6 +218,25 @@ namespace scene
 	void CameraRotateLeftRight(Camera& camera, float angleInDegrees); // поворот влево/вправо
 	void CameraRotateUpDown(Camera& camera, float angleInDegrees); // поворот вверх/вниз
 
+
+	struct GeometryBuffer
+	{
+
+		VertexBuffer vb;
+		IndexBuffer ib;
+		VertexArray vao;
+	};
+
+	GeometryBuffer CreateGeometryBuffer(
+		render::ResourceUsage usage,
+		/*vertex*/unsigned vertexCount, unsigned vertexSize, const void* vertexData,
+		/*index*/unsigned indexCount, unsigned indexSize, const void* indexData,
+		const ShaderProgram& shaders
+	);
+	GeometryBuffer CreateGeometryBuffer(render::ResourceUsage usage, unsigned vertexCount, unsigned vertexSize, const void* vertexData, const ShaderProgram& shaders);
+	void Destroy(GeometryBuffer& buffer);
+
+
 	class Material
 	{
 	public:
@@ -271,6 +290,7 @@ namespace scene
 }
 
 using scene::Camera;
+using scene::GeometryBuffer;
 using scene::Material;
 using scene::VertexMesh;
 using scene::Mesh;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Sector.h"
 #include "ShaderCode.h"
+#include "TempFunc.h"
 //-----------------------------------------------------------------------------
 struct WorldVertex
 {
@@ -38,7 +39,7 @@ void CompleteSector(Sector& sector)
 		// сначала берем первую точку из начала первой стены
 		uniquePoint.push_back(sector.walls[0].p1);
 		// все начальные точки стен равны концам предыдущих стен, поэтому берем только конечную точку p2
-		for (int i = 0; i < sector.walls.size(); i++)
+		for (size_t i = 0; i < sector.walls.size(); i++)
 		{
 			if (sector.walls[i].p2 == uniquePoint[0]) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
 			uniquePoint.push_back(sector.walls[i].p2);
@@ -46,7 +47,7 @@ void CompleteSector(Sector& sector)
 
 		// триангуляция
 		TPPLPoly poly;
-		poly.Init(uniquePoint.size());
+		poly.Init((long)uniquePoint.size());
 		for (size_t i = 0; i < uniquePoint.size(); i++)
 		{
 			poly[i] = TPPLPoint{ uniquePoint[i].x, uniquePoint[i].y };

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "GameStateEditor.h"
 #include "EditorConstant.h"
-
+//-----------------------------------------------------------------------------
 GameStateEditor gGameStateEditor;
-
+//-----------------------------------------------------------------------------
 bool GameStateEditor::OnCreate()
 {
 	if (!m_leftPanel.Create())
@@ -15,57 +15,64 @@ bool GameStateEditor::OnCreate()
 
 	return true;
 }
-
+//-----------------------------------------------------------------------------
 void GameStateEditor::OnDestroy()
 {
 	m_leftPanel.Destroy();
 	m_rightPanel.Destroy();
 }
-
+//-----------------------------------------------------------------------------
 void GameStateEditor::OnActive()
 {
 }
-
+//-----------------------------------------------------------------------------
 void GameStateEditor::OnUpdate(float deltaTime)
 {
-	glm::vec2 realMousePos = app::GetMousePosition();
-	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
+	const ImGuiIO& io = ImGui::GetIO();
 
-	if (app::IsMouseButtonDown(0))
+	if( !io.WantCaptureMouse )
 	{
-		if (realMousePos.x <= halfScreenWidth && !m_rightPanel.IsActive())
-		{
-			m_leftPanel.SetActive(true);
-			m_rightPanel.SetActive(false);
-			app::SetMouseLock(false);
-		}
-		else
-		{
-			m_leftPanel.SetActive(false);
-			m_rightPanel.SetActive(true);
-			app::SetMouseLock(true);
-		}
-	}
+		const glm::vec2 realMousePos = app::GetMousePosition();
+		const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
 
-	if (app::IsKeyDown(app::KEY_ESCAPE))
-	{
-		if (m_rightPanel.IsActive())
+		if( app::IsMouseButtonDown(0) )
 		{
-			m_rightPanel.SetActive(false);
-			app::SetMouseLock(false);
+			if( realMousePos.x <= halfScreenWidth && !m_rightPanel.IsActive() )
+			{
+				m_leftPanel.SetActive(true);
+				m_rightPanel.SetActive(false);
+				app::SetMouseLock(false);
+			}
+			else
+			{
+				m_leftPanel.SetActive(false);
+				m_rightPanel.SetActive(true);
+				app::SetMouseLock(true);
+			}
 		}
-	}
 
-	m_leftPanel.Update(deltaTime);
-	m_rightPanel.Update(deltaTime);
+		if( !io.WantCaptureKeyboard && app::IsKeyDown(app::KEY_ESCAPE) )
+		{
+			if( m_rightPanel.IsActive() )
+			{
+				m_leftPanel.SetActive(true);
+				m_rightPanel.SetActive(false);
+				app::SetMouseLock(false);
+			}
+		}
+
+		m_leftPanel.Update(deltaTime);
+		m_rightPanel.Update(deltaTime);
+	}
 }
-
+//-----------------------------------------------------------------------------
 void GameStateEditor::OnFrame(float deltaTime)
 {
 	app::BeginFrame();
 	
 	m_leftPanel.Draw(deltaTime);
-	m_rightPanel.Draw(deltaTime);
+	//m_rightPanel.Draw(deltaTime);
 
 	app::EndFrame();
 }
+//-----------------------------------------------------------------------------

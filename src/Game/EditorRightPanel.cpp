@@ -54,10 +54,8 @@ void EditorRightPanel::Destroy()
 
 void EditorRightPanel::Update(float deltaTime)
 {
+	(void)deltaTime;
 	if (!m_isActive) return;
-
-	glm::vec2 realMousePos = app::GetMousePosition();
-	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
 
 	const float mouseSensitivity = 10.0f * app::GetDeltaTime();
 	const float moveSpeed = 10.0f * app::GetDeltaTime();
@@ -75,11 +73,12 @@ void EditorRightPanel::Update(float deltaTime)
 
 void EditorRightPanel::Draw(float deltaTime)
 {
+	(void)deltaTime;
 	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
 
 	glEnable(GL_DEPTH_TEST);
-	glViewport(halfScreenWidth, 0.0f, (float)app::GetWindowHeight(), (float)app::GetWindowHeight());
-	glScissor(halfScreenWidth, 0.0f, (float)app::GetWindowHeight(), (float)app::GetWindowHeight());
+	glViewport((GLint)halfScreenWidth, 0, app::GetWindowHeight(), app::GetWindowHeight());
+	glScissor((GLint)halfScreenWidth, 0, app::GetWindowHeight(), app::GetWindowHeight());
 
 	const float aspectRatio = (float)halfScreenWidth / (float)app::GetWindowHeight();
 	glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);

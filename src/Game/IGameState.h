@@ -6,6 +6,8 @@ class IGameState
 {
 	friend class GameStateManager;
 public:
+	virtual ~IGameState() = default;
+
 	// OnCreate - создание ресурсов
 	virtual bool OnCreate() = 0;
 	// OnDestroy - удаление ресурсов
