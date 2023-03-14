@@ -89,6 +89,30 @@
     <ClCompile Include="EditorRightPanel.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
+    <ClCompile Include="TextureCache.cpp">
+      <Filter>GameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_demo.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_draw.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_tables.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_widgets.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_impl_glfw.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui\imgui_impl_opengl3.cpp">
+      <Filter>3rdparty\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -132,6 +156,9 @@
     </Filter>
     <Filter Include="Editor">
       <UniqueIdentifier>{28332ca1-842a-4524-9e90-094a36ed7e97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\imgui">
+      <UniqueIdentifier>{59a3638b-ffd0-4232-8420-f3065177524b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +275,30 @@
     </ClInclude>
     <ClInclude Include="EditorRightPanel.h">
       <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureCache.h">
+      <Filter>GameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imconfig.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imgui.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imgui_internal.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imstb_rectpack.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imstb_textedit.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imgui_impl_glfw.h">
+      <Filter>3rdparty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui\imgui_impl_opengl3.h">
+      <Filter>3rdparty\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

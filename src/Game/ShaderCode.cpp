@@ -10,6 +10,13 @@ ShaderProgram shader;
 Uniform uniformProj;
 Uniform uniformView;
 
+ShaderProgram SectorRenderShader;
+Uniform SectorRenderUniformProj;
+Uniform SectorRenderUniformView;
+Uniform SectorRenderUniformLightAmbient;
+Uniform SectorRenderUniformLightDiffuse;
+Uniform SectorRenderUniformLightDirection;
+
 bool CreateDefaultShader()
 {
 	shader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
@@ -21,6 +28,13 @@ bool CreateDefaultShader()
 	uniformModelViewMatrix = render::GetUniform(shaderModel, "uView");
 	uniformModelProjectionMatrix = render::GetUniform(shaderModel, "uProjection");
 
+	SectorRenderShader = render::CreateShaderProgram(vertexShaderSectorRenderText, fragmentShaderSectorRenderText);
+	SectorRenderUniformProj = render::GetUniform(SectorRenderShader, "projectionMatrix");
+	SectorRenderUniformView = render::GetUniform(SectorRenderShader, "viewMatrix");
+	SectorRenderUniformLightAmbient = render::GetUniform(SectorRenderShader, "Light.Ambient");
+	SectorRenderUniformLightDiffuse = render::GetUniform(SectorRenderShader, "Light.Diffuse");
+	SectorRenderUniformLightDirection = render::GetUniform(SectorRenderShader, "Light.Direction");
+
 	return true;
 }
 
@@ -28,4 +42,5 @@ void DestroyDefaultShader()
 {
 	render::DestroyResource(shader);
 	render::DestroyResource(shaderModel);
+	render::DestroyResource(SectorRenderShader);
 }

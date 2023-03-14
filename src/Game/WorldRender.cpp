@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "WorldRender.h"
+#include "ShaderCode.h"
 
 // TODO: возможно координаты мира не могут быть меньше нуля чтобы не создавать проблемы
 // unit - единица из которй вычисляется все остальное - например текстурные координаты
@@ -8,80 +9,12 @@
 // может быть такое решение - после рендера тек сектора перебрать все заново, и отрисовать попавшие в фрустум, ведь я ставлю метку что сектор уже отрисован, значит повторно не отрисуется.
 // но наверное надо упростить
 
-constexpr const char* vertexShaderText = R"(
-#version 330 core
-
-layout(location = 0) in vec3 vertexPosition;
-layout(location = 1) in vec3 vertexNormal;
-layout(location = 2) in vec3 vertexColor;
-layout(location = 3) in vec2 vertexTexCoord;
-
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-
-out vec3 FragmentColor;
-out vec3 Normal;
-out vec2 TexCoord;
-
-void main()
-{
-	gl_Position   = projectionMatrix * viewMatrix * vec4(vertexPosition, 1.0);
-	FragmentColor = vertexColor;
-	Normal        = vertexNormal;
-	TexCoord      = vertexTexCoord;
-}
-)";
-
-constexpr const char* fragmentShaderText = R"(
-#version 330 core
-
-in vec3 FragmentColor;
-in vec3 Normal;
-in vec2 TexCoord;
-
-struct DirectionalLight
-{
-	float Ambient, Diffuse;
-	vec3 Direction;
-};
-uniform DirectionalLight Light;
-
-uniform sampler2D Texture;
-
-out vec4 outColor;
-
-void main()
-{
-	outColor = texture(Texture, TexCoord) * vec4(FragmentColor, 1.0);
-	float NdotLD = max(dot(Light.Direction, normalize(Normal)), 0.0); // ламберт
-	float NdotLD2 = max(dot(Light.Direction, normalize(-Normal)), 0.0); // ламберт
-
-	
-	outColor.rgb *= Light.Ambient + Light.Diffuse * max(NdotLD, NdotLD2);
-	//float attenuation = saturate(1.0 - DistanceToLight / LightRadius);
-	//frag_Color.rgb *= Light.Ambient + Light.Diffuse * NdotLD * attenuation;
-}
-)";
-ShaderProgram SectorShader;
-Uniform SectorUniformProj;
-Uniform SectorUniformView;
-Uniform SectorUniformLightAmbient;
-Uniform SectorUniformLightDiffuse;
-Uniform SectorUniformLightDirection;
-
 std::vector<Sector> Sectors(3);
 
 std::vector<Texture2D> textures(6);
 
 void CreateWorldRender()
 {
-	SectorShader = render::CreateShaderProgram(vertexShaderText, fragmentShaderText);
-	SectorUniformProj = render::GetUniform(SectorShader, "projectionMatrix");
-	SectorUniformView = render::GetUniform(SectorShader, "viewMatrix");
-	SectorUniformLightAmbient = render::GetUniform(SectorShader, "Light.Ambient");
-	SectorUniformLightDiffuse = render::GetUniform(SectorShader, "Light.Diffuse");
-	SectorUniformLightDirection = render::GetUniform(SectorShader, "Light.Direction");
-
 	textures[0] = render::CreateTexture2D("../data/textures/t00.png");
 	textures[1] = render::CreateTexture2D("../data/textures/t01.png");
 	textures[2] = render::CreateTexture2D("../data/textures/t02.png");
@@ -149,13 +82,13 @@ void DrawWorldRender(const scene::Camera& cam)
 	glm::vec3 LightDirection = -glm::normalize(cam.viewPoint - cam.position);
 		//glm::vec3(0.0f, 0.5f, -1.0f);
 
-	render::Bind(SectorShader);
-	render::SetUniform(SectorUniformProj, mat);
-	render::SetUniform(SectorUniformView, scene::GetCameraViewMatrix(cam));
+	render::Bind(SectorRenderShader);
+	render::SetUniform(SectorRenderUniformProj, mat);
+	render::SetUniform(SectorRenderUniformView, scene::GetCameraViewMatrix(cam));
 
-	render::SetUniform(SectorUniformLightAmbient, 0.333333f);
-	render::SetUniform(SectorUniformLightDiffuse, 0.666666f);
-	render::SetUniform(SectorUniformLightDirection, LightDirection);
+	render::SetUniform(SectorRenderUniformLightAmbient, 0.333333f);
+	render::SetUniform(SectorRenderUniformLightDiffuse, 0.666666f);
+	render::SetUniform(SectorRenderUniformLightDirection, LightDirection);
 
 	DrawSectors(0, Sectors, textures);
 	DrawSectors(1, Sectors, textures);

@@ -2,11 +2,10 @@
 #include "Engine.h"
 #include "GameApp.h"
 #include "ShaderCode.h"
+#include "TextureCache.h"
 #include "GameStateManager.h"
 #include "GameStateTest.h"
 #include "GameStateEditor.h"
-
-
 #include "trace.h"
 
 //https://www.youtube.com/watch?v=MDusDn8oTSE
@@ -18,19 +17,9 @@
 //графику для шутера взять отсюда - https://tommulgrew.itch.io/trial-of-the-sorcerer
 //https ://apapappa.itch.io/yaw
 //https://itey.itch.io/royal-goblin-hunt
-
-
-//https://www.youtube.com/watch?v=fSjc8vLMg8c
-//
-//сектор
-//<portal ? > -где переход в другой сектор
-//
 //https ://github.com/victorfisac/Physac
-//
 //https://shrines.rpgclassics.com/fds/deepdungeon/info.shtml
-//
 //https://www.youtube.com/@LeoOno/videos
-//
 //https://www.youtube.com/channel/UCjdHbo8_vh3rxQ-875XGkvw/community?lb=UgkxAhhnkGgELDWMs41ygSHgOm2tWV5nTrty
 
 GameStateManager gGameStateManager;
@@ -81,6 +70,7 @@ int main()
 	if( app::Create({ .window = {.width = 1600, .height = 900} }) )
 	{
 		CreateDefaultShader();
+		CreateDefaultTextures();
 
 		gGameStateManager.AddState(&gGameStateTest);
 		gGameStateManager.AddState(&gGameStateEditor);
@@ -95,6 +85,7 @@ int main()
 		}
 #endif
 
+		DestroyDefaultTextures();
 		DestroyDefaultShader();
 
 		gGameStateManager.Destroy();

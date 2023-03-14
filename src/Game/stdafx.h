@@ -65,6 +65,11 @@ Left handed
 
 #include <tiny_obj_loader.h>
 
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif

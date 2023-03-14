@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Sector.h"
+#include "ShaderCode.h"
 //-----------------------------------------------------------------------------
 struct WorldVertex
 {
@@ -11,18 +12,16 @@ struct WorldVertex
 //-----------------------------------------------------------------------------
 void CompleteSector(Sector& sector)
 {
-	extern ShaderProgram SectorShader;
-
 	// TODO: вместо 1 ставить реальные размеры
 
 	sector.wallVB = render::CreateVertexBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr);
-	sector.wallVao = render::CreateVertexArray(&sector.wallVB, nullptr, SectorShader);
+	sector.wallVao = render::CreateVertexArray(&sector.wallVB, nullptr, SectorRenderShader);
 
 	sector.ceillingVB = render::CreateVertexBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr);
-	sector.ceillingVao = render::CreateVertexArray(&sector.ceillingVB, nullptr, SectorShader);
+	sector.ceillingVao = render::CreateVertexArray(&sector.ceillingVB, nullptr, SectorRenderShader);
 
 	sector.floorVB = render::CreateVertexBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr);
-	sector.floorVao = render::CreateVertexArray(&sector.floorVB, nullptr, SectorShader);
+	sector.floorVao = render::CreateVertexArray(&sector.floorVB, nullptr, SectorRenderShader);
 
 	sector.min = glm::min(sector.walls[0].p1, sector.walls[0].p2);
 	sector.max = glm::max(sector.walls[0].p1, sector.walls[0].p2);
