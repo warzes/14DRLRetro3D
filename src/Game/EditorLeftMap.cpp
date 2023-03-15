@@ -26,8 +26,8 @@ bool EditorLeftMap::Create()
 	if (!scene::IsValid(m_geomPoint))
 		return false;
 
-	constexpr VertexPos3 vert2[] = { {glm::vec3(1.0f)}, {glm::vec3(1.0f)} };
-	m_geomWall = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vert2), sizeof(VertexPos3), vert2, Simple2DLineDrawShader);
+	constexpr float vertData[] = { 0.0f, 1.0f };
+	m_geomWall = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vertData), sizeof(float), vertData, Simple2DLineDrawShader);
 	if (!scene::IsValid(m_geomWall))
 		return false;
 
@@ -46,21 +46,20 @@ void EditorLeftMap::Draw(const EditorLeftViewport& viewport) const
 	render::SetUniform(SimpleColorDrawProj, viewport.GetOrthoProjection());
 	render::SetUniform(SimpleColorDrawView, viewport.GetView());
 	render::SetUniform(SimpleColorDrawColor, glm::vec3(1.0f, 0.9f, 0.1f));
-
-	// первая точка
-	if (TempEditorCurrentWall.p1.pos.x < gridSize && TempEditorCurrentWall.p1.pos.y < gridSize
-		&& TempEditorCurrentWall.p2.pos.x >= gridSize && TempEditorCurrentWall.p2.pos.y >= gridSize)
-		drawPoint(TempEditorCurrentWall.p1.pos);
-
-	for (const auto& it : TempEditorWalls)
+	for( auto& it : TempEditorVertices )
 	{
-		// p1
-		if (it.p1.pos.x < gridSize && it.p1.pos.y < gridSize)
-			drawPoint(it.p1.pos);
+		if ( it.IsValid()) drawPoint(it.pos);
+	}
 
-		// p2
-		if (it.p2.pos.x < gridSize && it.p2.pos.y < gridSize)
-			drawPoint(it.p2.pos);
+	render::Bind(Simple2DLineDrawShader);
+	render::SetUniform(Simple2DLineDrawViewProj, viewport.GetOrthoProjection() * viewport.GetView());
+	render::SetUniform(Simple2DLineDrawColor, glm::vec3(1.0f, 0.9f, 0.1f));
+	for( size_t i = 0; i < TempEditorVertices.size(); i++ )
+	{
+		if( i + 1 < TempEditorVertices.size() )
+		{
+			drawLine(TempEditorVertices[i].pos, TempEditorVertices[i+1].pos);
+		}
 	}
 }
 //-----------------------------------------------------------------------------
@@ -70,5 +69,11 @@ void EditorLeftMap::drawPoint(const glm::vec2& pos) const
 	world = glm::scale(world, glm::vec3(1.2f));
 	render::SetUniform(SimpleColorDrawWorld, world);
 	render::Draw(m_geomPoint.vao, render::PrimitiveDraw::Triangles);
+}
+//-----------------------------------------------------------------------------
+void EditorLeftMap::drawLine(const glm::vec2& pos1, const glm::vec2& pos2) const
+{
+	render::SetUniform(Simple2DLineDrawPos, glm::vec4(pos1, pos2));
+	render::Draw(m_geomWall.vao, render::PrimitiveDraw::Lines);
 }
 //-----------------------------------------------------------------------------

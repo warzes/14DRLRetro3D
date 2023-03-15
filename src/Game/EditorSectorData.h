@@ -1,8 +1,15 @@
 #pragma once
 
+#include "EditorConstant.h"
+
 struct SectorEditorVertex
 {
-	glm::vec2 pos;
+	glm::vec2 pos = glm::vec2(gridSize);
+
+	bool IsValid() const
+	{
+		return pos.x < gridSize && pos.y < gridSize;
+	}
 };
 
 struct SectorEditorWall
@@ -15,9 +22,4 @@ struct SectorEditorWall
 // идея в том что изменения производить если были изменения в редакторе
 extern bool EditorDataChange;
 
-// редактор работает так:
-//	раставляются вершины путем клика мышкой
-//	когда будет щелчок по первой секте, тогда создастся сектор
-extern SectorEditorWall TempEditorCurrentWall;
-extern std::list<SectorEditorWall> TempEditorWalls;
-extern unsigned TempEditorVertexNum;
+extern std::vector<SectorEditorVertex> TempEditorVertices;

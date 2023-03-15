@@ -30,9 +30,7 @@ Uniform UniformGridCellWorld;
 Uniform UniformGridCellColor;
 
 ShaderProgram Simple2DLineDrawShader;
-Uniform Simple2DLineDrawProj;
-Uniform Simple2DLineDrawView;
-Uniform Simple2DLineDrawWorld;
+Uniform Simple2DLineDrawViewProj;
 Uniform Simple2DLineDrawColor;
 Uniform Simple2DLineDrawPos;
 
@@ -67,9 +65,7 @@ bool CreateDefaultShader()
 	UniformGridCellColor = render::GetUniform(GridCellShader, "uColor");
 
 	Simple2DLineDrawShader = render::CreateShaderProgram(vertexShaderSimple2DLineDraw, fragmentShaderSimple2DLineDraw);
-	Simple2DLineDrawProj = render::GetUniform(Simple2DLineDrawShader, "uProjection");
-	Simple2DLineDrawView = render::GetUniform(Simple2DLineDrawShader, "uView");
-	Simple2DLineDrawWorld = render::GetUniform(Simple2DLineDrawShader, "uWorld");
+	Simple2DLineDrawViewProj = render::GetUniform(Simple2DLineDrawShader, "uVP");
 	Simple2DLineDrawColor = render::GetUniform(Simple2DLineDrawShader, "uColor");
 	Simple2DLineDrawPos = render::GetUniform(Simple2DLineDrawShader, "uPos");
 

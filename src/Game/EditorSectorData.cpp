@@ -3,7 +3,5 @@
 #include "EditorConstant.h"
 //-----------------------------------------------------------------------------
 bool EditorDataChange = true;
-SectorEditorWall TempEditorCurrentWall = {glm::vec2(gridSize)};
-std::list<SectorEditorWall> TempEditorWalls;
-unsigned TempEditorVertexNum = 0;
+std::vector<SectorEditorVertex> TempEditorVertices;
 //-----------------------------------------------------------------------------

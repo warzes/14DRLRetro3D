@@ -241,19 +241,14 @@ extern Uniform SimpleColorDrawColor;
 constexpr const char* vertexShaderSimple2DLineDraw = R"(
 #version 330 core
 
-layout(location = 0) in vec3 vertexPosition;
+layout(location = 0) in float vertexId;
 
-uniform mat4 uWorld;
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 uVP;
 uniform vec4 uPos;
 
 void main()
 {
-	if (gl_VertexID % 2 != 0) 
-		gl_Position = uProjection * uView * uWorld * vec4(uPos.xy, 1.0, 1.0) * vec4(vertexPosition, 1.0);
-	else 
-		gl_Position = uProjection * uView * uWorld * vec4(uPos.zw, 1.0, 1.0) * vec4(vertexPosition, 1.0);
+	gl_Position = uVP * vec4(((vertexId < 1.0) ? uPos.xy : uPos.zw), 0.0, 1.0);
 }
 )";
 constexpr const char* fragmentShaderSimple2DLineDraw = R"(
@@ -270,9 +265,7 @@ void main()
 )";
 
 extern ShaderProgram Simple2DLineDrawShader;
-extern Uniform Simple2DLineDrawProj;
-extern Uniform Simple2DLineDrawView;
-extern Uniform Simple2DLineDrawWorld;
+extern Uniform Simple2DLineDrawViewProj;
 extern Uniform Simple2DLineDrawColor;
 extern Uniform Simple2DLineDrawPos;
 

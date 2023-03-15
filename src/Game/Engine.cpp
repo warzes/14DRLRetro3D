@@ -416,6 +416,8 @@ VertexArray render::CreateVertexArray(VertexBuffer* vbo, IndexBuffer* ibo, const
 	std::vector<VertexAttribute> attribs(attribInfo.size());
 	for( size_t i = 0; i < attribInfo.size(); i++ )
 	{
+		// TODO: gl_VertexID считается атрибутом, но при этом почему-то location у него равен -1
+		// в будущем пофиксить, а пока не юзать
 		assert(attribInfo[i].location>-1);
 		attribs[i].location = (unsigned)attribInfo[i].location; // TODO: attribInfo[i].location может быть -1, тогда как в attribs[i].location unsigned. нужно исправить
 		attribs[i].normalized = false;
@@ -974,8 +976,8 @@ bool scene::IsValid(const GeometryBuffer& buffer)
 	const bool validVB = IsValid(buffer.vb);
 	const bool validIB = (buffer.ib.count > 0 && buffer.ib.size > 0) ? IsValid(buffer.ib) : true;
 	const bool validVAO = IsValid(buffer.vao);
-	const bool vbEqual = buffer.vb == *buffer.vao.vbo;
-	const bool ibEqual = buffer.ib == *buffer.vao.ibo;
+	const bool vbEqual = (!buffer.vao.vbo) || buffer.vb == *buffer.vao.vbo;
+	const bool ibEqual = (!buffer.vao.ibo) || buffer.ib == *buffer.vao.ibo;
 
 	return validVB && validIB && validVAO && vbEqual && ibEqual;
 }

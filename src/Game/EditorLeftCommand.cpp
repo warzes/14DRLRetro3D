@@ -14,21 +14,11 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 	{
 		glm::vec2 posInMap = cursor.GetPosToMap();
 
-		TempEditorVertexNum++;
 
-		if (TempEditorVertexNum % 2 != 0) // первая точка стены
-		{
-			TempEditorCurrentWall.p1.pos = posInMap;
-			TempEditorCurrentWall.p2.pos = glm::vec2(gridSize); // TODO: нужно присваивать бесконечность
-		}
-		else // конец стены
-		{
-			TempEditorCurrentWall.p2.pos = posInMap;
-			TempEditorWalls.push_back(TempEditorCurrentWall);
 
-			TempEditorCurrentWall.p1.pos = TempEditorCurrentWall.p2.pos = glm::vec2(gridSize);
-		}
 
+
+		TempEditorVertices.push_back({ posInMap });
 		EditorDataChange = true;
 	}
 }

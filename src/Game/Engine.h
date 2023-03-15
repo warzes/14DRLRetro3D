@@ -152,7 +152,6 @@ namespace render
 	bool operator==(const VertexArray& Left, const VertexArray& Right) noexcept;
 	bool operator==(const Texture2D& Left, const Texture2D& Right) noexcept;
 
-
 	inline bool IsValid(const ShaderProgram& resource) { return resource.id > 0; }
 	inline bool IsValid(const Uniform& uniform) { return uniform.location >= 0; }
 	inline bool IsValid(const VertexBuffer& resource) { return resource.id > 0; }
