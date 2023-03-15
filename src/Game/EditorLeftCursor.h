@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Engine.h"
-#include "EditorLeftGrid.h"
+
+class EditorLeftViewport;
 
 class EditorLeftCursor
 {
@@ -9,10 +10,13 @@ public:
 	bool Create();
 	void Destroy();
 
-	void Update(const glm::vec2& cam, const EditorLeftGrid& grid);
-	void Draw(const glm::vec2& cam);
+	void Update(const EditorLeftViewport& viewport);
+	void Draw(const EditorLeftViewport& viewport);
 
 private:
 	GeometryBuffer m_geom;
-	glm::vec2 m_pos;
+	glm::vec2 m_posToMap;
+	glm::vec2 m_posToScreen;
+
+
 };

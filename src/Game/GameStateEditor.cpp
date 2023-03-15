@@ -29,16 +29,15 @@ void GameStateEditor::OnActive()
 //-----------------------------------------------------------------------------
 void GameStateEditor::OnUpdate(float deltaTime)
 {
+	// переключение между левой и правой панелями редактора
 	const ImGuiIO& io = ImGui::GetIO();
-
 	if( !io.WantCaptureMouse )
 	{
 		const glm::vec2 realMousePos = app::GetMousePosition();
-		const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
 
 		if( app::IsMouseButtonDown(0) )
 		{
-			if( realMousePos.x <= halfScreenWidth && !m_rightPanel.IsActive() )
+			if( realMousePos.x <= m_leftPanel.GetLeftViewportInfo().GetWidth() && !m_rightPanel.IsActive() )
 			{
 				m_leftPanel.SetActive(true);
 				m_rightPanel.SetActive(false);

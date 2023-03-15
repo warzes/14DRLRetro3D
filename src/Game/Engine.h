@@ -145,6 +145,14 @@ namespace render
 	struct VertexArray { unsigned id = 0; VertexBuffer *vbo = nullptr; IndexBuffer *ibo = nullptr; unsigned attribsCount = 0; };
 	struct Texture2D { unsigned id = 0; unsigned width = 0; unsigned height = 0; TexelsFormat format = TexelsFormat::RGBA_U8; };
 
+	bool operator==(const ShaderProgram& Left, const ShaderProgram& Right) noexcept;
+	bool operator==(const Uniform& Left, const Uniform& Right) noexcept;
+	bool operator==(const VertexBuffer& Left, const VertexBuffer& Right) noexcept;
+	bool operator==(const IndexBuffer& Left, const IndexBuffer& Right) noexcept;
+	bool operator==(const VertexArray& Left, const VertexArray& Right) noexcept;
+	bool operator==(const Texture2D& Left, const Texture2D& Right) noexcept;
+
+
 	inline bool IsValid(const ShaderProgram& resource) { return resource.id > 0; }
 	inline bool IsValid(const Uniform& uniform) { return uniform.location >= 0; }
 	inline bool IsValid(const VertexBuffer& resource) { return resource.id > 0; }
@@ -190,7 +198,6 @@ namespace render
 	void Bind(const Texture2D& resource, unsigned slot = 0);
 
 	void Draw(const VertexArray& vao, PrimitiveDraw primitive = PrimitiveDraw::Triangles);
-
 } // namespace render
 
 using render::ShaderProgram;
@@ -239,6 +246,8 @@ namespace scene
 	);
 	GeometryBuffer CreateGeometryBuffer(render::ResourceUsage usage, unsigned vertexCount, unsigned vertexSize, const void* vertexData, const ShaderProgram& shaders);
 	void Destroy(GeometryBuffer& buffer);
+
+	bool IsValid(const GeometryBuffer& buffer);
 
 
 	class Material

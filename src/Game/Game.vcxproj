@@ -399,10 +399,10 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
-    <ClCompile Include="EditorLeftCamera.cpp" />
     <ClCompile Include="EditorLeftCursor.cpp" />
     <ClCompile Include="EditorLeftGrid.cpp" />
     <ClCompile Include="EditorLeftPanel.cpp" />
+    <ClCompile Include="EditorLeftViewport.cpp" />
     <ClCompile Include="EditorRightPanel.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -525,10 +525,10 @@
     <ClInclude Include="defs.h" />
     <ClInclude Include="dirty.h" />
     <ClInclude Include="EditorConstant.h" />
-    <ClInclude Include="EditorLeftCamera.h" />
     <ClInclude Include="EditorLeftCursor.h" />
     <ClInclude Include="EditorLeftGrid.h" />
     <ClInclude Include="EditorLeftPanel.h" />
+    <ClInclude Include="EditorLeftViewport.h" />
     <ClInclude Include="EditorRightPanel.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="floatn.h" />

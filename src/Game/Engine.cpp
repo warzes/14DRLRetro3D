@@ -273,6 +273,44 @@ unsigned createShader(GLenum openGLshaderType, const std::string& source)
 
 	return shaderId;
 }
+// если какая-то структура была изменена, надо не забыть внести изменения в operator==
+static_assert(sizeof(ShaderProgram) == 4, "ShaderProgram changed!!!");
+static_assert(sizeof(Uniform) == 8, "Uniform changed!!!");
+static_assert(sizeof(VertexBuffer) == 16, "VertexBuffer changed!!!");
+static_assert(sizeof(IndexBuffer) == 16, "IndexBuffer changed!!!");
+static_assert(sizeof(VertexArray) == 32, "VertexArray changed!!!");
+static_assert(sizeof(Texture2D) == 16, "Texture2D changed!!!");
+//-----------------------------------------------------------------------------
+bool render::operator==(const ShaderProgram& Left, const ShaderProgram& Right) noexcept
+{
+	return Left.id == Right.id;
+}
+//-----------------------------------------------------------------------------
+bool render::operator==(const Uniform& Left, const Uniform& Right) noexcept
+{
+	return Left.location == Right.location && Left.programId == Right.programId;
+}
+//-----------------------------------------------------------------------------
+bool render::operator==(const VertexBuffer& Left, const VertexBuffer& Right) noexcept
+{
+
+	return Left.count == Right.count && Left.id == Right.id && Left.size == Right.size && Left.usage == Right.usage;
+}
+//-----------------------------------------------------------------------------
+bool render::operator==(const IndexBuffer& Left, const IndexBuffer& Right) noexcept
+{
+	return Left.count == Right.count && Left.id == Right.id && Left.size == Right.size && Left.usage == Right.usage;
+}
+//-----------------------------------------------------------------------------
+bool render::operator==(const VertexArray& Left, const VertexArray& Right) noexcept
+{
+	return Left.attribsCount == Right.attribsCount && Left.ibo == Right.ibo && Left.id == Right.id && Left.vbo == Right.vbo;
+}
+//-----------------------------------------------------------------------------
+bool render::operator==(const Texture2D& Left, const Texture2D& Right) noexcept
+{
+	return Left.format == Right.format && Left.height == Right.height && Left.id == Right.id && Left.width == Right.width;
+}
 //-----------------------------------------------------------------------------
 bool render::IsReadyUniform(const Uniform& uniform)
 {
@@ -718,6 +756,7 @@ void render::ResetState(ResourceType type, unsigned slot)
 //-----------------------------------------------------------------------------
 void render::Bind(const ShaderProgram& resource)
 {
+	assert(IsValid(resource));
 	if( CurrentShaderProgram == resource.id ) return;
 	CurrentShaderProgram = resource.id;
 	glUseProgram(resource.id);
@@ -725,6 +764,7 @@ void render::Bind(const ShaderProgram& resource)
 //-----------------------------------------------------------------------------
 void render::Bind(const VertexBuffer& resource)
 {
+	assert(IsValid(resource));
 	if( CurrentVBO == resource.id ) return;
 	CurrentVBO = resource.id;
 	glBindBuffer(GL_ARRAY_BUFFER, resource.id);
@@ -732,6 +772,7 @@ void render::Bind(const VertexBuffer& resource)
 //-----------------------------------------------------------------------------
 void render::Bind(const IndexBuffer& resource)
 {
+	assert(IsValid(resource));
 	if( CurrentIBO == resource.id ) return;
 	CurrentIBO = resource.id;
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.id);
@@ -752,6 +793,7 @@ void render::Bind(const VertexAttribute& attribute)
 //-----------------------------------------------------------------------------
 void render::Bind(const Texture2D& resource, unsigned slot)
 {
+	assert(IsValid(resource));
 	if( CurrentTexture2D[slot] == resource.id ) return;
 	CurrentTexture2D[slot] = resource.id;
 	glActiveTexture(GL_TEXTURE0 + slot);
@@ -920,11 +962,22 @@ GeometryBuffer scene::CreateGeometryBuffer(render::ResourceUsage usage, unsigned
 	return CreateGeometryBuffer(usage, vertexCount, vertexSize, vertexData, 0, 0, nullptr, shaders);
 }
 //-----------------------------------------------------------------------------
-void  scene::Destroy(GeometryBuffer& buffer)
+void scene::Destroy(GeometryBuffer& buffer)
 {
 	render::DestroyResource(buffer.vb);
 	render::DestroyResource(buffer.ib);
 	render::DestroyResource(buffer.vao);
+}
+//-----------------------------------------------------------------------------
+bool scene::IsValid(const GeometryBuffer& buffer)
+{
+	const bool validVB = IsValid(buffer.vb);
+	const bool validIB = (buffer.ib.count > 0 && buffer.ib.size > 0) ? IsValid(buffer.ib) : true;
+	const bool validVAO = IsValid(buffer.vao);
+	const bool vbEqual = buffer.vb == *buffer.vao.vbo;
+	const bool ibEqual = buffer.ib == *buffer.vao.ibo;
+
+	return validVB && validIB && validVAO && vbEqual && ibEqual;
 }
 //-----------------------------------------------------------------------------
 Model createMeshBuffer(std::vector<Mesh>&& meshes)

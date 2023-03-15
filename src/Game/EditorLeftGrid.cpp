@@ -2,13 +2,11 @@
 #include "EditorLeftGrid.h"
 #include "ShaderCode.h"
 #include "EditorConstant.h"
+#include "EditorLeftViewport.h"
 //-----------------------------------------------------------------------------
 bool EditorLeftGrid::Create()
 {
-	/*m_geomBuff = scene::CreateGeometryBuffer(render::ResourceUsage::Dynamic, 1, sizeof(VertexPos3), nullptr, LineDrawShader);
-	m_tempVertexBiffer.resize(gridSize * 4);*/
-
-	// создается квад размером в зону карты - gridSize=1000
+	// создается квад размером в зону карты - gridSize
 	// в текстурных координатах ставится gridSize / gridStep чтобы создать эффект ячеек
 	constexpr VertexPos3Tex vert[] =
 	{
@@ -22,7 +20,11 @@ bool EditorLeftGrid::Create()
 		0, 1, 2,
 		2, 3, 0
 	};
-	m_geomBuff2 = scene::CreateGeometryBuffer(render::ResourceUsage::Static, 4, sizeof(VertexPos3Tex), vert, 6, sizeof(int), indexs, GridCellShader);
+	m_geomBuff = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(VertexPos3Tex), vert, Countof(indexs), sizeof(int), indexs, GridCellShader);
+	if( !scene::IsValid(m_geomBuff) )
+	{
+		return false;
+	}
 
 	render::Texture2DInfo info;
 	info.mipmap = false;
@@ -31,93 +33,79 @@ bool EditorLeftGrid::Create()
 	info.wrapS = render::TextureWrapping::Repeat;
 	info.wrapT = render::TextureWrapping::Repeat;
 
-	m_tex = render::CreateTexture2D("../data/textures/gridCell.png", true, info);
+	m_gridTexture = render::CreateTexture2D("../data/textures/gridCell.png", true, info);
+	if( !render::IsValid(m_gridTexture) )
+	{
+		return false;
+	}
 
 	return true;
 }
 //-----------------------------------------------------------------------------
 void EditorLeftGrid::Destroy()
 {
-	//scene::Destroy(m_geomBuff);
-	scene::Destroy(m_geomBuff2);
-	render::DestroyResource(m_tex);
+	scene::Destroy(m_geomBuff);
+	render::DestroyResource(m_gridTexture);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftGrid::Update(const glm::vec2& cam)
+void EditorLeftGrid::Update(const EditorLeftViewport& viewport)
 {
-	glm::ivec2 pos;
-	glm::vec2 offset;
-	glm::vec2 sizeCell;
-	GetMouseInfo(cam, pos, offset, sizeCell);
-	glm::ivec2 offsetTest = glm::ivec2(0);
-	if( offset.x > 0.5f ) offsetTest.x = 1;
-	if( offset.y > 0.5f ) offsetTest.y = 1;
+	//glm::vec3 worldPos;
+	//glm::ivec2 posInMap;
+	//glm::vec2 sizeCell;
+	//glm::vec2 offset;
+	//viewport.GetCursorInfo(worldPos, posInMap, sizeCell, offset);
 
-	glm::vec2 realMousePos = app::GetMousePosition();
+	//glm::ivec2 pos;
+	//glm::vec2 offset;
+	//glm::vec2 sizeCell;
+	//GetMouseInfo(viewport, pos, offset, sizeCell);
+	//glm::ivec2 offsetTest = glm::ivec2(0);
+	//if( offset.x > 0.5f ) offsetTest.x = 1;
+	//if( offset.y > 0.5f ) offsetTest.y = 1;
 
-	if( app::IsMouseButtonPressed(0) )
-	{
-		std::string text = "Mouse pos=" + std::to_string(pos.x) + ":" + std::to_string(pos.y);
-		text += "- Offset=" + std::to_string(offset.x) + ":" + std::to_string(offset.y);
-		text += "- Real=" + std::to_string(realMousePos.x) + ":" + std::to_string(realMousePos.y);
-		LogPrint(text);
-	}
+	//glm::vec2 realMousePos = app::GetMousePosition();
 
-
-	//m_curNumVB = 0;
-	//for( size_t i = 0; i < gridSize; i += gridStep )
+	//if( app::IsMouseButtonPressed(0) )
 	//{
-	//	m_tempVertexBiffer[m_curNumVB++] = { glm::vec3(i, 0.0f, 0.0f) };
-	//	m_tempVertexBiffer[m_curNumVB++] = { glm::vec3(i, gridSize, 0.0f) };
-
-	//	m_tempVertexBiffer[m_curNumVB++] = { glm::vec3(0.0f, i, 0.0f) };
-	//	m_tempVertexBiffer[m_curNumVB++] = { glm::vec3(gridSize, i, 0.0f) };
+	//	std::string text = "Mouse pos=" + std::to_string(pos.x) + ":" + std::to_string(pos.y);
+	//	text += "- Offset=" + std::to_string(offset.x) + ":" + std::to_string(offset.y);
+	//	text += "- Real=" + std::to_string(realMousePos.x) + ":" + std::to_string(realMousePos.y);
+	//	LogPrint(text);
 	//}
-	//render::UpdateVertexBuffer(m_geomBuff.vb, 0, m_curNumVB, sizeof(VertexPos3), m_tempVertexBiffer.data());
 }
 //-----------------------------------------------------------------------------
-void EditorLeftGrid::Draw(const glm::vec2& cam)
+void EditorLeftGrid::Draw(const EditorLeftViewport& viewport)
 {
-	glm::mat4 proj = glm::ortho(0.0f, (float)viewSize, (float)viewSize, 0.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::lookAt(glm::vec3(cam.x, cam.y, -0.5f), glm::vec3(cam.x, cam.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	//render::Bind(LineDrawShader);
-	//render::SetUniform(UniformLineDrawProj, proj);
-	//render::SetUniform(UniformLineDrawView, view);
-
-	//render::SetUniform(UniformLineDrawWorld, glm::mat4(1.0f));
-	//render::SetUniform(UniformLineDrawColor, glm::vec3(0.7f, 1.0f, 0.3f));
-
-	//render::Draw(m_geomBuff.vao, render::PrimitiveDraw::Lines);
-
-	render::Bind(m_tex);
+	render::Bind(m_gridTexture);
 	render::Bind(GridCellShader);
-	render::SetUniform(UniformGridCellProj, proj);
-	render::SetUniform(UniformGridCellView, view);
+	render::SetUniform(UniformGridCellProj, viewport.GetOrthoProjection());
+	render::SetUniform(UniformGridCellView, viewport.GetView());
 	render::SetUniform(UniformGridCellWorld, glm::mat4(1.0f));
 	render::SetUniform(UniformGridCellColor, glm::vec3(0.7f, 1.0f, 0.3f));
 
-	render::Draw(m_geomBuff2.vao, render::PrimitiveDraw::Triangles);
+	assert(scene::IsValid(m_geomBuff));
+	render::Draw(m_geomBuff.vao, render::PrimitiveDraw::Triangles);
 }
-//-----------------------------------------------------------------------------
-void EditorLeftGrid::GetMouseInfo(const glm::vec2& cam, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell) const
-{
-	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
-	const float sizeScaleX = halfScreenWidth / viewSize;
-	const float sizeScaleY = app::GetWindowHeight() / viewSize;
-
-	sizeCell.x = sizeScaleX * gridStep;
-	sizeCell.y = sizeScaleY * gridStep;
-
-	glm::vec2 realMousePos = app::GetMousePosition();
-
-	const float posX = realMousePos.x / sizeCell.x + cam.x / gridStep;
-	const float posY = realMousePos.y / sizeCell.y + cam.y / gridStep;
-
-	posInMap.x = static_cast<int>(posX);
-	posInMap.y = static_cast<int>(posY);
-
-	offset.x = posX - (float)posInMap.x;
-	offset.y = posY - (float)posInMap.y;
-}
+////-----------------------------------------------------------------------------
+//void EditorLeftGrid::GetMouseInfo(const EditorLeftViewport& viewport, glm::ivec2& outPosInMap, glm::vec2& outOffset, glm::vec2& outSizeCell) const
+//{
+//	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
+//	const float sizeScaleX = halfScreenWidth / viewSize;
+//	const float sizeScaleY = app::GetWindowHeight() / viewSize;
+//
+//	outSizeCell.x = sizeScaleX * gridStep;
+//	outSizeCell.y = sizeScaleY * gridStep;
+//
+//	const glm::vec2 realMousePos = app::GetMousePosition();
+//
+//	const float posX = realMousePos.x / outSizeCell.x + viewport.GetCameraPosition().x / gridStep;
+//	const float posY = realMousePos.y / outSizeCell.y + viewport.GetCameraPosition().y / gridStep;
+//
+//	outPosInMap.x = static_cast<int>(posX);
+//	outPosInMap.y = static_cast<int>(posY);
+//
+//	outOffset.x = posX - (float)outPosInMap.x;
+//	outOffset.y = posY - (float)outPosInMap.y;
+//}
 //-----------------------------------------------------------------------------

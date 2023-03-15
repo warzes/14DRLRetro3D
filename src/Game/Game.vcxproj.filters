@@ -83,9 +83,6 @@
     <ClCompile Include="EditorLeftPanel.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
-    <ClCompile Include="EditorRightPanel.cpp">
-      <Filter>Editor</Filter>
-    </ClCompile>
     <ClCompile Include="TextureCache.cpp">
       <Filter>GameResources</Filter>
     </ClCompile>
@@ -116,11 +113,14 @@
     <ClCompile Include="EditorLeftGrid.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftCamera.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="EditorLeftCursor.cpp">
       <Filter>Editor\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftViewport.cpp">
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorRightPanel.cpp">
+      <Filter>Editor\old</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +171,9 @@
     </Filter>
     <Filter Include="Editor\impl">
       <UniqueIdentifier>{4bab9790-6f01-4adb-a87e-e1cb36a971d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\old">
+      <UniqueIdentifier>{a724b42c-2b8c-4437-bb1e-7ad33248e874}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -282,9 +285,6 @@
     <ClInclude Include="EditorLeftPanel.h">
       <Filter>Editor</Filter>
     </ClInclude>
-    <ClInclude Include="EditorRightPanel.h">
-      <Filter>Editor</Filter>
-    </ClInclude>
     <ClInclude Include="TextureCache.h">
       <Filter>GameResources</Filter>
     </ClInclude>
@@ -318,11 +318,14 @@
     <ClInclude Include="VertexFormat.h">
       <Filter>GameResources</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftCamera.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="EditorLeftCursor.h">
       <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftViewport.h">
+      <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorRightPanel.h">
+      <Filter>Editor\old</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <iostream> // TODO: удалить
 
 #if defined(_WIN32)
 #	include <glad/gl.h>

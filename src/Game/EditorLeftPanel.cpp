@@ -99,9 +99,14 @@ void EditorLeftPanel::Update(float deltaTime)
 {
 	if (!m_isActive) return;
 
-	m_leftCamera.Update(deltaTime);
-	m_cursor.Update(m_leftCamera.cam, m_grid);
-	m_grid.Update(m_leftCamera.cam);
+	m_leftViewport.Update(deltaTime);
+	m_grid.Update(m_leftViewport);
+	m_cursor.Update(m_leftViewport);
+
+
+
+
+
 
 	glm::vec2 realMousePos = app::GetMousePosition();
 	glm::ivec2 pos;
@@ -129,14 +134,10 @@ void EditorLeftPanel::Draw(float deltaTime)
 {
 	(void)deltaTime;
 
-	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
-
 	glDisable(GL_DEPTH_TEST);
-	glViewport(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
-	glScissor(0, 0, (GLsizei)halfScreenWidth, app::GetWindowHeight());
-
-	m_grid.Draw(m_leftCamera.cam);
-	m_cursor.Draw(m_leftCamera.cam);
+	m_leftViewport.SetOpenGLViewport();
+	m_grid.Draw(m_leftViewport);
+	m_cursor.Draw(m_leftViewport);
 	return;
 
 
@@ -153,7 +154,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 
 		glm::mat4 proj = glm::ortho(0.0f, (float)viewSize, (float)viewSize, 0.0f, -1.0f, 1.0f);
 
-		glm::mat4 view = glm::lookAt(glm::vec3(m_leftCamera.cam.x, m_leftCamera.cam.y, -0.5f), glm::vec3(m_leftCamera.cam.x, m_leftCamera.cam.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 view = glm::lookAt(glm::vec3(m_leftViewport.GetCameraPosition().x, m_leftViewport.GetCameraPosition().y, -0.5f), glm::vec3(m_leftViewport.GetCameraPosition().x, m_leftViewport.GetCameraPosition().y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		
 
@@ -266,8 +267,8 @@ void EditorLeftPanel::getMouseInfo(const glm::vec2& realPos, glm::ivec2& posInMa
 	sizeCell.x = halfScreenWidth / viewSize * gridStep;
 	sizeCell.y = (float)app::GetWindowHeight() / viewSize * gridStep;
 	
-	float posX = realPos.x / sizeCell.x + m_leftCamera.cam.x;
-	float posY = realPos.y / sizeCell.y + m_leftCamera.cam.y;
+	float posX = realPos.x / sizeCell.x + m_leftViewport.GetCameraPosition().x;
+	float posY = realPos.y / sizeCell.y + m_leftViewport.GetCameraPosition().y;
 
 	posInMap.x = static_cast<int>(posX);
 	posInMap.y = static_cast<int>(posY);
