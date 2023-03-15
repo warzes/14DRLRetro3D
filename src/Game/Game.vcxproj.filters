@@ -122,6 +122,15 @@
     <ClCompile Include="EditorRightPanel.cpp">
       <Filter>Editor\old</Filter>
     </ClCompile>
+    <ClCompile Include="EditorLeftCommand.cpp">
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorSectorData.cpp">
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftMap.cpp">
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -326,6 +335,15 @@
     </ClInclude>
     <ClInclude Include="EditorRightPanel.h">
       <Filter>Editor\old</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftCommand.h">
+      <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorSectorData.h">
+      <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftMap.h">
+      <Filter>Editor\impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

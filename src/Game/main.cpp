@@ -8,12 +8,14 @@
 #include "GameStateEditor.h"
 //#include "trace.h"
 
+
 //https://www.youtube.com/watch?v=MDusDn8oTSE
 //https://www.youtube.com/watch?v=v1riwEd0BDA
 //https://github.com/SirJonthe/retro3d
 //либу коллизий (на основе моего матана) в отдельном репо
 
 //идеи
+// отсюда текстуры, меч и щит - https://www.youtube.com/watch?v=veIiowrr-qk
 //графику для шутера взять отсюда - https://tommulgrew.itch.io/trial-of-the-sorcerer
 //https ://apapappa.itch.io/yaw
 //https://itey.itch.io/royal-goblin-hunt

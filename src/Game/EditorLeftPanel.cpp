@@ -33,7 +33,7 @@ bool EditorLeftPanel::Create()
 
 	m_vb = render::CreateVertexBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(VertexPos3), vert);
 	m_ib = render::CreateIndexBuffer(render::ResourceUsage::Static, Countof(indexs), sizeof(int), indexs);
-	m_vao = render::CreateVertexArray(&m_vb, &m_ib, LineDrawShader);
+	m_vao = render::CreateVertexArray(&m_vb, &m_ib, SimpleColorShader);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -78,11 +78,15 @@ bool EditorLeftPanel::Create()
 	if( !m_cursor.Create() )
 		return false;
 
+	if ( !m_map.Create() )
+		return false;
+
 	return true;
 }
 
 void EditorLeftPanel::Destroy()
 {
+	m_map.Destroy();
 	m_cursor.Destroy();
 	m_grid.Destroy();
 
@@ -100,12 +104,8 @@ void EditorLeftPanel::Update(float deltaTime)
 	if (!m_isActive) return;
 
 	m_leftViewport.Update(deltaTime);
-	m_grid.Update(m_leftViewport);
-	m_cursor.Update(m_leftViewport);
-
-
-
-
+	m_cursor.Update(m_leftViewport, m_grid);
+	m_commands.Update(m_cursor, m_map);
 
 
 	glm::vec2 realMousePos = app::GetMousePosition();
@@ -137,6 +137,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 	glDisable(GL_DEPTH_TEST);
 	m_leftViewport.SetOpenGLViewport();
 	m_grid.Draw(m_leftViewport);
+	m_map.Draw(m_leftViewport);
 	m_cursor.Draw(m_leftViewport);
 	return;
 
@@ -159,10 +160,10 @@ void EditorLeftPanel::Draw(float deltaTime)
 		
 
 
-		render::Bind(LineDrawShader);
-		render::SetUniform(UniformLineDrawProj, proj);
-		render::SetUniform(UniformLineDrawView, view);
-		render::SetUniform(UniformLineDrawColor, glm::vec3(0.1f, 0.2f, 0.3f));
+		render::Bind(SimpleColorShader);
+		render::SetUniform(SimpleColorDrawProj, proj);
+		render::SetUniform(SimpleColorDrawView, view);
+		render::SetUniform(SimpleColorDrawColor, glm::vec3(0.1f, 0.2f, 0.3f));
 
 		for (int x = 0; x <= gridSize; x += gridStep)
 		{
@@ -170,7 +171,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 			{
 				glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, 0.0f));
 				world = glm::scale(world, glm::vec3(gridLineSize, 1.0f, 1.0f));
-				render::SetUniform(UniformLineDrawWorld, world);
+				render::SetUniform(SimpleColorDrawWorld, world);
 				render::Draw(m_vao);
 			}
 
@@ -178,12 +179,12 @@ void EditorLeftPanel::Draw(float deltaTime)
 			{
 				glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, x, 0.0f));
 				world = glm::scale(world, glm::vec3(1.0f, gridLineSize, 1.0f));
-				render::SetUniform(UniformLineDrawWorld, world);
+				render::SetUniform(SimpleColorDrawWorld, world);
 				render::Draw(m_vao);
 			}
 		}
 
-		render::SetUniform(UniformLineDrawColor, glm::vec3(1.0f, 1.0f, 1.0f));
+		render::SetUniform(SimpleColorDrawColor, glm::vec3(1.0f, 1.0f, 1.0f));
 		for (size_t i = 0; i < testPoints.size(); i++)
 		{
 			glm::mat4 world = glm::translate(glm::mat4(1.0f),
@@ -192,15 +193,15 @@ void EditorLeftPanel::Draw(float deltaTime)
 					testPoints[i].realPos.y,
 					0.0f));
 			world = glm::scale(world, glm::vec3(gridLineSize));
-			render::SetUniform(UniformLineDrawWorld, world);
+			render::SetUniform(SimpleColorDrawWorld, world);
 			render::Draw(m_vao);
 		}
 
 		// draw cursor
-		render::SetUniform(UniformLineDrawColor, glm::vec3(1.0f, 1.0f, 0.3f));
+		render::SetUniform(SimpleColorDrawColor, glm::vec3(1.0f, 1.0f, 0.3f));
 		glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(Cursor.realPos.x, Cursor.realPos.y, 0.0f));
 		world = glm::scale(world, glm::vec3(gridLineSize*2));
-		render::SetUniform(UniformLineDrawWorld, world);
+		render::SetUniform(SimpleColorDrawWorld, world);
 		render::Draw(m_vao);
 
 

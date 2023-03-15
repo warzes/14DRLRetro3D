@@ -200,9 +200,9 @@ extern Uniform SectorRenderUniformLightDiffuse;
 extern Uniform SectorRenderUniformLightDirection;
 
 //=============================================================================
-// Line Draw shader
+// Simple Color shader
 //=============================================================================
-constexpr const char* vertexShaderLineDrawText = R"(
+constexpr const char* vertexShaderSimpleColor = R"(
 #version 330 core
 
 layout(location = 0) in vec3 vertexPosition;
@@ -216,7 +216,7 @@ void main()
 	gl_Position = uProjection * uView * uWorld * vec4(vertexPosition, 1.0);
 }
 )";
-constexpr const char* fragmentShaderLineDrawText = R"(
+constexpr const char* fragmentShaderSimpleColor = R"(
 #version 330 core
 
 uniform vec3 uColor;
@@ -229,11 +229,52 @@ void main()
 }
 )";
 
-extern ShaderProgram LineDrawShader;
-extern Uniform UniformLineDrawProj;
-extern Uniform UniformLineDrawView;
-extern Uniform UniformLineDrawWorld;
-extern Uniform UniformLineDrawColor;
+extern ShaderProgram SimpleColorShader;
+extern Uniform SimpleColorDrawProj;
+extern Uniform SimpleColorDrawView;
+extern Uniform SimpleColorDrawWorld;
+extern Uniform SimpleColorDrawColor;
+
+//=============================================================================
+// Simple 2d Line Draw shader
+//=============================================================================
+constexpr const char* vertexShaderSimple2DLineDraw = R"(
+#version 330 core
+
+layout(location = 0) in vec3 vertexPosition;
+
+uniform mat4 uWorld;
+uniform mat4 uView;
+uniform mat4 uProjection;
+uniform vec4 uPos;
+
+void main()
+{
+	if (gl_VertexID % 2 != 0) 
+		gl_Position = uProjection * uView * uWorld * vec4(uPos.xy, 1.0, 1.0) * vec4(vertexPosition, 1.0);
+	else 
+		gl_Position = uProjection * uView * uWorld * vec4(uPos.zw, 1.0, 1.0) * vec4(vertexPosition, 1.0);
+}
+)";
+constexpr const char* fragmentShaderSimple2DLineDraw = R"(
+#version 330 core
+
+uniform vec3 uColor;
+
+out vec4 outColor;
+
+void main()
+{
+	outColor = vec4(uColor, 1.0);
+}
+)";
+
+extern ShaderProgram Simple2DLineDrawShader;
+extern Uniform Simple2DLineDrawProj;
+extern Uniform Simple2DLineDrawView;
+extern Uniform Simple2DLineDrawWorld;
+extern Uniform Simple2DLineDrawColor;
+extern Uniform Simple2DLineDrawPos;
 
 //=============================================================================
 // Grid Cell shader

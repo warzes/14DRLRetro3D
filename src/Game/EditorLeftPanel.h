@@ -4,6 +4,8 @@
 #include "EditorLeftGrid.h"
 #include "EditorLeftCursor.h"
 #include "EditorLeftViewport.h"
+#include "EditorLeftCommand.h"
+#include "EditorLeftMap.h"
 
 class EditorLeftPanel
 {
@@ -22,8 +24,9 @@ private:
 
 	EditorLeftViewport m_leftViewport;
 	EditorLeftGrid m_grid;
-
 	EditorLeftCursor m_cursor;
+	EditorLeftCommand m_commands;
+	EditorLeftMap m_map;
 	VertexBuffer m_vb;
 	IndexBuffer m_ib;
 	VertexArray m_vao;

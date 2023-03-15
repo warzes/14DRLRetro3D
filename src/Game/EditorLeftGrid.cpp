@@ -48,33 +48,6 @@ void EditorLeftGrid::Destroy()
 	render::DestroyResource(m_gridTexture);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftGrid::Update(const EditorLeftViewport& viewport)
-{
-	//glm::vec3 worldPos;
-	//glm::ivec2 posInMap;
-	//glm::vec2 sizeCell;
-	//glm::vec2 offset;
-	//viewport.GetCursorInfo(worldPos, posInMap, sizeCell, offset);
-
-	//glm::ivec2 pos;
-	//glm::vec2 offset;
-	//glm::vec2 sizeCell;
-	//GetMouseInfo(viewport, pos, offset, sizeCell);
-	//glm::ivec2 offsetTest = glm::ivec2(0);
-	//if( offset.x > 0.5f ) offsetTest.x = 1;
-	//if( offset.y > 0.5f ) offsetTest.y = 1;
-
-	//glm::vec2 realMousePos = app::GetMousePosition();
-
-	//if( app::IsMouseButtonPressed(0) )
-	//{
-	//	std::string text = "Mouse pos=" + std::to_string(pos.x) + ":" + std::to_string(pos.y);
-	//	text += "- Offset=" + std::to_string(offset.x) + ":" + std::to_string(offset.y);
-	//	text += "- Real=" + std::to_string(realMousePos.x) + ":" + std::to_string(realMousePos.y);
-	//	LogPrint(text);
-	//}
-}
-//-----------------------------------------------------------------------------
 void EditorLeftGrid::Draw(const EditorLeftViewport& viewport)
 {
 	render::Bind(m_gridTexture);
@@ -87,25 +60,33 @@ void EditorLeftGrid::Draw(const EditorLeftViewport& viewport)
 	assert(scene::IsValid(m_geomBuff));
 	render::Draw(m_geomBuff.vao, render::PrimitiveDraw::Triangles);
 }
-////-----------------------------------------------------------------------------
-//void EditorLeftGrid::GetMouseInfo(const EditorLeftViewport& viewport, glm::ivec2& outPosInMap, glm::vec2& outOffset, glm::vec2& outSizeCell) const
-//{
-//	const float halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
-//	const float sizeScaleX = halfScreenWidth / viewSize;
-//	const float sizeScaleY = app::GetWindowHeight() / viewSize;
-//
-//	outSizeCell.x = sizeScaleX * gridStep;
-//	outSizeCell.y = sizeScaleY * gridStep;
-//
-//	const glm::vec2 realMousePos = app::GetMousePosition();
-//
-//	const float posX = realMousePos.x / outSizeCell.x + viewport.GetCameraPosition().x / gridStep;
-//	const float posY = realMousePos.y / outSizeCell.y + viewport.GetCameraPosition().y / gridStep;
-//
-//	outPosInMap.x = static_cast<int>(posX);
-//	outPosInMap.y = static_cast<int>(posY);
-//
-//	outOffset.x = posX - (float)outPosInMap.x;
-//	outOffset.y = posY - (float)outPosInMap.y;
-//}
+//-----------------------------------------------------------------------------
+void EditorLeftGrid::GetCursorToMap(const EditorLeftViewport& viewport, glm::vec2& outPosToMap, glm::vec2& outPosToScreen) const
+{
+	glm::vec2 realCursorPos = app::GetMousePosition();
+	realCursorPos.y = (viewport.GetHeight() - realCursorPos.y); // TODO: что-то с этим сделать
+
+	if (realCursorPos.x < viewport.GetWidth())
+	{
+		// TODO: перенести этот код в viewport или грид
+		outPosToMap = viewport.PosToWorldSpace({ realCursorPos.x, realCursorPos.y, 0.0f }, true);
+		const glm::ivec2 intPos = viewport.GetPosInMap({ realCursorPos.x, realCursorPos.y, 0.0f });
+		//std::cout << "pos=" << std::to_string(m_pos.x) << ":" << std::to_string(m_pos.y);
+		//std::cout << "    posMap=" << std::to_string(intPos.x) << ":" << std::to_string(intPos.y);
+
+		const float offsetX = outPosToMap.x / gridStep - intPos.x;
+		const float offsetY = outPosToMap.y / gridStep - intPos.y;
+
+		outPosToMap = intPos * gridStep;
+		if (offsetX > 0.3f && offsetX < 0.7f) outPosToMap.x += 0.5f * gridStep;
+		else if (offsetX > 0.6f) outPosToMap.x += 1.0f * gridStep;
+		if (offsetY > 0.3f && offsetY < 0.7f) outPosToMap.y += 0.5f * gridStep;
+		else if (offsetY > 0.6f) outPosToMap.y += 1.0f * gridStep;
+
+		outPosToScreen.x = outPosToMap.x - viewport.GetCameraPosition().x;
+		outPosToScreen.y = outPosToMap.y - viewport.GetCameraPosition().y;
+
+		//std::cout << "    npos=" << std::to_string(offsetX) << ":" << std::to_string(offsetY) << std::endl;
+	}
+}
 //-----------------------------------------------------------------------------

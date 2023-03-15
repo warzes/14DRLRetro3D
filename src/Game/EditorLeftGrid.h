@@ -11,10 +11,9 @@ public:
 	bool Create();
 	void Destroy();
 
-	void Update(const EditorLeftViewport& viewport);
 	void Draw(const EditorLeftViewport& viewport);
 
-	//void GetMouseInfo(const EditorLeftViewport& viewport, glm::ivec2& outPosInMap, glm::vec2& outOffset, glm::vec2& outSizeCell) const;
+	void GetCursorToMap(const EditorLeftViewport& viewport, glm::vec2& outPosToMap, glm::vec2& outPosToScreen) const;
 
 private:
 	GeometryBuffer m_geomBuff;
