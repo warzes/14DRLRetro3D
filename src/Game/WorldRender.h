@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Sector.h"
+#include "OldSector.h"
 #include "Engine.h"
 
 void CreateWorldRender();

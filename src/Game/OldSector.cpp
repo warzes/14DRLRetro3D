@@ -1,17 +1,10 @@
 #include "stdafx.h"
-#include "Sector.h"
+#include "OldSector.h"
 #include "ShaderCode.h"
 #include "TempFunc.h"
+#include "VertexFormat.h"
 //-----------------------------------------------------------------------------
-struct WorldVertex
-{
-	glm::vec3 pos;
-	glm::vec3 normal;
-	glm::vec3 color;
-	glm::vec2 texCoord;
-};
-//-----------------------------------------------------------------------------
-void CompleteSector(Sector& sector)
+void CompleteSector(OldSector& sector)
 {
 	// TODO: вместо 1 ставить реальные размеры
 
@@ -66,7 +59,7 @@ void CompleteSector(Sector& sector)
 	}
 }
 //-----------------------------------------------------------------------------
-std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
+std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale)
 {
 	FILE *fp = fopen(fileName, "r");
 	if( !fp ) 
@@ -79,7 +72,7 @@ std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
 	int numSect = 0; //number of sectors
 	int numWall = 0; //number of walls
 
-	std::vector<Sector> sectors;
+	std::vector<OldSector> sectors;
 
 	// number of sectors
 	fscanf(fp, "%i", &numSect);
@@ -120,7 +113,7 @@ std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
 	// load all walls
 	for( int w = 0; w < numWall; w++ )
 	{
-		Wall wall;
+		OldWall wall;
 
 		int x1, y1;             //bottom line point 1
 		fscanf(fp, "%i", &x1);
@@ -168,7 +161,7 @@ std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale)
 	return sectors;
 }
 //-----------------------------------------------------------------------------
-void DestroySector(Sector& sector)
+void DestroySector(OldSector& sector)
 {
 	render::DestroyResource(sector.wallVao);
 	render::DestroyResource(sector.wallVB);
@@ -180,12 +173,12 @@ void DestroySector(Sector& sector)
 	sector.walls.clear();
 }
 //-----------------------------------------------------------------------------
-void UpdateSector(Sector& sector)
+void UpdateSector(OldSector& sector)
 {
 	// TODO:
 }
 //-----------------------------------------------------------------------------
-void DrawSectors(unsigned currentId, std::vector<Sector>& sectors, const std::vector<Texture2D>& textures)
+void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std::vector<Texture2D>& textures)
 {
 	if (currentId >= sectors.size()) return;
 	auto& sector = sectors[currentId];
@@ -284,7 +277,7 @@ void DrawSectors(unsigned currentId, std::vector<Sector>& sectors, const std::ve
 	}
 }
 //-----------------------------------------------------------------------------
-bool IsInside(const Sector& sector, const glm::vec3& pos)
+bool IsInside(const OldSector& sector, const glm::vec3& pos)
 {
 	// высота точки выше/ниже сектора
 	if (pos.y < sector.FloorHeight) return false;

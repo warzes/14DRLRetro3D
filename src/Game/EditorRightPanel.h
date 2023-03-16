@@ -2,6 +2,8 @@
 
 #include "Engine.h"
 
+struct SectorEditorWall;
+
 class EditorRightPanel
 {
 public:
@@ -14,12 +16,16 @@ public:
 	bool IsActive() const;
 
 private:
-	VertexBuffer m_vb;
-	IndexBuffer m_ib;
-	VertexArray m_vao;
+	void drawSectors();
+	//VertexBuffer m_vb;
+	//IndexBuffer m_ib;
+	//VertexArray m_vao;
 	Texture2D m_texture;
 	scene::Camera m_cam;
 
-	Model m_model;
+	GeometryBuffer geom;
+
+
+	//Model m_model;
 	bool m_isActive = false;
 };

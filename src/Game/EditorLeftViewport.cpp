@@ -29,6 +29,7 @@ void EditorLeftViewport::Update(float deltaTime)
 //-----------------------------------------------------------------------------
 void EditorLeftViewport::SetOpenGLViewport()
 {
+	glDisable(GL_DEPTH_TEST);
 	glViewport(0, 0, (GLsizei)m_screenViewPort.z, (GLsizei)m_screenViewPort.w);
 	glScissor( 0, 0, (GLsizei)m_screenViewPort.z, (GLsizei)m_screenViewPort.w);
 }

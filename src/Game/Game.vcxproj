@@ -401,6 +401,7 @@
     </ClCompile>
     <ClCompile Include="EditorLeftCommand.cpp" />
     <ClCompile Include="EditorLeftCursor.cpp" />
+    <ClCompile Include="EditorLeftDrawHelper.cpp" />
     <ClCompile Include="EditorLeftGrid.cpp" />
     <ClCompile Include="EditorLeftMap.cpp" />
     <ClCompile Include="EditorLeftPanel.cpp" />
@@ -442,7 +443,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
-    <ClCompile Include="Sector.cpp" />
+    <ClCompile Include="OldSector.cpp" />
     <ClCompile Include="ShaderCode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -530,6 +531,7 @@
     <ClInclude Include="EditorConstant.h" />
     <ClInclude Include="EditorLeftCommand.h" />
     <ClInclude Include="EditorLeftCursor.h" />
+    <ClInclude Include="EditorLeftDrawHelper.h" />
     <ClInclude Include="EditorLeftGrid.h" />
     <ClInclude Include="EditorLeftMap.h" />
     <ClInclude Include="EditorLeftPanel.h" />
@@ -548,7 +550,7 @@
     <ClInclude Include="mat.h" />
     <ClInclude Include="mymath.h" />
     <ClInclude Include="quat.h" />
-    <ClInclude Include="Sector.h" />
+    <ClInclude Include="OldSector.h" />
     <ClInclude Include="ShaderCode.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="strn.h" />

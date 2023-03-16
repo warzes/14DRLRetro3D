@@ -17,12 +17,6 @@
     <ClCompile Include="..\3rdparty\polypartition\polypartition.cpp">
       <Filter>3rdparty\polypartition</Filter>
     </ClCompile>
-    <ClCompile Include="Sector.cpp">
-      <Filter>SectorRender</Filter>
-    </ClCompile>
-    <ClCompile Include="WorldRender.cpp">
-      <Filter>SectorRender</Filter>
-    </ClCompile>
     <ClCompile Include="dirty.c">
       <Filter>other\_PolySoup</Filter>
     </ClCompile>
@@ -131,6 +125,15 @@
     <ClCompile Include="EditorLeftMap.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
+    <ClCompile Include="OldSector.cpp">
+      <Filter>SectorRender\Old</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldRender.cpp">
+      <Filter>SectorRender\Old</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftDrawHelper.cpp">
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="3rdparty">
@@ -184,6 +187,12 @@
     <Filter Include="Editor\old">
       <UniqueIdentifier>{a724b42c-2b8c-4437-bb1e-7ad33248e874}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SectorRender\Old">
+      <UniqueIdentifier>{b43793d3-fe72-458d-9376-0f835d4d535e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\impl\LeftPanel">
+      <UniqueIdentifier>{8b887f5c-f1cb-42bf-b583-e053ab42d901}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\glad\gl.h">
@@ -203,15 +212,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\3rdparty\polypartition\polypartition.h">
       <Filter>3rdparty\polypartition</Filter>
-    </ClInclude>
-    <ClInclude Include="Sector.h">
-      <Filter>SectorRender</Filter>
-    </ClInclude>
-    <ClInclude Include="TempFunc.h">
-      <Filter>SectorRender</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldRender.h">
-      <Filter>SectorRender</Filter>
     </ClInclude>
     <ClInclude Include="defs.h">
       <Filter>other\_PolySoup</Filter>
@@ -344,6 +344,18 @@
     </ClInclude>
     <ClInclude Include="EditorLeftMap.h">
       <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="OldSector.h">
+      <Filter>SectorRender\Old</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFunc.h">
+      <Filter>SectorRender\Old</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldRender.h">
+      <Filter>SectorRender\Old</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftDrawHelper.h">
+      <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine.h"
+#include "EditorLeftDrawHelper.h"
 #include "EditorLeftGrid.h"
 #include "EditorLeftCursor.h"
 #include "EditorLeftViewport.h"
@@ -17,18 +17,22 @@ public:
 
 	void SetActive(bool active);
 
-	const EditorLeftViewport& GetLeftViewportInfo() const { return m_leftViewport; }
+	// курсор тут?
+	bool IsMouseIn() const;
 
 private:
-	void getMouseInfo(const glm::vec2& realPos, glm::ivec2& posInMap, glm::vec2& offset, glm::vec2& sizeCell);
+	EditorLeftDrawHelper m_drawHelper;
+
+
+
+
+
+
 
 	EditorLeftViewport m_leftViewport;
 	EditorLeftGrid m_grid;
 	EditorLeftCursor m_cursor;
 	EditorLeftCommand m_commands;
 	EditorLeftMap m_map;
-	VertexBuffer m_vb;
-	IndexBuffer m_ib;
-	VertexArray m_vao;
 	bool m_isActive = false;
 };

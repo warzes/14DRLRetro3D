@@ -5,7 +5,7 @@
 // TODO: либа триангул€ции позвол€ет делать дырки в поверхности. возможно это пригодитс€ - например дырки от пуль в дерев€нной стене
 // также эта либа дает некоторые функции анализа поверхности - например нахождение внутри
 
-struct WallPoint
+struct OldWallPoint
 {
 	glm::vec2 point;
 };
@@ -16,17 +16,17 @@ struct WallPoint
 // portal - если ноль, то стена, иначе это портал, число - это ид сектора
 // textureId - ид текстуры
 // TODO: на самом деле стенам не нужна p1, так как у каждой последующей стены p1 равно p2 от предыдущей стены. ћожно оптимизировать если будет нужно
-struct Wall
+struct OldWall
 {
-	WallPoint p1;
-	WallPoint p2;
+	OldWallPoint p1;
+	OldWallPoint p2;
 	unsigned portal;
 	int textureId;
 };
 
-struct Sector
+struct OldSector
 {
-	std::vector<Wall> walls;
+	std::vector<OldWall> walls;
 	float CeilingHeight;
 	float FloorHeight;
 	int CeilingTextureId;
@@ -54,11 +54,11 @@ struct Sector
 	uint32_t frameId = 999999;
 };
 
-void CompleteSector(Sector& sector); // нужно вызывать после ручного внесени€ данных. ¬ будущем подумать как лучше
+void CompleteSector(OldSector& sector); // нужно вызывать после ручного внесени€ данных. ¬ будущем подумать как лучше
 
-std::vector<Sector> LoadSectorFromFile(const char* fileName, float scale = 1.0f);
-void DestroySector(Sector& sector);
-void UpdateSector(Sector& sector);
-void DrawSectors(unsigned currentId, std::vector<Sector>& sectors, const std::vector<Texture2D>& textures);
+std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale = 1.0f);
+void DestroySector(OldSector& sector);
+void UpdateSector(OldSector& sector);
+void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std::vector<Texture2D>& textures);
 
-bool IsInside(const Sector& sector, const glm::vec3& pos);
+bool IsInside(const OldSector& sector, const glm::vec3& pos);

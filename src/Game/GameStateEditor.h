@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IGameState.h"
-#include "Engine.h"
 #include "EditorLeftPanel.h"
 #include "EditorRightPanel.h"
 
@@ -16,6 +15,11 @@ public:
 	void OnFrame(float deltaTime);
 
 private:
+	bool createImgui();
+	void destroyImgui();
+	void activeLeftPanel();
+	void activeRightPanel();
+
 	EditorLeftPanel m_leftPanel;
 	EditorRightPanel m_rightPanel;
 };
