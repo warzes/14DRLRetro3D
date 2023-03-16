@@ -1,6 +1,26 @@
 #include "stdafx.h"
 #include "EditorLeftPanel.h"
 #include "Engine.h"
+#include <numbers>
+
+убрать
+template <class>
+inline constexpr bool AlwaysFalse = false;
+
+template <class T>
+struct Invalid {
+	static_assert(AlwaysFalse<T>, "A program that instantiates a primary template of a mathematical constant "
+		"variable template is ill-formed. (N4835 [math.constants]/3)");
+};
+
+template <class T>
+inline constexpr T pi_v = Invalid<T>{};
+template <>
+inline constexpr double pi_v<double> = 3.141592653589793;
+template <>
+inline constexpr float pi_v<float> = 3.14f;
+
+
 //-----------------------------------------------------------------------------
 bool EditorLeftPanel::Create()
 {
@@ -16,7 +36,7 @@ bool EditorLeftPanel::Create()
 	}
 
 
-
+	auto t = pi_v<float>;
 
 	if( !m_cursor.Create() )
 		return false;
