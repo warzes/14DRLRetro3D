@@ -19,8 +19,8 @@ void EditorLeftViewport::Update(float deltaTime)
 	//else aspectY = (float)app::GetWindowHeight() / m_halfScreenWidth;
 
 	m_orthoProjection = glm::ortho(
-		0.0f, (float)viewSize * aspectX,
-		(float)viewSize * aspectY, 0.0f,
+		0.0f, (float)EditorViewSize * aspectX,
+		(float)EditorViewSize * aspectY, 0.0f,
 		-1.0f, 1.0f);
 
 	constexpr glm::vec3 up = { 0.0f, 1.0f, 0.0f };
@@ -48,12 +48,12 @@ glm::ivec2 EditorLeftViewport::GetPosInMap(const glm::vec3& screenPos) const
 {
 	const glm::vec3 posToMap = PosToWorldSpace(screenPos, true);
 
-	float tX = posToMap.x / gridStep;
-	float tY = posToMap.y / gridStep;
+	float tX = posToMap.x / EditorGridStep;
+	float tY = posToMap.y / EditorGridStep;
 	if( tX < 0.0f ) tX = 0.0f;
 	if( tX < 0.0f ) tX = 0.0f;
-	if( tX >= gridSize ) tX = gridSize - 1;
-	if( tY >= gridSize ) tY = gridSize - 1;
+	if( tX >= EditorMapGridSize ) tX = EditorMapGridSize - 1;
+	if( tY >= EditorMapGridSize ) tY = EditorMapGridSize - 1;
 
 	const int tiX = (int)(tX);
 	const int tiY = (int)(tY);
@@ -69,8 +69,8 @@ void EditorLeftViewport::updatePositionCamera(float deltaTime)
 	if( app::IsKeyDown(app::KEY_S) ) m_camPos.y += CameraSpeedInEditorLeftPanel * deltaTime;
 	if( m_camPos.x < 0.0f ) m_camPos.x = 0.0f;
 	if( m_camPos.y < 0.0f ) m_camPos.y = 0.0f;
-	if( m_camPos.x > gridSize - viewSize ) m_camPos.x = gridSize - viewSize;
-	if( m_camPos.y > gridSize - viewSize ) m_camPos.y = gridSize - viewSize;
+	if( m_camPos.x > EditorMapGridSize - EditorViewSize ) m_camPos.x = EditorMapGridSize - EditorViewSize;
+	if( m_camPos.y > EditorMapGridSize - EditorViewSize ) m_camPos.y = EditorMapGridSize - EditorViewSize;
 	//std::string text = "cam=" + std::to_string(cam.x) + "-" + std::to_string(cam.y);
 	//LogPrint(text);
 }
@@ -80,19 +80,19 @@ void EditorLeftViewport::GetCursorInfo(glm::vec3& outWorldPos, glm::ivec2& outPo
 	const glm::vec2 realMousePos = app::GetMousePosition();
 	outWorldPos = PosToWorldSpace({ realMousePos.x, realMousePos.y, 0.0f }, useCameraView);
 
-	const float sizeScaleX = m_screenViewPort.z / viewSize;
-	const float sizeScaleY = m_screenViewPort.w / viewSize;
+	const float sizeScaleX = m_screenViewPort.z / EditorViewSize;
+	const float sizeScaleY = m_screenViewPort.w / EditorViewSize;
 
-	outSizeCell.x = sizeScaleX * gridStep;
-	outSizeCell.y = sizeScaleY * gridStep;
+	outSizeCell.x = sizeScaleX * EditorGridStep;
+	outSizeCell.y = sizeScaleY * EditorGridStep;
 
 	// функция нерабочая - а возможно уже ненужная
 
-	const float posX = outWorldPos.x + m_camPos.x / gridStep;
-	const float posY = outWorldPos.y + m_camPos.y / gridStep;
+	const float posX = outWorldPos.x + m_camPos.x / EditorGridStep;
+	const float posY = outWorldPos.y + m_camPos.y / EditorGridStep;
 
-	const float posX2 = realMousePos.x / outSizeCell.x + m_camPos.x / gridStep;
-	const float posY2 = realMousePos.y / outSizeCell.y + m_camPos.y / gridStep;
+	const float posX2 = realMousePos.x / outSizeCell.x + m_camPos.x / EditorGridStep;
+	const float posY2 = realMousePos.y / outSizeCell.y + m_camPos.y / EditorGridStep;
 
 	outPosInMap.x = static_cast<int>(posX);
 	outPosInMap.y = static_cast<int>(posY);

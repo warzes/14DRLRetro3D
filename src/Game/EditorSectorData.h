@@ -5,11 +5,11 @@
 
 struct SectorEditorVertex
 {
-	glm::vec2 pos = glm::vec2(gridSize);
+	glm::vec2 pos = glm::vec2(EditorMapGridSize);
 
 	bool IsValid() const
 	{
-		return pos.x < gridSize && pos.y < gridSize;
+		return pos.x < EditorMapGridSize && pos.y < EditorMapGridSize;
 	}
 };
 

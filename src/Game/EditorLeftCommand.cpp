@@ -22,7 +22,7 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 
 	if (app::IsMouseButtonReleased(0))
 	{
-		if ( posInMap.x >= 0.0f && posInMap.x < gridSize && posInMap.y >= 0.0f && posInMap.y < gridSize )
+		if ( posInMap.x >= 0.0f && posInMap.x < EditorMapGridSize && posInMap.y >= 0.0f && posInMap.y < EditorMapGridSize )
 		{
 			// сектор замыкается?
 			if( TempEditorVertices.size() > 2 && posInMap == TempEditorVertices[0].pos )

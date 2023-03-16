@@ -4,7 +4,7 @@
 #include "ShaderCode.h"
 #include "EditorConstant.h"
 #include "EditorLeftViewport.h"
-#include "EditorLeftGrid.h"
+#include "EditorLeftMap.h"
 //-----------------------------------------------------------------------------
 bool EditorLeftCursor::Create()
 {
@@ -26,9 +26,9 @@ void EditorLeftCursor::Destroy()
 	scene::Destroy(m_geom);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftCursor::Update(const EditorLeftViewport& viewport, const EditorLeftGrid& grid)
+void EditorLeftCursor::Update(const EditorLeftViewport& viewport, const EditorLeftMap& map)
 {
-	grid.GetCursorToMap(viewport, m_posToMap, m_posToScreen);
+	map.GetCursorToMap(viewport, m_posToMap, m_posToScreen);
 } 
 //-----------------------------------------------------------------------------
 void EditorLeftCursor::Draw(const EditorLeftViewport& viewport)

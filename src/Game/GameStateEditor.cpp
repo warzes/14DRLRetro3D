@@ -2,19 +2,31 @@
 #include "GameStateEditor.h"
 //-----------------------------------------------------------------------------
 GameStateEditor gGameStateEditor;
+int EditorMapGridSize = 300;
+int EditorGridStep = 3;
+int EditorViewSize = 90;
 //-----------------------------------------------------------------------------
 bool GameStateEditor::OnCreate()
 {
 	if( !createImgui() )
+	{
+		Fatal("Editor Imgui Init failed!");
 		return false;
+	}
 
 	if (!m_leftPanel.Create())
+	{
+		Fatal("Editor Left Panel failed!");
 		return false;
+	}
 
 	if (!m_rightPanel.Create())
+	{
+		Fatal("Editor Right Panel failed!");
 		return false;
+	}
 
-	m_leftPanel.SetActive(true);
+	activeLeftPanel();
 
 	return true;
 }
@@ -29,6 +41,7 @@ void GameStateEditor::OnDestroy()
 //-----------------------------------------------------------------------------
 void GameStateEditor::OnActive()
 {
+	activeLeftPanel();
 }
 //-----------------------------------------------------------------------------
 void GameStateEditor::OnUpdate(float deltaTime)

@@ -104,9 +104,6 @@
     <ClCompile Include="GameStateEditor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftGrid.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="EditorLeftCursor.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
@@ -122,9 +119,6 @@
     <ClCompile Include="EditorSectorData.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftMap.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="OldSector.cpp">
       <Filter>SectorRender\Old</Filter>
     </ClCompile>
@@ -132,6 +126,9 @@
       <Filter>SectorRender\Old</Filter>
     </ClCompile>
     <ClCompile Include="EditorLeftDrawHelper.cpp">
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftMap.cpp">
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClCompile>
   </ItemGroup>
@@ -321,9 +318,6 @@
     <ClInclude Include="GameStateEditor.h">
       <Filter>Editor</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftGrid.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="VertexFormat.h">
       <Filter>GameResources</Filter>
     </ClInclude>
@@ -342,9 +336,6 @@
     <ClInclude Include="EditorSectorData.h">
       <Filter>Editor\impl</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftMap.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="OldSector.h">
       <Filter>SectorRender\Old</Filter>
     </ClInclude>
@@ -355,6 +346,9 @@
       <Filter>SectorRender\Old</Filter>
     </ClInclude>
     <ClInclude Include="EditorLeftDrawHelper.h">
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftMap.h">
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
   </ItemGroup>
