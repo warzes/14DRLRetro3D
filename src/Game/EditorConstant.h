@@ -2,9 +2,9 @@
 
 const float CameraSpeedInEditorLeftPanel = 50.0f;
 
-// размер всей карты
+// СЂР°Р·РјРµСЂ РІСЃРµР№ РєР°СЂС‚С‹
 extern int EditorMapGridSize;
-// размер ячейки
+// СЂР°Р·РјРµСЂ СЏС‡РµР№РєРё РєР»РµС‚РєРё
 extern int EditorGridStep;
-// размер вьювера левой панели
+// СЂР°Р·РјРµСЂ РІСЊСЋРІРµСЂР° Р»РµРІРѕР№ РїР°РЅРµР»Рё
 extern int EditorViewSize;

@@ -46,7 +46,7 @@ void EditorLeftPanel::Draw(float deltaTime)
 
 	m_leftViewport.SetOpenGLViewport();
 	m_map.Draw(m_leftViewport);
-	m_cursor.Draw(m_leftViewport);	
+	m_cursor.Draw(m_leftViewport);
 }
 //-----------------------------------------------------------------------------
 void EditorLeftPanel::SetActive(bool active)

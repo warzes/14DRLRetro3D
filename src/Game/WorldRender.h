@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "OldSector.h"
 #include "Engine.h"

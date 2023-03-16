@@ -50,11 +50,11 @@ void GameStateEditor::OnUpdate(float deltaTime)
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	// переключение между левой и правой панелями редактора
+	// РїРµСЂРµРєР»СЋС‡РµРЅРёРµ РјРµР¶РґСѓ Р»РµРІРѕР№ Рё РїСЂР°РІРѕР№ РїР°РЅРµР»СЏРјРё СЂРµРґР°РєС‚РѕСЂР°
 	const ImGuiIO& io = ImGui::GetIO();
 	if( !io.WantCaptureMouse && !io.WantCaptureKeyboard )
 	{
-		// правая панель перехватывает указатель мыши, поэтому мы не можем переключиться на левую мышкой
+		// РїСЂР°РІР°СЏ РїР°РЅРµР»СЊ РїРµСЂРµС…РІР°С‚С‹РІР°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РјС‹С€Рё, РїРѕСЌС‚РѕРјСѓ РјС‹ РЅРµ РјРѕР¶РµРј РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° Р»РµРІСѓСЋ РјС‹С€РєРѕР№
 		if( app::IsMouseButtonPressed(0) && !m_rightPanel.IsActive() )
 		{
 			if( m_leftPanel.IsMouseIn())
@@ -63,13 +63,13 @@ void GameStateEditor::OnUpdate(float deltaTime)
 				activeRightPanel();
 		}
 
-		// если активна правая панель, то выход по esc
+		// РµСЃР»Рё Р°РєС‚РёРІРЅР° РїСЂР°РІР°СЏ РїР°РЅРµР»СЊ, С‚Рѕ РІС‹С…РѕРґ РїРѕ esc
 		if( app::IsKeyPressed(app::KEY_ESCAPE) && m_rightPanel.IsActive() )
 		{
 			activeLeftPanel();
 		}
 
-		// обновляем события если не было событий в имгуи
+		// РѕР±РЅРѕРІР»СЏРµРј СЃРѕР±С‹С‚РёСЏ РµСЃР»Рё РЅРµ Р±С‹Р»Рѕ СЃРѕР±С‹С‚РёР№ РІ РёРјРіСѓРё
 		m_leftPanel.Update(deltaTime);
 		m_rightPanel.Update(deltaTime);
 	}
@@ -100,7 +100,7 @@ bool GameStateEditor::createImgui()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;    // Enable Gamepad Controls
-	io.IniFilename = nullptr; // не нужно хранить файл настроек
+	io.IniFilename = nullptr; // РЅРµ РЅСѓР¶РЅРѕ С…СЂР°РЅРёС‚СЊ С„Р°Р№Р» РЅР°СЃС‚СЂРѕРµРє
 
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsLight();

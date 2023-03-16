@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 void CompleteSector(OldSector& sector)
 {
-	// TODO: вместо 1 ставить реальные размеры
+	// TODO: РІРјРµСЃС‚Рѕ 1 СЃС‚Р°РІРёС‚СЊ СЂРµР°Р»СЊРЅС‹Рµ СЂР°Р·РјРµСЂС‹
 
 	sector.wallVB = render::CreateVertexBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr);
 	sector.wallVao = render::CreateVertexArray(&sector.wallVB, nullptr, SectorRenderShader);
@@ -27,18 +27,18 @@ void CompleteSector(OldSector& sector)
 
 	// Triangulate
 	{
-		// нужно получить список уникальных точек. 
+		// РЅСѓР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє СѓРЅРёРєР°Р»СЊРЅС‹С… С‚РѕС‡РµРє. 
 		std::vector<glm::vec2> uniquePoint;
-		// сначала берем первую точку из начала первой стены
+		// СЃРЅР°С‡Р°Р»Р° Р±РµСЂРµРј РїРµСЂРІСѓСЋ С‚РѕС‡РєСѓ РёР· РЅР°С‡Р°Р»Р° РїРµСЂРІРѕР№ СЃС‚РµРЅС‹
 		uniquePoint.push_back(sector.walls[0].p1.point);
-		// все начальные точки стен равны концам предыдущих стен, поэтому берем только конечную точку p2
+		// РІСЃРµ РЅР°С‡Р°Р»СЊРЅС‹Рµ С‚РѕС‡РєРё СЃС‚РµРЅ СЂР°РІРЅС‹ РєРѕРЅС†Р°Рј РїСЂРµРґС‹РґСѓС‰РёС… СЃС‚РµРЅ, РїРѕСЌС‚РѕРјСѓ Р±РµСЂРµРј С‚РѕР»СЊРєРѕ РєРѕРЅРµС‡РЅСѓСЋ С‚РѕС‡РєСѓ p2
 		for (size_t i = 0; i < sector.walls.size(); i++)
 		{
-			if (sector.walls[i].p2.point == uniquePoint[0]) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
+			if (sector.walls[i].p2.point == uniquePoint[0]) break;// РЅРѕ РїСЂРѕРІРµСЂСЏРµРј С‡С‚Рѕ РєРѕРЅРµС‡РЅР°СЏ С‚РѕС‡РєР° РЅРµ СЂР°РІРЅР° СЃР°РјРѕР№ РїРµСЂРІРѕР№ (Р·Р°РјС‹РєР°СЏ РїРѕР»РёРіРѕРЅ)
 			uniquePoint.push_back(sector.walls[i].p2.point);
 		}
 
-		// триангуляция
+		// С‚СЂРёР°РЅРіСѓР»СЏС†РёСЏ
 		TPPLPoly poly;
 		poly.Init((long)uniquePoint.size());
 		for (size_t i = 0; i < uniquePoint.size(); i++)
@@ -78,7 +78,7 @@ std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale)
 	fscanf(fp, "%i", &numSect);
 	sectors.resize(numSect);
 
-	struct numWallHelper // TODO: временный класс для соотношения стен и секторов
+	struct numWallHelper // TODO: РІСЂРµРјРµРЅРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЃРѕРѕС‚РЅРѕС€РµРЅРёСЏ СЃС‚РµРЅ Рё СЃРµРєС‚РѕСЂРѕРІ
 	{ 
 		int ws, we; //wall number start and end
 	};
@@ -89,13 +89,13 @@ std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale)
 	{		
 		fscanf(fp, "%i", &wallHelper[s].ws);
 		fscanf(fp, "%i", &wallHelper[s].we);
-		// TODO: здесь переделать. в оригинале у каждого сектора свой набор стен, мне это не нужно в файле карты
+		// TODO: Р·РґРµСЃСЊ РїРµСЂРµРґРµР»Р°С‚СЊ. РІ РѕСЂРёРіРёРЅР°Р»Рµ Сѓ РєР°Р¶РґРѕРіРѕ СЃРµРєС‚РѕСЂР° СЃРІРѕР№ РЅР°Р±РѕСЂ СЃС‚РµРЅ, РјРЅРµ СЌС‚Рѕ РЅРµ РЅСѓР¶РЅРѕ РІ С„Р°Р№Р»Рµ РєР°СЂС‚С‹
 		//sectors[s].walls.resize(wallHelper[s].we - wallHelper[s].ws);
 
 		int z1, z2; //height of bottom and top
 		fscanf(fp, "%i", &z1);
 		fscanf(fp, "%i", &z2);
-		// TODO: тут высота в целых, а мне нужно в флоатах
+		// TODO: С‚СѓС‚ РІС‹СЃРѕС‚Р° РІ С†РµР»С‹С…, Р° РјРЅРµ РЅСѓР¶РЅРѕ РІ С„Р»РѕР°С‚Р°С…
 		sectors[s].FloorHeight = z1 * scale;
 		sectors[s].CeilingHeight = z2 * scale;
 
@@ -108,7 +108,7 @@ std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale)
 	}
 
 	fscanf(fp, "%i", &numWall);   //number of walls
-	// TODO: мне это не нужно
+	// TODO: РјРЅРµ СЌС‚Рѕ РЅРµ РЅСѓР¶РЅРѕ
 
 	// load all walls
 	for( int w = 0; w < numWall; w++ )
@@ -133,13 +133,13 @@ std::vector<OldSector> LoadSectorFromFile(const char* fileName, float scale)
 		fscanf(fp, "%i", &wt);
 		fscanf(fp, "%i", &u);
 		fscanf(fp, "%i", &v);
-		int shade;             //shade of the wall // угол?
+		int shade;             //shade of the wall // СѓРіРѕР»?
 		fscanf(fp, "%i", &shade);
 
 		wall.textureId = wt;
 
 		int numS = 0;
-		// ищем нужный сектор
+		// РёС‰РµРј РЅСѓР¶РЅС‹Р№ СЃРµРєС‚РѕСЂ
 		for( int i = 0; i < wallHelper.size(); i++ )
 		{
 			if( w < wallHelper[i].we )
@@ -183,7 +183,7 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std:
 	if (currentId >= sectors.size()) return;
 	auto& sector = sectors[currentId];
 	if (sector.walls.size() == 0) return;
-	if (sector.frameId == app::GetCurrentFrameId()) return; // уже рисовался в этом кадре
+	if (sector.frameId == app::GetCurrentFrameId()) return; // СѓР¶Рµ СЂРёСЃРѕРІР°Р»СЃСЏ РІ СЌС‚РѕРј РєР°РґСЂРµ
 	sector.frameId = app::GetCurrentFrameId();
 
 	// draw wall
@@ -240,7 +240,7 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std:
 			data.push_back({ v6, normal2, {1.0f, 1.0f, 1.0f}, t4 });
 		}
 		render::UpdateVertexBuffer(sector.wallVB, 0, data.size(), sizeof(WorldVertex), data.data());
-		render::Bind(textures[sector.walls[0].textureId]); // TODO: сделать текстуры разным стенам
+		render::Bind(textures[sector.walls[0].textureId]); // TODO: СЃРґРµР»Р°С‚СЊ С‚РµРєСЃС‚СѓСЂС‹ СЂР°Р·РЅС‹Рј СЃС‚РµРЅР°Рј
 		render::Draw(sector.wallVao);
 	}
 
@@ -259,18 +259,18 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std:
 			}
 		}
 
-		// рисуем пол
+		// СЂРёСЃСѓРµРј РїРѕР»
 		render::UpdateVertexBuffer(sector.floorVB, 0, data.size(), sizeof(WorldVertex), data.data());
 		render::Bind(textures[sector.FloorTextureId]);
 		render::Draw(sector.floorVao);
 
-		// все тоже самое что и у пола, только изменена высота и нормаль
+		// РІСЃРµ С‚РѕР¶Рµ СЃР°РјРѕРµ С‡С‚Рѕ Рё Сѓ РїРѕР»Р°, С‚РѕР»СЊРєРѕ РёР·РјРµРЅРµРЅР° РІС‹СЃРѕС‚Р° Рё РЅРѕСЂРјР°Р»СЊ
 		for (size_t i = 0; i < data.size(); i++)
 		{
 			data[i].pos.y = sector.CeilingHeight;
 			data[i].normal.y = -1.0f;
 		}
-		// рисуем потолок
+		// СЂРёСЃСѓРµРј РїРѕС‚РѕР»РѕРє
 		render::UpdateVertexBuffer(sector.floorVB, 0, data.size(), sizeof(WorldVertex), data.data());
 		render::Bind(textures[sector.CeilingTextureId]);
 		render::Draw(sector.floorVao);
@@ -279,11 +279,11 @@ void DrawSectors(unsigned currentId, std::vector<OldSector>& sectors, const std:
 //-----------------------------------------------------------------------------
 bool IsInside(const OldSector& sector, const glm::vec3& pos)
 {
-	// высота точки выше/ниже сектора
+	// РІС‹СЃРѕС‚Р° С‚РѕС‡РєРё РІС‹С€Рµ/РЅРёР¶Рµ СЃРµРєС‚РѕСЂР°
 	if (pos.y < sector.FloorHeight) return false;
 	if (pos.y > sector.CeilingHeight) return false;
 
-	// точка не входит в ААББ
+	// С‚РѕС‡РєР° РЅРµ РІС…РѕРґРёС‚ РІ РђРђР‘Р‘
 	if (pos.x < sector.min.x || pos.x > sector.max.x || pos.y < sector.min.y || pos.y > sector.max.y) return false;
 
 	const glm::vec2 p = { pos.x, pos.z };

@@ -11,10 +11,10 @@ void EditorLeftViewport::Update(float deltaTime)
 
 	m_screenViewPort = glm::vec4(0.f, 0.f, m_halfScreenWidth, app::GetWindowHeight());
 
-	// TODO: нужно ли так делать?
+	// TODO: РЅСѓР¶РЅРѕ Р»Рё С‚Р°Рє РґРµР»Р°С‚СЊ?
 	float aspectX = 1.0f;
 	float aspectY = 1.0f;
-	// TODO: не работает - дает лишний сдвиг по высоте
+	// TODO: РЅРµ СЂР°Р±РѕС‚Р°РµС‚ - РґР°РµС‚ Р»РёС€РЅРёР№ СЃРґРІРёРі РїРѕ РІС‹СЃРѕС‚Рµ
 	//if( (int)m_halfScreenWidth > app::GetWindowHeight() ) aspectX = m_halfScreenWidth / (float)app::GetWindowHeight();
 	//else aspectY = (float)app::GetWindowHeight() / m_halfScreenWidth;
 
@@ -86,7 +86,7 @@ void EditorLeftViewport::GetCursorInfo(glm::vec3& outWorldPos, glm::ivec2& outPo
 	outSizeCell.x = sizeScaleX * EditorGridStep;
 	outSizeCell.y = sizeScaleY * EditorGridStep;
 
-	// функция нерабочая - а возможно уже ненужная
+	// С„СѓРЅРєС†РёСЏ РЅРµСЂР°Р±РѕС‡Р°СЏ - Р° РІРѕР·РјРѕР¶РЅРѕ СѓР¶Рµ РЅРµРЅСѓР¶РЅР°СЏ
 
 	const float posX = outWorldPos.x + m_camPos.x / EditorGridStep;
 	const float posY = outWorldPos.y + m_camPos.y / EditorGridStep;

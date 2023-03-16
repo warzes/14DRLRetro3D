@@ -20,7 +20,7 @@ public:
 
 	void SetActive(bool active);
 
-	// курсор тут?
+	// РєСѓСЂСЃРѕСЂ С‚СѓС‚?
 	bool IsMouseIn() const;
 
 private:

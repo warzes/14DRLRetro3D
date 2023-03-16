@@ -183,8 +183,8 @@ out vec4 outColor;
 void main()
 {
 	outColor = texture(Texture, TexCoord) * vec4(FragmentColor, 1.0);
-	float NdotLD = max(dot(Light.Direction, normalize(Normal)), 0.0); // ламберт
-	float NdotLD2 = max(dot(Light.Direction, normalize(-Normal)), 0.0); // ламберт
+	float NdotLD = max(dot(Light.Direction, normalize(Normal)), 0.0); // Р»Р°РјР±РµСЂС‚
+	float NdotLD2 = max(dot(Light.Direction, normalize(-Normal)), 0.0); // Р»Р°РјР±РµСЂС‚
 
 	
 	outColor.rgb *= Light.Ambient + Light.Diffuse * max(NdotLD, NdotLD2);

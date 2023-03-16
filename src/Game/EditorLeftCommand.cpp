@@ -10,12 +10,12 @@
 //-----------------------------------------------------------------------------
 void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& map)
 {
-	// щелчок левой кнопкой
+	// С‰РµР»С‡РѕРє Р»РµРІРѕР№ РєРЅРѕРїРєРѕР№
 	glm::vec2 posInMap = cursor.GetPosToMap();
 
 	if( app::IsKeyPressed(app::KEY_BACKSPACE) )
 	{
-		// удалить последнюю вершину
+		// СѓРґР°Р»РёС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ РІРµСЂС€РёРЅСѓ
 		if ( TempEditorVertices.size() > 0 )
 			TempEditorVertices.pop_back();
 	}
@@ -24,14 +24,14 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 	{
 		if ( posInMap.x >= 0.0f && posInMap.x < EditorMapGridSize && posInMap.y >= 0.0f && posInMap.y < EditorMapGridSize )
 		{
-			// сектор замыкается?
+			// СЃРµРєС‚РѕСЂ Р·Р°РјС‹РєР°РµС‚СЃСЏ?
 			if( TempEditorVertices.size() > 2 && posInMap == TempEditorVertices[0].pos )
 			{
 				buildEditorSector();
 			}
 			else
 			{
-				// точка на другой точке этого сектора? это ошибка
+				// С‚РѕС‡РєР° РЅР° РґСЂСѓРіРѕР№ С‚РѕС‡РєРµ СЌС‚РѕРіРѕ СЃРµРєС‚РѕСЂР°? СЌС‚Рѕ РѕС€РёР±РєР°
 				bool isError = false;
 				for( size_t i = 0; i < TempEditorVertices.size(); i++ )
 				{
@@ -42,7 +42,7 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 					}
 				}
 
-				// добавляем точку если нет ошибок
+				// РґРѕР±Р°РІР»СЏРµРј С‚РѕС‡РєСѓ РµСЃР»Рё РЅРµС‚ РѕС€РёР±РѕРє
 				if( !isError )
 				{
 					TempEditorVertices.push_back({ posInMap });
@@ -71,7 +71,7 @@ void EditorLeftCommand::buildEditorSector()
 
 		sector.walls.push_back(wall);
 	}
-	// вставляем стену которая соединена с первой точкой
+	// РІСЃС‚Р°РІР»СЏРµРј СЃС‚РµРЅСѓ РєРѕС‚РѕСЂР°СЏ СЃРѕРµРґРёРЅРµРЅР° СЃ РїРµСЂРІРѕР№ С‚РѕС‡РєРѕР№
 	SectorEditorWall wall;
 	wall.p1 = TempEditorVertices[TempEditorVertices.size() - 1];
 	wall.p2 = TempEditorVertices[0];
@@ -99,18 +99,18 @@ void EditorLeftCommand::buildGeomSector(SectorEditorSector& sector)
 
 	// Triangulate
 	{
-		// нужно получить список уникальных точек. 
+		// РЅСѓР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє СѓРЅРёРєР°Р»СЊРЅС‹С… С‚РѕС‡РµРє. 
 		std::vector<glm::vec2> uniquePoint;
-		// сначала берем первую точку из начала первой стены
+		// СЃРЅР°С‡Р°Р»Р° Р±РµСЂРµРј РїРµСЂРІСѓСЋ С‚РѕС‡РєСѓ РёР· РЅР°С‡Р°Р»Р° РїРµСЂРІРѕР№ СЃС‚РµРЅС‹
 		uniquePoint.push_back(sector.walls[0].p1.pos);
-		// все начальные точки стен равны концам предыдущих стен, поэтому берем только конечную точку p2
+		// РІСЃРµ РЅР°С‡Р°Р»СЊРЅС‹Рµ С‚РѕС‡РєРё СЃС‚РµРЅ СЂР°РІРЅС‹ РєРѕРЅС†Р°Рј РїСЂРµРґС‹РґСѓС‰РёС… СЃС‚РµРЅ, РїРѕСЌС‚РѕРјСѓ Р±РµСЂРµРј С‚РѕР»СЊРєРѕ РєРѕРЅРµС‡РЅСѓСЋ С‚РѕС‡РєСѓ p2
 		for( size_t i = 0; i < sector.walls.size(); i++ )
 		{
-			if( sector.walls[i].p2.pos == uniquePoint[0] ) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
+			if( sector.walls[i].p2.pos == uniquePoint[0] ) break;// РЅРѕ РїСЂРѕРІРµСЂСЏРµРј С‡С‚Рѕ РєРѕРЅРµС‡РЅР°СЏ С‚РѕС‡РєР° РЅРµ СЂР°РІРЅР° СЃР°РјРѕР№ РїРµСЂРІРѕР№ (Р·Р°РјС‹РєР°СЏ РїРѕР»РёРіРѕРЅ)
 			uniquePoint.push_back(sector.walls[i].p2.pos);
 		}
 
-		// триангуляция
+		// С‚СЂРёР°РЅРіСѓР»СЏС†РёСЏ
 		TPPLPoly poly;
 		poly.Init((long)uniquePoint.size());
 		for( size_t i = 0; i < uniquePoint.size(); i++ )

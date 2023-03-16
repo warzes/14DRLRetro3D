@@ -8,12 +8,12 @@ class IGameState
 public:
 	virtual ~IGameState() = default;
 
-	// OnCreate - создание ресурсов
+	// OnCreate - СЃРѕР·РґР°РЅРёРµ СЂРµСЃСѓСЂСЃРѕРІ
 	virtual bool OnCreate() = 0;
-	// OnDestroy - удаление ресурсов
+	// OnDestroy - СѓРґР°Р»РµРЅРёРµ СЂРµСЃСѓСЂСЃРѕРІ
 	virtual void OnDestroy() = 0;
 
-	// OnActive - если нужно что-то сбросить при переходе в стейт, например в меню
+	// OnActive - РµСЃР»Рё РЅСѓР¶РЅРѕ С‡С‚Рѕ-С‚Рѕ СЃР±СЂРѕСЃРёС‚СЊ РїСЂРё РїРµСЂРµС…РѕРґРµ РІ СЃС‚РµР№С‚, РЅР°РїСЂРёРјРµСЂ РІ РјРµРЅСЋ
 	virtual void OnActive() = 0;
 
 	virtual void OnUpdate(float deltaTime) = 0;

@@ -17,14 +17,14 @@ public:
 	glm::vec3 PosToScreenSpace(const glm::vec3& worldPos, bool useCameraView = true) const;
 	glm::vec3 PosToWorldSpace(const glm::vec3& screenPos, bool useCameraView = true) const;
 
-	// переводит координаты из скринспейса в координаты ячейки карты вида [gridSize][gridSize]
+	// РїРµСЂРµРІРѕРґРёС‚ РєРѕРѕСЂРґРёРЅР°С‚С‹ РёР· СЃРєСЂРёРЅСЃРїРµР№СЃР° РІ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРё РєР°СЂС‚С‹ РІРёРґР° [gridSize][gridSize]
 	glm::ivec2 GetPosInMap(const glm::vec3& screenPos) const;
 
-	// outWorldPos - позиция указателя в мировом пространстве
-	// outPosInMap - позиция на карте, где карта представленна [gridSize][gridSize]. целые числа
-	// outSizeCell - размер ячейки
-	// outOffset - расстояние от левого-верхнего угла ячейки до указателя
-	// useCameraView - считает включая модификации камеры (иначе только в пределах окна)
+	// outWorldPos - РїРѕР·РёС†РёСЏ СѓРєР°Р·Р°С‚РµР»СЏ РІ РјРёСЂРѕРІРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ
+	// outPosInMap - РїРѕР·РёС†РёСЏ РЅР° РєР°СЂС‚Рµ, РіРґРµ РєР°СЂС‚Р° РїСЂРµРґСЃС‚Р°РІР»РµРЅРЅР° [gridSize][gridSize]. С†РµР»С‹Рµ С‡РёСЃР»Р°
+	// outSizeCell - СЂР°Р·РјРµСЂ СЏС‡РµР№РєРё
+	// outOffset - СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ Р»РµРІРѕРіРѕ-РІРµСЂС…РЅРµРіРѕ СѓРіР»Р° СЏС‡РµР№РєРё РґРѕ СѓРєР°Р·Р°С‚РµР»СЏ
+	// useCameraView - СЃС‡РёС‚Р°РµС‚ РІРєР»СЋС‡Р°СЏ РјРѕРґРёС„РёРєР°С†РёРё РєР°РјРµСЂС‹ (РёРЅР°С‡Рµ С‚РѕР»СЊРєРѕ РІ РїСЂРµРґРµР»Р°С… РѕРєРЅР°)
 	void GetCursorInfo(glm::vec3& outWorldPos, glm::ivec2& outPosInMap, glm::vec2& outSizeCell, glm::vec2& outOffset, bool useCameraView = true) const;
 
 private:

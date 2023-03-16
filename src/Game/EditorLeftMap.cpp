@@ -8,15 +8,8 @@
 //-----------------------------------------------------------------------------
 bool EditorLeftMap::Create()
 {
-	рефакторю тут
-
-
-		eureka - много идей по редактору
-		https ://github.com/samuaaltonen/doom-nukem
-https://github.com/KernelOverseer/KSICARDOOM
-
-	// создается квад размером в зону карты - gridSize
-	// в текстурных координатах ставится gridSize / gridStep чтобы создать эффект ячеек
+	// СЃРѕР·РґР°РµС‚СЃСЏ РєРІР°Рґ СЂР°Р·РјРµСЂРѕРј РІ Р·РѕРЅСѓ РєР°СЂС‚С‹ - gridSize
+	// РІ С‚РµРєСЃС‚СѓСЂРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚Р°С… СЃС‚Р°РІРёС‚СЃСЏ gridSize / gridStep С‡С‚РѕР±С‹ СЃРѕР·РґР°С‚СЊ СЌС„С„РµРєС‚ СЏС‡РµРµРє
 	const VertexPos3Tex vert[] =
 	{
 		{{0.0f,      0.0f,     0.0f}, {0.0f,                EditorMapGridSize / EditorGridStep}},
@@ -170,11 +163,11 @@ void EditorLeftMap::drawSectors(const EditorLeftViewport& viewport) const
 void EditorLeftMap::GetCursorToMap(const EditorLeftViewport& viewport, glm::vec2& outPosToMap, glm::vec2& outPosToScreen) const
 {
 	glm::vec2 realCursorPos = app::GetMousePosition();
-	realCursorPos.y = (viewport.GetHeight() - realCursorPos.y); // TODO: что-то с этим сделать
+	realCursorPos.y = (viewport.GetHeight() - realCursorPos.y); // TODO: С‡С‚Рѕ-С‚Рѕ СЃ СЌС‚РёРј СЃРґРµР»Р°С‚СЊ
 
 	if( realCursorPos.x < viewport.GetWidth() )
 	{
-		// TODO: перенести этот код в viewport или грид
+		// TODO: РїРµСЂРµРЅРµСЃС‚Рё СЌС‚РѕС‚ РєРѕРґ РІ viewport РёР»Рё РіСЂРёРґ
 		outPosToMap = viewport.PosToWorldSpace({ realCursorPos.x, realCursorPos.y, 0.0f }, true);
 		const glm::ivec2 intPos = viewport.GetPosInMap({ realCursorPos.x, realCursorPos.y, 0.0f });
 		//std::cout << "pos=" << std::to_string(m_pos.x) << ":" << std::to_string(m_pos.y);

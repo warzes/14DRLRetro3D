@@ -84,7 +84,7 @@ void EditorRightPanel::Draw(float deltaTime)
 	glViewport((GLint)halfScreenWidth, 0, app::GetWindowHeight(), app::GetWindowHeight());
 	glScissor((GLint)halfScreenWidth, 0, app::GetWindowHeight(), app::GetWindowHeight());
 
-	const float aspectRatio = halfScreenWidth / (float)app::GetWindowHeight(); // TODO: проверить
+	const float aspectRatio = halfScreenWidth / (float)app::GetWindowHeight(); // TODO: РїСЂРѕРІРµСЂРёС‚СЊ
 	glm::mat4 mat = glm::perspective(glm::radians(45.0f), aspectRatio, 0.01f, 1000.f);
 	glm::vec3 LightDirection = -glm::normalize(m_cam.viewPoint - m_cam.position);
 	//glm::vec3(0.0f, 0.5f, -1.0f);
@@ -190,7 +190,7 @@ void EditorRightPanel::drawSectors()
 				data.push_back({ v6, normal2, {1.0f, 1.0f, 1.0f}, t4 });
 			}
 			render::UpdateVertexBuffer(sector.wall.vb, 0, data.size(), sizeof(WorldVertex), data.data());
-			//render::Bind(textures[sector.walls[0].textureId]); // TODO: сделать текстуры разным стенам
+			//render::Bind(textures[sector.walls[0].textureId]); // TODO: СЃРґРµР»Р°С‚СЊ С‚РµРєСЃС‚СѓСЂС‹ СЂР°Р·РЅС‹Рј СЃС‚РµРЅР°Рј
 			render::Draw(sector.wall.vao);
 		}
 
@@ -209,18 +209,18 @@ void EditorRightPanel::drawSectors()
 				}
 			}
 
-			// рисуем пол
+			// СЂРёСЃСѓРµРј РїРѕР»
 			render::UpdateVertexBuffer(sector.floor.vb, 0, data.size(), sizeof(WorldVertex), data.data());
 			//render::Bind(textures[sector.FloorTextureId]);
 			render::Draw(sector.floor.vao);
 
-			// все тоже самое что и у пола, только изменена высота и нормаль
+			// РІСЃРµ С‚РѕР¶Рµ СЃР°РјРѕРµ С‡С‚Рѕ Рё Сѓ РїРѕР»Р°, С‚РѕР»СЊРєРѕ РёР·РјРµРЅРµРЅР° РІС‹СЃРѕС‚Р° Рё РЅРѕСЂРјР°Р»СЊ
 			for( size_t i = 0; i < data.size(); i++ )
 			{
 				data[i].pos.y = sector.CeilingHeight;
 				data[i].normal.y = -1.0f;
 			}
-			// рисуем потолок
+			// СЂРёСЃСѓРµРј РїРѕС‚РѕР»РѕРє
 			render::UpdateVertexBuffer(sector.ceilling.vb, 0, data.size(), sizeof(WorldVertex), data.data());
 			//render::Bind(textures[sector.CeilingTextureId]);
 			render::Draw(sector.ceilling.vao);
