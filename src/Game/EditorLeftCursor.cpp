@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "EditorLeftCursor.h"
-#include "VertexFormat.h"
-#include "ShaderCode.h"
-#include "EditorConstant.h"
-#include "EditorLeftViewport.h"
 #include "EditorLeftMap.h"
 #include "EditorLeftDrawHelper.h"
 //-----------------------------------------------------------------------------

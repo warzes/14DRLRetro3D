@@ -13,7 +13,7 @@ public:
 	void Update(const EditorLeftViewport& viewport, const EditorLeftMap& map);
 	void Draw(const EditorLeftViewport& viewport, const EditorLeftDrawHelper& drawer);
 
-	const glm::vec2& GetPosToMap() const { return m_posToMap; }
+	const glm::vec2& PosToMap() const { return m_posToMap; }
 
 private:
 	glm::vec2 m_posToMap;

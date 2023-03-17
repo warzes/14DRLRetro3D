@@ -8,7 +8,6 @@ void EditorLeftViewport::Update(float deltaTime)
 	updatePositionCamera(deltaTime);
 
 	m_halfScreenWidth = (float)app::GetWindowWidth() / 2.0f;
-
 	m_screenViewPort = glm::vec4(0.f, 0.f, m_halfScreenWidth, app::GetWindowHeight());
 
 	// TODO: нужно ли так делать?
@@ -73,31 +72,5 @@ void EditorLeftViewport::updatePositionCamera(float deltaTime)
 	if( m_camPos.y > EditorMapGridSize - EditorViewSize ) m_camPos.y = EditorMapGridSize - EditorViewSize;
 	//std::string text = "cam=" + std::to_string(cam.x) + "-" + std::to_string(cam.y);
 	//LogPrint(text);
-}
-//-----------------------------------------------------------------------------
-void EditorLeftViewport::GetCursorInfo(glm::vec3& outWorldPos, glm::ivec2& outPosInMap, glm::vec2& outSizeCell, glm::vec2& outOffset, bool useCameraView) const
-{
-	const glm::vec2 realMousePos = app::GetMousePosition();
-	outWorldPos = PosToWorldSpace({ realMousePos.x, realMousePos.y, 0.0f }, useCameraView);
-
-	const float sizeScaleX = m_screenViewPort.z / EditorViewSize;
-	const float sizeScaleY = m_screenViewPort.w / EditorViewSize;
-
-	outSizeCell.x = sizeScaleX * EditorGridStep;
-	outSizeCell.y = sizeScaleY * EditorGridStep;
-
-	// функция нерабочая - а возможно уже ненужная
-
-	const float posX = outWorldPos.x + m_camPos.x / EditorGridStep;
-	const float posY = outWorldPos.y + m_camPos.y / EditorGridStep;
-
-	const float posX2 = realMousePos.x / outSizeCell.x + m_camPos.x / EditorGridStep;
-	const float posY2 = realMousePos.y / outSizeCell.y + m_camPos.y / EditorGridStep;
-
-	outPosInMap.x = static_cast<int>(posX);
-	outPosInMap.y = static_cast<int>(posY);
-
-	outOffset.x = posX - (float)outPosInMap.x;
-	outOffset.y = posY - (float)outPosInMap.y;
 }
 //-----------------------------------------------------------------------------

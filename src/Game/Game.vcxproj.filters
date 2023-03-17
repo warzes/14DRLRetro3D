@@ -104,9 +104,6 @@
     <ClCompile Include="GameStateEditor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftViewport.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="EditorRightPanel.cpp">
       <Filter>Editor\old</Filter>
     </ClCompile>
@@ -129,7 +126,10 @@
       <Filter>Editor\impl</Filter>
     </ClCompile>
     <ClCompile Include="EditorLeftCursor.cpp">
-      <Filter>Editor\impl</Filter>
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftViewport.cpp">
+      <Filter>Editor\impl\LeftPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -324,9 +324,6 @@
     <ClInclude Include="VertexFormat.h">
       <Filter>GameResources</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftViewport.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="EditorRightPanel.h">
       <Filter>Editor\old</Filter>
     </ClInclude>
@@ -352,7 +349,10 @@
       <Filter>Editor\impl</Filter>
     </ClInclude>
     <ClInclude Include="EditorLeftCursor.h">
-      <Filter>Editor\impl</Filter>
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftViewport.h">
+      <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

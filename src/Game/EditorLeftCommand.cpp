@@ -11,7 +11,7 @@
 void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& map)
 {
 	// щелчок левой кнопкой
-	glm::vec2 posInMap = cursor.GetPosToMap();
+	glm::vec2 posInMap = cursor.PosToMap();
 
 	if( app::IsKeyPressed(app::KEY_BACKSPACE) )
 	{
