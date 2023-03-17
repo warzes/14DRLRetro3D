@@ -23,29 +23,20 @@ void EditorLeftMap::Draw(const EditorLeftViewport& viewport, const EditorLeftDra
 		if( it.IsValid() ) drawer.DrawPoint(it.pos);
 	}
 
-	// draw a probable wall
-	if( TempEditorVertices.size() > 0 && CurrentCursorPoint.IsValid())
-	{
-		drawer.PreDrawLine(viewport, CurrentCursorWallColor);
-		drawer.DrawLine(TempEditorVertices[TempEditorVertices.size()-1].pos, CurrentCursorPoint.pos);
-	}
-
-	return;
-
-
-
-
-
-	
-
 	// draw line
 	drawer.PreDrawLine(viewport, { 1.0f, 0.9f, 0.1f });
 	for( size_t i = 0; i < TempEditorVertices.size(); i++ )
 	{
-		if( i + 1 < TempEditorVertices.size() )
-		{
-			drawer.DrawLine(TempEditorVertices[i].pos, TempEditorVertices[i + 1].pos);
-		}
+		const size_t nextPoint = i + 1;
+		if( nextPoint < TempEditorVertices.size() )
+			drawer.DrawLine(TempEditorVertices[i].pos, TempEditorVertices[nextPoint].pos);
+	}
+
+	// draw a probable wall
+	if( TempEditorVertices.size() > 0 && CurrentCursorPoint.IsValid() )
+	{
+		drawer.PreDrawLine(viewport, ProbableWallColor);
+		drawer.DrawLine(TempEditorVertices[TempEditorVertices.size() - 1].pos, CurrentCursorPoint.pos);
 	}
 
 	// draw sectors

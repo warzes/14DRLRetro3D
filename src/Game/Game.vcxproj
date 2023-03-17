@@ -524,6 +524,7 @@
     <ClInclude Include="bound.h" />
     <ClInclude Include="bpcd.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="Collisions.h" />
     <ClInclude Include="compare.h" />
     <ClInclude Include="defs.h" />
     <ClInclude Include="dirty.h" />

@@ -12,9 +12,5 @@ public:
 private:
 	bool checkCursorPoint() const;
 	bool addPoint();
-
-
-
 	void buildEditorSector();
-	void buildGeomSector(SectorEditorSector& sector);
 };

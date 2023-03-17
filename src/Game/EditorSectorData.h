@@ -49,6 +49,13 @@ struct SectorEditorSector
 	GeometryBuffer floor;
 	GeometryBuffer ceilling;
 	TPPLPolyList trianglesList;
+
+	void Build();
+
+private:
+	void computeAABB();
+	void createGeometryBuffer();
+	void triangulate();
 };
 
 // идея в том что изменения производить если были изменения в редакторе
@@ -57,22 +64,22 @@ extern bool EditorDataChange;
 extern bool EditorNewSector;
 
 extern SectorEditorVertex CurrentCursorPoint;
-extern glm::vec3 CurrentCursorWallColor;
+extern glm::vec3 ProbableWallColor;
 extern std::vector<SectorEditorVertex> TempEditorVertices;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern std::vector<SectorEditorSector> TempEditorSectors;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 extern SectorEditorVertex* SelectVertex;
 extern SectorEditorVertex* SelectVertex2;

@@ -7,15 +7,16 @@
 #include "EditorConstant.h"
 #include "ShaderCode.h"
 #include "VertexFormat.h"
+#include "Collisions.h"
 //-----------------------------------------------------------------------------
 void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& map)
 {
 	// при движении мыши
 	const glm::vec2 posInMap = cursor.PosToMap();
 	CurrentCursorPoint.pos = posInMap;
-	CurrentCursorWallColor = { 0.4f, 0.4f, 1.0f };
-	if( !checkCursorPoint() )
-		CurrentCursorWallColor = { 1.4f, 0.0f, 0.0f };
+	ProbableWallColor = { 0.4f, 0.4f, 1.0f };
+	if( !checkCursorPoint() && (CurrentCursorPoint.pos != TempEditorVertices[0].pos || TempEditorVertices.size() < 3) )
+		ProbableWallColor = { 1.4f, 0.0f, 0.0f };
 
 	// клик левой кнопкой мыши
 	if( app::IsMouseButtonReleased(0) )
@@ -24,47 +25,11 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 		isAddPoint = addPoint();
 	}
 
-
-
-	return;
 	if( app::IsKeyPressed(app::KEY_BACKSPACE) )
 	{
-		// удалить последнюю вершину
+		// удалить последнюю вершину временного сектора
 		if ( TempEditorVertices.size() > 0 )
 			TempEditorVertices.pop_back();
-	}
-
-	if (app::IsMouseButtonReleased(0))
-	{
-		if ( posInMap.x >= 0.0f && posInMap.x < EditorMapGridSize && posInMap.y >= 0.0f && posInMap.y < EditorMapGridSize )
-		{
-			// сектор замыкается?
-			if( TempEditorVertices.size() > 2 && posInMap == TempEditorVertices[0].pos )
-			{
-				buildEditorSector();
-			}
-			else
-			{
-				// точка на другой точке этого сектора? это ошибка
-				bool isError = false;
-				for( size_t i = 0; i < TempEditorVertices.size(); i++ )
-				{
-					if( posInMap == TempEditorVertices[i].pos )
-					{
-						isError = true;
-						break;
-					}
-				}
-
-				// добавляем точку если нет ошибок
-				if( !isError )
-				{
-					TempEditorVertices.push_back({ posInMap });
-					EditorDataChange = true;
-					EditorNewSector = true;
-				}
-			}
-		}
 	}
 }
 //-----------------------------------------------------------------------------
@@ -73,20 +38,37 @@ bool EditorLeftCommand::checkCursorPoint() const
 	if( !CurrentCursorPoint.IsValid() ) // точка невалидна
 		return false;
 
-	// проверки на ошибки
-	bool isError = false;
-
 	// если сейчас идет создание нового сектора, то нельзя щелкать по имеющимся точкам этого сектора (по другим можно)
-	isError = IsContains(TempEditorVertices, CurrentCursorPoint);
-	// TODO: проверка на пересечение стен - это тоже ошибка
+	if( IsContains(TempEditorVertices, CurrentCursorPoint) ) return false;
 
-	if( isError ) return false;
+	// проверка на пересечение стен нового сектора
+	if( TempEditorVertices.size() > 1 )
+	{
+		const glm::vec2 p1 = TempEditorVertices[TempEditorVertices.size() - 1].pos;
+		const glm::vec2 p2 = CurrentCursorPoint.pos;
+		glm::vec2 nouse;
+		for( size_t i = 1; i < TempEditorVertices.size()-1; i++ )
+		{
+			const glm::vec2 p3 = TempEditorVertices[i-1].pos;
+			const glm::vec2 p4 = TempEditorVertices[i].pos;
+
+			if( Intersection2D(p1, p2, p3, p4, nouse) )
+				return false;
+		}
+	}
 
 	return true;
 }
 //-----------------------------------------------------------------------------
 bool EditorLeftCommand::addPoint()
 {
+	// сектор замыкается?
+	if( EditorNewSector && TempEditorVertices.size() > 2 && CurrentCursorPoint == TempEditorVertices[0] )
+	{
+		buildEditorSector();
+		return false;
+	}
+
 	if( !checkCursorPoint() ) return false;
 
 	// ошибок не было, значит добавляем новую точку
@@ -102,74 +84,25 @@ void EditorLeftCommand::buildEditorSector()
 	EditorDataChange = true;
 	EditorNewSector = false;
 
-	SectorEditorSector sector;
+	SectorEditorSector newSector;
 	for( size_t i = 1; i < TempEditorVertices.size(); i++ )
 	{
 		assert(TempEditorVertices[i].IsValid());
-
-		SectorEditorWall wall;
-		wall.p1 = TempEditorVertices[i-1];
-		wall.p2 = TempEditorVertices[i];
-
-		sector.walls.push_back(wall);
+		const SectorEditorWall wall = { 
+			.p1 = TempEditorVertices[i - 1], 
+			.p2 = TempEditorVertices[i] 
+		};
+		newSector.walls.push_back(wall);
 	}
 	// вставляем стену которая соединена с первой точкой
-	SectorEditorWall wall;
-	wall.p1 = TempEditorVertices[TempEditorVertices.size() - 1];
-	wall.p2 = TempEditorVertices[0];
-	sector.walls.push_back(wall);
+	const SectorEditorWall endWall = { 
+		.p1 = TempEditorVertices[TempEditorVertices.size() - 1], 
+		.p2 = TempEditorVertices[0] 
+	};
+	newSector.walls.push_back(endWall);
+	newSector.Build();
 
-	buildGeomSector(sector);
-
-	TempEditorSectors.push_back(sector);
+	TempEditorSectors.push_back(newSector);
 	TempEditorVertices.clear();
-}
-//-----------------------------------------------------------------------------
-void EditorLeftCommand::buildGeomSector(SectorEditorSector& sector)
-{
-	sector.min = glm::min(sector.walls[0].p1.pos, sector.walls[0].p2.pos);
-	sector.max = glm::max(sector.walls[0].p1.pos, sector.walls[0].p2.pos);
-	for( size_t i = 1; i < sector.walls.size(); i++ )
-	{
-		sector.min = glm::min(sector.min, glm::min(sector.walls[i].p1.pos, sector.walls[i].p2.pos));
-		sector.max = glm::max(sector.max, glm::max(sector.walls[i].p1.pos, sector.walls[i].p2.pos));
-	}
-
-	sector.wall = scene::CreateGeometryBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr, SectorRenderShader);
-	sector.ceilling = scene::CreateGeometryBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr, SectorRenderShader);
-	sector.floor = scene::CreateGeometryBuffer(render::ResourceUsage::Dynamic, 1, sizeof(WorldVertex), nullptr, SectorRenderShader);
-
-	// Triangulate
-	{
-		// нужно получить список уникальных точек. 
-		std::vector<glm::vec2> uniquePoint;
-		// сначала берем первую точку из начала первой стены
-		uniquePoint.push_back(sector.walls[0].p1.pos);
-		// все начальные точки стен равны концам предыдущих стен, поэтому берем только конечную точку p2
-		for( size_t i = 0; i < sector.walls.size(); i++ )
-		{
-			if( sector.walls[i].p2.pos == uniquePoint[0] ) break;// но проверяем что конечная точка не равна самой первой (замыкая полигон)
-			uniquePoint.push_back(sector.walls[i].p2.pos);
-		}
-
-		// триангуляция
-		TPPLPoly poly;
-		poly.Init((long)uniquePoint.size());
-		for( size_t i = 0; i < uniquePoint.size(); i++ )
-		{
-			poly[i] = TPPLPoint{ uniquePoint[i].x, uniquePoint[i].y };
-		}
-		poly.SetOrientation(TPPL_ORIENTATION_CCW);
-
-		TPPLPartition tri;
-		int ret = tri.Triangulate_OPT(&poly, &sector.trianglesList);
-		if( ret == 0 )
-		{
-			//poly.Invert();
-			poly.SetOrientation(TPPL_ORIENTATION_CW);
-			ret = tri.Triangulate_OPT(&poly, &sector.trianglesList);
-		}
-		assert(ret);
-	}
 }
 //-----------------------------------------------------------------------------

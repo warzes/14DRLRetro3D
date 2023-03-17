@@ -354,6 +354,7 @@
     <ClInclude Include="EditorLeftMap.h">
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
+    <ClInclude Include="Collisions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\emscripten\build.bat">
