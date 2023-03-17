@@ -20,8 +20,23 @@ void EditorLeftMap::Draw(const EditorLeftViewport& viewport, const EditorLeftDra
 	drawer.PreDrawPoint(viewport, { 1.0f, 0.9f, 0.1f });
 	for( auto& it : TempEditorVertices )
 	{
-		if ( it.IsValid()) drawer.DrawPoint(it.pos);
+		if( it.IsValid() ) drawer.DrawPoint(it.pos);
 	}
+
+	// draw a probable wall
+	if( TempEditorVertices.size() > 0 && CurrentCursorPoint.IsValid())
+	{
+		drawer.PreDrawLine(viewport, CurrentCursorWallColor);
+		drawer.DrawLine(TempEditorVertices[TempEditorVertices.size()-1].pos, CurrentCursorPoint.pos);
+	}
+
+	return;
+
+
+
+
+
+	
 
 	// draw line
 	drawer.PreDrawLine(viewport, { 1.0f, 0.9f, 0.1f });

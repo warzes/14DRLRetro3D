@@ -3,29 +3,31 @@
 #include "EditorConstant.h"
 #include "Engine.h"
 
-
-
-
-
-
-
-
 struct SectorEditorVertex
 {
 	glm::vec2 pos = glm::vec2(EditorMapGridSize);
 
+	bool operator==(const glm::vec2& v) { return pos == v; }
+	bool operator==(const SectorEditorVertex& r) { return pos == r.pos; }
+
 	bool IsValid() const
 	{
-		return pos.x < EditorMapGridSize && pos.y < EditorMapGridSize;
+		return pos.x >= 0.0f && pos.y >= 0.0f && pos.x < EditorMapGridSize && pos.y < EditorMapGridSize;
 	}
 };
+
+bool IsContains(const std::vector<SectorEditorVertex>& arrayVerts, const SectorEditorVertex& vert);
 
 struct SectorEditorWall
 {
 	SectorEditorVertex p1;
 	SectorEditorVertex p2;
-	unsigned portal = 0;
-	int textureId = 0;
+	unsigned textureId = 0;
+
+	bool IsValid() const
+	{
+		return p1.IsValid() && p2.IsValid();
+	}
 };
 
 struct SectorEditorSector
@@ -37,10 +39,11 @@ struct SectorEditorSector
 
 	glm::vec2 position; // высчитывать позицию сектора из стен по ААББ
 
-	float CeilingHeight = 10.0f;
 	float FloorHeight = 0.0f;
-	int CeilingTextureId = 0;
-	int FloorTextureId = 0;
+	float CeilingHeight = 10.0f;
+
+	unsigned FloorTextureId = 0;
+	unsigned CeilingTextureId = 0;
 
 	GeometryBuffer wall;
 	GeometryBuffer floor;
@@ -50,11 +53,25 @@ struct SectorEditorSector
 
 // идея в том что изменения производить если были изменения в редакторе
 extern bool EditorDataChange;
-
 // сейчас создается новый сектор
 extern bool EditorNewSector;
 
+extern SectorEditorVertex CurrentCursorPoint;
+extern glm::vec3 CurrentCursorWallColor;
 extern std::vector<SectorEditorVertex> TempEditorVertices;
+
+
+
+
+
+
+
+
+
+
+
+
+
 extern std::vector<SectorEditorSector> TempEditorSectors;
 
 extern SectorEditorVertex* SelectVertex;

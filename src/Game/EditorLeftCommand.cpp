@@ -10,9 +10,23 @@
 //-----------------------------------------------------------------------------
 void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& map)
 {
-	// щелчок левой кнопкой
-	glm::vec2 posInMap = cursor.PosToMap();
+	// при движении мыши
+	const glm::vec2 posInMap = cursor.PosToMap();
+	CurrentCursorPoint.pos = posInMap;
+	CurrentCursorWallColor = { 0.4f, 0.4f, 1.0f };
+	if( !checkCursorPoint() )
+		CurrentCursorWallColor = { 1.4f, 0.0f, 0.0f };
 
+	// клик левой кнопкой мыши
+	if( app::IsMouseButtonReleased(0) )
+	{
+		bool isAddPoint = false;
+		isAddPoint = addPoint();
+	}
+
+
+
+	return;
 	if( app::IsKeyPressed(app::KEY_BACKSPACE) )
 	{
 		// удалить последнюю вершину
@@ -52,6 +66,34 @@ void EditorLeftCommand::Update(const EditorLeftCursor& cursor, EditorLeftMap& ma
 			}
 		}
 	}
+}
+//-----------------------------------------------------------------------------
+bool EditorLeftCommand::checkCursorPoint() const
+{
+	if( !CurrentCursorPoint.IsValid() ) // точка невалидна
+		return false;
+
+	// проверки на ошибки
+	bool isError = false;
+
+	// если сейчас идет создание нового сектора, то нельзя щелкать по имеющимся точкам этого сектора (по другим можно)
+	isError = IsContains(TempEditorVertices, CurrentCursorPoint);
+	// TODO: проверка на пересечение стен - это тоже ошибка
+
+	if( isError ) return false;
+
+	return true;
+}
+//-----------------------------------------------------------------------------
+bool EditorLeftCommand::addPoint()
+{
+	if( !checkCursorPoint() ) return false;
+
+	// ошибок не было, значит добавляем новую точку
+	TempEditorVertices.push_back(CurrentCursorPoint);
+	EditorDataChange = true;
+	EditorNewSector = true;
+	return true;
 }
 //-----------------------------------------------------------------------------
 void EditorLeftCommand::buildEditorSector()

@@ -10,6 +10,11 @@ public:
 	void Update(const EditorLeftCursor& cursor, EditorLeftMap& map);
 
 private:
+	bool checkCursorPoint() const;
+	bool addPoint();
+
+
+
 	void buildEditorSector();
 	void buildGeomSector(SectorEditorSector& sector);
 };
