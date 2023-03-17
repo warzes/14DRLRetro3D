@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Engine.h"
-
 class EditorLeftViewport;
 class EditorLeftMap;
+class EditorLeftDrawHelper;
 
 class EditorLeftCursor
 {
@@ -12,12 +11,11 @@ public:
 	void Destroy();
 
 	void Update(const EditorLeftViewport& viewport, const EditorLeftMap& map);
-	void Draw(const EditorLeftViewport& viewport);
+	void Draw(const EditorLeftViewport& viewport, const EditorLeftDrawHelper& drawer);
 
 	const glm::vec2& GetPosToMap() const { return m_posToMap; }
 
 private:
-	GeometryBuffer m_geom;
 	glm::vec2 m_posToMap;
 	glm::vec2 m_posToScreen;
 };

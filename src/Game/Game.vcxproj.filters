@@ -104,9 +104,6 @@
     <ClCompile Include="GameStateEditor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftCursor.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="EditorLeftViewport.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
@@ -129,7 +126,10 @@
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClCompile>
     <ClCompile Include="EditorLeftMap.cpp">
-      <Filter>Editor\impl\LeftPanel</Filter>
+      <Filter>Editor\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftCursor.cpp">
+      <Filter>Editor\impl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +189,9 @@
     </Filter>
     <Filter Include="Editor\impl\LeftPanel">
       <UniqueIdentifier>{8b887f5c-f1cb-42bf-b583-e053ab42d901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ec27bec9-ebaa-471e-a503-b31abf602f5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,9 +324,6 @@
     <ClInclude Include="VertexFormat.h">
       <Filter>GameResources</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftCursor.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="EditorLeftViewport.h">
       <Filter>Editor\impl</Filter>
     </ClInclude>
@@ -349,7 +349,10 @@
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
     <ClInclude Include="EditorLeftMap.h">
-      <Filter>Editor\impl\LeftPanel</Filter>
+      <Filter>Editor\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLeftCursor.h">
+      <Filter>Editor\impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

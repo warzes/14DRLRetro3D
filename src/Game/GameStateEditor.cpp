@@ -54,22 +54,26 @@ void GameStateEditor::OnUpdate(float deltaTime)
 	const ImGuiIO& io = ImGui::GetIO();
 	if( !io.WantCaptureMouse && !io.WantCaptureKeyboard )
 	{
-		// правая панель перехватывает указатель мыши, поэтому мы не можем переключиться на левую мышкой
-		if( app::IsMouseButtonPressed(0) && !m_rightPanel.IsActive() )
+		if( !m_rightPanel.IsActive() )
 		{
-			if( m_leftPanel.IsMouseIn())
-				activeLeftPanel();
-			else
-				activeRightPanel();
+			// правая панель перехватывает указатель мыши, поэтому мы не можем переключиться на левую мышкой из нее
+			if( app::IsMouseButtonPressed(0))
+			{
+				if( m_leftPanel.IsMouseIn() )
+					activeLeftPanel();
+				else
+					activeRightPanel();
+			}
 		}
-
-		// если активна правая панель, то выход по esc
-		if( app::IsKeyPressed(app::KEY_ESCAPE) && m_rightPanel.IsActive() )
+		else
 		{
-			activeLeftPanel();
+			// если активна правая панель, то выход по esc
+			if( app::IsKeyPressed(app::KEY_ESCAPE) )
+				activeLeftPanel();
 		}
 
 		// обновляем события если не было событий в имгуи
+		// TODO: а возможно нужно передавать событие имгуи и апдейт вызывать всегда
 		m_leftPanel.Update(deltaTime);
 		m_rightPanel.Update(deltaTime);
 	}
@@ -79,13 +83,13 @@ void GameStateEditor::OnFrame(float deltaTime)
 {
 	app::BeginFrame();
 	
-	m_leftPanel.Draw(deltaTime);
+	m_leftPanel.Draw();
 	m_rightPanel.Draw(deltaTime);
 
 	ImGui::Begin("Window"); 
 	ImGui::Text("Hello window!");
 	ImGui::SameLine();
-	ImGui::Button("Close Me");
+	ImGui::Button("Close");
 	ImGui::End();
 
 	ImGui::Render();
@@ -106,9 +110,11 @@ bool GameStateEditor::createImgui()
 	//ImGui::StyleColorsLight();
 
 	extern GLFWwindow* Window;
-	ImGui_ImplGlfw_InitForOpenGL(Window, true);
+	if( !ImGui_ImplGlfw_InitForOpenGL(Window, true) )
+		return false;
 	const char* glsl_version = "#version 330";
-	ImGui_ImplOpenGL3_Init(glsl_version);
+	if( !ImGui_ImplOpenGL3_Init(glsl_version) )
+		return false;
 
 	// Load Fonts
 	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -119,13 +125,13 @@ bool GameStateEditor::createImgui()
 	// - Read 'docs/FONTS.md' for more instructions and details.
 	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
 	// - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
-	//io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-	//IM_ASSERT(font != NULL);
+	// io.Fonts->AddFontDefault();
+	// io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
+	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+	// ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+	// IM_ASSERT(font != NULL);
 
 	return true;
 }

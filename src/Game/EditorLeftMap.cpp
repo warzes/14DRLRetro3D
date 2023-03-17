@@ -3,162 +3,55 @@
 #include "EditorLeftViewport.h"
 #include "EditorSectorData.h"
 #include "EditorConstant.h"
+#include "EditorLeftDrawHelper.h"
 #include "VertexFormat.h"
 #include "ShaderCode.h"
 //-----------------------------------------------------------------------------
 bool EditorLeftMap::Create()
 {
-	здесь продолжить
-
-
-	// создается квад размером в зону карты - gridSize
-	// в текстурных координатах ставится gridSize / gridStep чтобы создать эффект ячеек
-	const VertexPos3Tex vert[] =
-	{
-		{{0.0f,      0.0f,     0.0f}, {0.0f,                EditorMapGridSize / EditorGridStep}},
-		{{0.0f,      EditorMapGridSize, 0.0f}, {0.0f,                0.0f               }},
-		{{ EditorMapGridSize, EditorMapGridSize, 0.0f}, {EditorMapGridSize / EditorGridStep, 0.0f               }},
-		{{ EditorMapGridSize, 0.0f,     0.0f}, {EditorMapGridSize / EditorGridStep, EditorMapGridSize / EditorGridStep}}
-	};
-	constexpr int indexs[] =
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
-	m_geomBuff = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vert), sizeof(VertexPos3Tex), vert, Countof(indexs), sizeof(int), indexs, GridCellShader);
-	if( !scene::IsValid(m_geomBuff) )
-	{
-		return false;
-	}
-
-	render::Texture2DInfo info;
-	info.mipmap = false;
-	info.magFilter = render::TextureMagFilter::Nearest;
-	info.minFilter = render::TextureMinFilter::Nearest;
-	info.wrapS = render::TextureWrapping::Repeat;
-	info.wrapT = render::TextureWrapping::Repeat;
-
-	m_gridTexture = render::CreateTexture2D("../data/textures/gridCell.png", true, info);
-	if( !render::IsValid(m_gridTexture) )
-	{
-		return false;
-	}
-
-
-
-
-
-	constexpr VertexPos3 vert3[] =
-	{
-		{{-0.5f, -0.5f, .0f}},
-		{{-0.5f,  0.5f, .0f}},
-		{{ 0.5f,  0.5f, .0f}},
-		{{ 0.5f, -0.5f, .0f}}
-	};
-
-	constexpr int indexs3[] =
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
-
-	m_geomPoint = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vert3), sizeof(VertexPos3), vert3, Countof(indexs), sizeof(indexs3[0]), indexs3, SimpleColorShader);
-	if (!scene::IsValid(m_geomPoint))
-		return false;
-
-	constexpr float vertData[] = { 0.0f, 1.0f };
-	m_geomWall = scene::CreateGeometryBuffer(render::ResourceUsage::Static, Countof(vertData), sizeof(float), vertData, Simple2DLineDrawShader);
-	if (!scene::IsValid(m_geomWall))
-		return false;
-
 	return true;
 }
 //-----------------------------------------------------------------------------
 void EditorLeftMap::Destroy()
 {
-	scene::Destroy(m_geomPoint);
-	scene::Destroy(m_geomWall);
-
-	scene::Destroy(m_geomBuff);
-	render::DestroyResource(m_gridTexture);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftMap::Draw(const EditorLeftViewport& viewport) const
+void EditorLeftMap::Draw(const EditorLeftViewport& viewport, const EditorLeftDrawHelper& drawer) const
 {
-	render::Bind(m_gridTexture);
-	render::Bind(GridCellShader);
-	render::SetUniform(UniformGridCellProj, viewport.GetOrthoProjection());
-	render::SetUniform(UniformGridCellView, viewport.GetView());
-	render::SetUniform(UniformGridCellWorld, glm::mat4(1.0f));
-	render::SetUniform(UniformGridCellColor, glm::vec3(0.7f, 1.0f, 0.3f));
-
-	assert(scene::IsValid(m_geomBuff));
-	render::Draw(m_geomBuff.vao, render::PrimitiveDraw::Triangles);
-
-
-
-
-
-
-
+	drawer.DrawGrid(viewport);
 
 	// draw point
-	render::Bind(SimpleColorShader);
-	render::SetUniform(SimpleColorDrawProj, viewport.GetOrthoProjection());
-	render::SetUniform(SimpleColorDrawView, viewport.GetView());
-	render::SetUniform(SimpleColorDrawColor, glm::vec3(1.0f, 0.9f, 0.1f));
+	drawer.PreDrawPoint(viewport, { 1.0f, 0.9f, 0.1f });
 	for( auto& it : TempEditorVertices )
 	{
-		if ( it.IsValid()) drawPoint(it.pos);
+		if ( it.IsValid()) drawer.DrawPoint(it.pos);
 	}
 
 	// draw line
-	render::Bind(Simple2DLineDrawShader);
-	render::SetUniform(Simple2DLineDrawViewProj, viewport.GetOrthoProjection() * viewport.GetView());
-	render::SetUniform(Simple2DLineDrawColor, glm::vec3(1.0f, 0.9f, 0.1f));
+	drawer.PreDrawLine(viewport, { 1.0f, 0.9f, 0.1f });
 	for( size_t i = 0; i < TempEditorVertices.size(); i++ )
 	{
 		if( i + 1 < TempEditorVertices.size() )
 		{
-			drawLine(TempEditorVertices[i].pos, TempEditorVertices[i+1].pos);
+			drawer.DrawLine(TempEditorVertices[i].pos, TempEditorVertices[i + 1].pos);
 		}
 	}
 
 	// draw sectors
-	drawSectors(viewport);
+	drawSectors(viewport, drawer);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftMap::drawPoint(const glm::vec2& pos) const
-{
-	glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
-	world = glm::scale(world, glm::vec3(1.2f));
-	render::SetUniform(SimpleColorDrawWorld, world);
-	render::Draw(m_geomPoint.vao, render::PrimitiveDraw::Triangles);
-}
-//-----------------------------------------------------------------------------
-void EditorLeftMap::drawLine(const glm::vec2& pos1, const glm::vec2& pos2) const
-{
-	render::SetUniform(Simple2DLineDrawPos, glm::vec4(pos1, pos2));
-	render::Draw(m_geomWall.vao, render::PrimitiveDraw::Lines);
-}
-//-----------------------------------------------------------------------------
-void EditorLeftMap::drawSectors(const EditorLeftViewport& viewport) const
+void EditorLeftMap::drawSectors(const EditorLeftViewport& viewport, const EditorLeftDrawHelper& drawer) const
 {
 	for( size_t i = 0; i < TempEditorSectors.size(); i++ )
 	{
 		for( size_t j = 0; j < TempEditorSectors[i].walls.size(); j++ )
 		{
-			// draw wall
-			render::Bind(Simple2DLineDrawShader);
-			render::SetUniform(Simple2DLineDrawViewProj, viewport.GetOrthoProjection() * viewport.GetView());
-			render::SetUniform(Simple2DLineDrawColor, glm::vec3(0.8f, 0.9f, 0.7f));
-			drawLine(TempEditorSectors[i].walls[j].p1.pos, TempEditorSectors[i].walls[j].p2.pos);
+			drawer.PreDrawLine(viewport, { 0.8f, 0.9f, 0.7f });
+			drawer.DrawLine(TempEditorSectors[i].walls[j].p1.pos, TempEditorSectors[i].walls[j].p2.pos);
 
-			render::Bind(SimpleColorShader);
-			render::SetUniform(SimpleColorDrawProj, viewport.GetOrthoProjection());
-			render::SetUniform(SimpleColorDrawView, viewport.GetView());
-			render::SetUniform(SimpleColorDrawColor, glm::vec3(0.8f, 0.9f, 0.7f));
-			drawPoint(TempEditorSectors[i].walls[j].p1.pos);
+			drawer.PreDrawPoint(viewport, { 0.8f, 0.9f, 0.7f });
+			drawer.DrawPoint(TempEditorSectors[i].walls[j].p1.pos);
 		}
 	}
 }

@@ -16,11 +16,11 @@ public:
 	void Destroy();
 
 	void Update(float deltaTime);
-	void Draw(float deltaTime);
+	void Draw();
 
 	void SetActive(bool active);
 
-	// курсор тут?
+	// курсор внутри панели
 	bool IsMouseIn() const;
 
 private:

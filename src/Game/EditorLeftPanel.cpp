@@ -1,26 +1,6 @@
 #include "stdafx.h"
 #include "EditorLeftPanel.h"
 #include "Engine.h"
-#include <numbers>
-
-убрать
-template <class>
-inline constexpr bool AlwaysFalse = false;
-
-template <class T>
-struct Invalid {
-	static_assert(AlwaysFalse<T>, "A program that instantiates a primary template of a mathematical constant "
-		"variable template is ill-formed. (N4835 [math.constants]/3)");
-};
-
-template <class T>
-inline constexpr T pi_v = Invalid<T>{};
-template <>
-inline constexpr double pi_v<double> = 3.141592653589793;
-template <>
-inline constexpr float pi_v<float> = 3.14f;
-
-
 //-----------------------------------------------------------------------------
 bool EditorLeftPanel::Create()
 {
@@ -35,19 +15,19 @@ bool EditorLeftPanel::Create()
 		return false;
 	}
 
-
-	auto t = pi_v<float>;
-
 	if( !m_cursor.Create() )
+	{
+		Fatal("Editor Cursor Manager Init failed!");
 		return false;
+	}
 
 	return true;
 }
 //-----------------------------------------------------------------------------
 void EditorLeftPanel::Destroy()
 {
-	m_map.Destroy();
 	m_cursor.Destroy();
+	m_map.Destroy();
 	m_drawHelper.Destroy();
 }
 //-----------------------------------------------------------------------------
@@ -60,13 +40,11 @@ void EditorLeftPanel::Update(float deltaTime)
 	m_commands.Update(m_cursor, m_map);
 }
 //-----------------------------------------------------------------------------
-void EditorLeftPanel::Draw(float deltaTime)
+void EditorLeftPanel::Draw()
 {
-	(void)deltaTime;
-
 	m_leftViewport.SetOpenGLViewport();
-	m_map.Draw(m_leftViewport);
-	m_cursor.Draw(m_leftViewport);
+	m_map.Draw(m_leftViewport, m_drawHelper);
+	m_cursor.Draw(m_leftViewport, m_drawHelper);
 }
 //-----------------------------------------------------------------------------
 void EditorLeftPanel::SetActive(bool active)
