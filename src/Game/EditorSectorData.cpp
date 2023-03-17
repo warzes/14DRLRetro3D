@@ -3,6 +3,7 @@
 #include "EditorConstant.h"
 #include "VertexFormat.h"
 #include "ShaderCode.h"
+https://www.dhpoware.com/demos/glslVertexLighting.html
 //-----------------------------------------------------------------------------
 bool EditorDataChange = true;
 bool EditorNewSector = false;
@@ -10,6 +11,10 @@ SectorEditorVertex CurrentCursorPoint;
 glm::vec3 ProbableWallColor = { 0.4f, 0.4f, 1.0f };
 std::vector<SectorEditorVertex> TempEditorVertices;
 std::vector<SectorEditorSector> TempEditorSectors;
+SectorEditorVertex* SelectPoint = nullptr;
+SectorEditorWall* SelectWall1 = nullptr;
+SectorEditorWall* SelectWall2 = nullptr;
+SectorEditorSector* SelectSector = nullptr;
 //-----------------------------------------------------------------------------
 bool IsContains(const std::vector<SectorEditorVertex>& arrayVerts, const SectorEditorVertex& vert)
 {
@@ -23,8 +28,14 @@ bool IsContains(const std::vector<SectorEditorVertex>& arrayVerts, const SectorE
 //-----------------------------------------------------------------------------
 void SectorEditorSector::Build()
 {
-	computeAABB();
 	createGeometryBuffer();
+	ReBuild();
+}
+//-----------------------------------------------------------------------------
+void SectorEditorSector::ReBuild()
+{
+	trianglesList.clear();
+	computeAABB();
 	triangulate();
 }
 //-----------------------------------------------------------------------------
@@ -71,15 +82,4 @@ void SectorEditorSector::triangulate()
 	}
 	assert(ret);
 }
-//-----------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-SectorEditorVertex* SelectVertex = nullptr;
-SectorEditorVertex* SelectVertex2 = nullptr;
 //-----------------------------------------------------------------------------

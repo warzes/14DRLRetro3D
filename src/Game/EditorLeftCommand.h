@@ -2,7 +2,6 @@
 
 class EditorLeftCursor;
 class EditorLeftMap;
-struct SectorEditorSector;
 
 class EditorLeftCommand
 {
@@ -13,4 +12,7 @@ private:
 	bool checkCursorPoint() const;
 	bool addPoint();
 	void buildEditorSector();
+
+	bool selectPoint();
+	bool movePoint();
 };

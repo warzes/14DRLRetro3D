@@ -51,6 +51,7 @@ struct SectorEditorSector
 	TPPLPolyList trianglesList;
 
 	void Build();
+	void ReBuild();
 
 private:
 	void computeAABB();
@@ -68,18 +69,8 @@ extern glm::vec3 ProbableWallColor;
 extern std::vector<SectorEditorVertex> TempEditorVertices;
 extern std::vector<SectorEditorSector> TempEditorSectors;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern SectorEditorVertex* SelectVertex;
-extern SectorEditorVertex* SelectVertex2;
+// указатели на выбранное
+extern SectorEditorVertex* SelectPoint;
+extern SectorEditorWall* SelectWall1;
+extern SectorEditorWall* SelectWall2;
+extern SectorEditorSector* SelectSector;

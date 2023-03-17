@@ -107,9 +107,6 @@
     <ClCompile Include="EditorRightPanel.cpp">
       <Filter>Editor\old</Filter>
     </ClCompile>
-    <ClCompile Include="EditorLeftCommand.cpp">
-      <Filter>Editor\impl</Filter>
-    </ClCompile>
     <ClCompile Include="EditorSectorData.cpp">
       <Filter>Editor\impl</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClCompile>
     <ClCompile Include="EditorLeftMap.cpp">
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLeftCommand.cpp">
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClCompile>
   </ItemGroup>
@@ -327,9 +327,6 @@
     <ClInclude Include="EditorRightPanel.h">
       <Filter>Editor\old</Filter>
     </ClInclude>
-    <ClInclude Include="EditorLeftCommand.h">
-      <Filter>Editor\impl</Filter>
-    </ClInclude>
     <ClInclude Include="EditorSectorData.h">
       <Filter>Editor\impl</Filter>
     </ClInclude>
@@ -355,6 +352,9 @@
       <Filter>Editor\impl\LeftPanel</Filter>
     </ClInclude>
     <ClInclude Include="Collisions.h" />
+    <ClInclude Include="EditorLeftCommand.h">
+      <Filter>Editor\impl\LeftPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\emscripten\build.bat">

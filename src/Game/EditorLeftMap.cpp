@@ -33,7 +33,7 @@ void EditorLeftMap::Draw(const EditorLeftViewport& viewport, const EditorLeftDra
 	}
 
 	// draw a probable wall
-	if( TempEditorVertices.size() > 0 && CurrentCursorPoint.IsValid() )
+	if( TempEditorVertices.size() > 0 && CurrentCursorPoint.IsValid() && !SelectPoint )
 	{
 		drawer.PreDrawLine(viewport, ProbableWallColor);
 		drawer.DrawLine(TempEditorVertices[TempEditorVertices.size() - 1].pos, CurrentCursorPoint.pos);
