@@ -36,7 +36,7 @@ void EditorLeftPanel::Update(float deltaTime)
 	if (!m_isActive) return;
 
 	m_leftViewport.Update(deltaTime);
-	m_cursor.Update(m_leftViewport, m_map);
+	m_cursor.Update(m_leftViewport);
 	m_commands.Update(m_cursor, m_map);
 }
 //-----------------------------------------------------------------------------
