@@ -3,7 +3,6 @@
 #include "EditorConstant.h"
 #include "VertexFormat.h"
 #include "ShaderCode.h"
-https://www.dhpoware.com/demos/glslVertexLighting.html
 //-----------------------------------------------------------------------------
 bool EditorDataChange = true;
 bool EditorNewSector = false;

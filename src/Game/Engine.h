@@ -1,5 +1,20 @@
 #pragma once
 
+template<size_t N, typename T>
+class Foo;
+
+template<typename T>
+class Foo<2, T>
+{
+	T& operator[](size_t index);
+
+	T t[2];
+};
+
+template<> inline float& Foo<2, float>::operator[](size_t index){return t[0];}
+template<> inline double& Foo<2, double>::operator[](size_t index) { return t[0]; }
+
+
 //=============================================================================
 // Engine config
 //=============================================================================
@@ -37,7 +52,7 @@ void Fatal(const std::string& msg);
 
 namespace render
 {
-	enum class ResourceType
+	enum class ResourceType : uint8_t
 	{
 		Unknown,
 		ShaderProgram,
@@ -47,21 +62,21 @@ namespace render
 		Texture2D
 	};
 
-	enum class ResourceUsage
+	enum class ResourceUsage : uint8_t
 	{
 		Static,
 		Dynamic,
 		Stream,
 	};
 
-	enum class PrimitiveDraw
+	enum class PrimitiveDraw : uint8_t
 	{
 		Lines,
 		Triangles,
 		Points,
 	};
 
-	enum class TextureMinFilter
+	enum class TextureMinFilter : uint8_t
 	{
 		Nearest,
 		Linear,
@@ -71,13 +86,13 @@ namespace render
 		LinearMipmapLinear,
 	};
 
-	enum class TextureMagFilter
+	enum class TextureMagFilter : uint8_t
 	{
 		Nearest,
 		Linear,
 	};
 
-	enum class TextureWrapping
+	enum class TextureWrapping : uint8_t
 	{
 		Repeat,
 		MirroredRepeat,
@@ -87,7 +102,7 @@ namespace render
 #endif
 	};
 
-	enum class TexelsFormat
+	enum class TexelsFormat : uint8_t
 	{
 		None = 0,
 		R_U8,
@@ -98,6 +113,68 @@ namespace render
 		DepthStencil_U16,
 		Depth_U24,
 		DepthStencil_U24,
+	};
+
+	enum class BlendFactor : uint8_t
+	{
+		Zero,
+		One
+		//...
+	};
+
+	enum class BlendOp : uint8_t
+	{
+		Add = 1,
+		Subrtact = 2,
+		//...
+	};
+
+	enum class ColorMask : uint8_t
+	{
+		Red = 1,
+		Green = 2,
+		Blue = 4,
+		Alpha = 8,
+		All = 0xF
+	};
+	inline ColorMask operator|(ColorMask a, ColorMask b) { return ColorMask(uint32_t(a) | uint32_t(b)); }
+	inline ColorMask operator&(ColorMask a, ColorMask b) { return ColorMask(uint32_t(a) & uint32_t(b)); }
+	inline ColorMask operator~(ColorMask a) { return ColorMask(~uint32_t(a)); }
+	inline bool operator!(ColorMask a) { return uint32_t(a) == 0; }
+	inline bool operator==(ColorMask a, uint32_t b) { return uint32_t(a) == b; }
+	inline bool operator!=(ColorMask a, uint32_t b) { return uint32_t(a) != b; }
+
+	enum class RasterFillMode : uint8_t
+	{
+		Solid,
+		Wireframe,
+	};
+
+	enum class RasterCullMode : uint8_t
+	{
+		Back,
+		Front,
+		Full
+	};
+
+	enum class StencilOp : uint8_t
+	{
+		Keep,
+		Zero,
+		Replace,
+		//...
+	};
+
+	enum class ComparisonFunc : uint8_t
+	{
+		Never,
+		Less = 2,
+		Equal = 3,
+		LessOrEqual = 4,
+		Greater = 5,
+		NotEqual = 6,
+		GreaterOrEqual = 7,
+		Always = 8
 	};
 
 	struct VertexAttribute
@@ -144,6 +221,9 @@ namespace render
 	struct IndexBuffer { unsigned id = 0; ResourceUsage usage = ResourceUsage::Static; unsigned count = 0; unsigned size = 0; };
 	struct VertexArray { unsigned id = 0; VertexBuffer *vbo = nullptr; IndexBuffer *ibo = nullptr; unsigned attribsCount = 0; };
 	struct Texture2D { unsigned id = 0; unsigned width = 0; unsigned height = 0; TexelsFormat format = TexelsFormat::RGBA_U8; };
+
+	struct BlendState { /*...*/ };
+	struct RasterState { /*...*/ };
 
 	bool operator==(const ShaderProgram& Left, const ShaderProgram& Right) noexcept;
 	bool operator==(const Uniform& Left, const Uniform& Right) noexcept;
